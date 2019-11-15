@@ -1,3 +1,12 @@
 <template>
-  <v-layout justify-center align-center>Coming soon!</v-layout>
+  <users />
 </template>
+
+<script>
+import Users from '~/components/Users'
+export default {
+  components: {
+    Users
+  }
+}
+</script>
