@@ -20,14 +20,21 @@ export default {
         content: process.env.npm_package_description || ''
       }
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      {
+        rel: 'stylesheet',
+        href:
+          'https://fonts.googleapis.com/css?family=Turret+Road|Lexend+Mega&display=swap'
+      }
+    ]
   },
   /*
    ** Customize the progress-bar color
    */
   loadingIndicator: {
     name: 'folding-cube',
-    color: '#1871C1',
+    color: colors.orange.base,
     background: 'white'
   },
   /*
@@ -41,14 +48,16 @@ export default {
     { src: '~/plugins/localStorage.js', ssr: false },
     '~/plugins/i18n.js',
     '~/plugins/global.js',
-    '~/plugins/vuetify.js'
+    '~/plugins/firebase.js',
+    '~/plugins/vuetify.js',
+    '~/plugins/mask.js'
   ],
   /*
    ** Nuxt.js dev-modules
    */
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
-    '@nuxtjs/eslint-module',
+    // '@nuxtjs/eslint-module',
     '@nuxtjs/vuetify'
   ],
   /*
@@ -71,10 +80,20 @@ export default {
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
+      dark: false,
       light: true,
       themes: {
-        light: {
+        dark: {
           primary: colors.blue.darken3,
+          accent: colors.grey.darken3,
+          secondary: colors.amber.darken3,
+          info: colors.teal.lighten1,
+          warning: colors.amber.base,
+          error: colors.deepOrange.accent4,
+          success: colors.green.accent3
+        },
+        light: {
+          primary: colors.orange.base,
           accent: colors.grey.darken3,
           secondary: colors.amber.darken3,
           info: colors.teal.lighten1,
@@ -83,9 +102,6 @@ export default {
           success: colors.green.accent3
         }
       }
-    },
-    icons: {
-      iconfont: 'fa' || 'mdi'
     }
   },
   /*

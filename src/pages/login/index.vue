@@ -1,29 +1,37 @@
 <template>
-  <v-app id="stockNoNav">
+  <v-app id="timeMapNoNav">
     <v-content>
       <v-container class="fill-height" fluid>
-        <v-row align="center" justify="center">
+        <v-row align="start" justify="center">
           <v-col cols="12" sm="8" md="4">
             <v-card class="elevation-12">
               <v-card-title>
-                Please login to use the application
+                <v-row class="appTitle primary--text" justify="center"
+                  >TIMEMAP</v-row
+                >
               </v-card-title>
+              <v-card-subtitle class="mt-5">
+                <v-row class="appLoginHeading" justify="center"
+                  >Hi, there.</v-row
+                >
+                <v-row class="appLoginInfo ma-5" justify="center">
+                  Thanks for showing your interest in Timemap. We hope our fun
+                  filled cute app can help you know more about your loved ones.
+                  Please login,
+                </v-row>
+              </v-card-subtitle>
               <v-card-text>
-                <v-btn @click="googleSignIn" fab icon color="primary">
-                  <v-icon>fab fa-google</v-icon>
-                </v-btn>
-                <v-btn @click="googleSignIn" fab icon color="primary">
-                  <v-icon>fab fa-facebook-f</v-icon>
-                </v-btn>
-                <v-btn @click="googleSignIn" fab icon color="primary">
-                  <v-icon>fab fa-twitter</v-icon>
-                </v-btn>
-                <v-btn @click="googleSignIn" fab icon color="primary">
-                  <v-icon>fab fa-whatsapp</v-icon>
-                </v-btn>
-                <v-btn @click="googleSignIn" fab icon color="primary">
-                  <v-icon>fab fa-linkedin-in</v-icon>
-                </v-btn>
+                <v-row justify="center">
+                  <v-btn @click="googleSignIn" fab icon color="primary">
+                    <v-icon>fab fa-google</v-icon>
+                  </v-btn>
+                  <v-btn @click="facebookSignIn" fab icon color="primary">
+                    <v-icon>fab fa-facebook-f</v-icon>
+                  </v-btn>
+                  <v-btn @click="phoneSignIn" fab icon color="primary">
+                    <v-icon>fas fa-phone</v-icon>
+                  </v-btn>
+                </v-row>
               </v-card-text>
             </v-card>
           </v-col>
@@ -34,14 +42,54 @@
 </template>
 
 <script>
+import firebase from 'firebase'
 export default {
+  data: () => ({}),
   layout: 'noNav',
+  mounted() {
+    const vm = this
+    vm.$nextTick(() => {
+      vm.$nuxt.$loading.start()
+      firebase
+        .auth()
+        .getRedirectResult()
+        .then(function(result) {
+          vm.$nuxt.$loading.finish()
+          vm.$store.commit('user/USER_UPDATED', result.user)
+          vm.$router.push('/')
+        })
+        .catch(function(error) {
+          /* eslint-disable no-console */
+          console.error(error)
+        })
+    })
+  },
   methods: {
     googleSignIn() {
-      const vm = this
-      vm.$store.commit('user/USER_UPDATED', { name: 'dummy' })
-      vm.$router.push('/')
+      firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())
+    },
+    facebookSignIn() {
+      firebase
+        .auth()
+        .signInWithRedirect(new firebase.auth.FacebookAuthProvider())
+    },
+    phoneSignIn() {
+      this.$router.push('/login/phone')
     }
   }
 }
 </script>
+<style scoped>
+.appTitle {
+  font-size: 40px;
+  font-family: 'Turret Road', cursive;
+  font-weight: 900;
+}
+.appLoginHeading {
+  font-size: 20px;
+  font-family: 'Lexend Mega', sans-serif;
+}
+.appLoginInfo {
+  font-family: 'Lexend Mega', sans-serif;
+}
+</style>

@@ -1,16 +1,23 @@
 <template>
-  <v-app id="timemap">
-    <v-app-bar app color="primary">
-      <v-toolbar-title class="success--text">
-        <v-btn fab icon color="success">
-          <v-icon>fas fa-user-clock</v-icon>
-        </v-btn>
-      </v-toolbar-title>
-      <span class="headline mt-1 success--text">TimeMap</span>
-      <v-row @click="logout" justify="end">
-        <v-btn fab icon color="success">
-          <v-icon>fa-sign-out-alt</v-icon>
-        </v-btn>
+  <v-app id="timeMap">
+    <v-app-bar app color="#ffffff" height="40">
+      <span class="appTitle primary--text">TIMEMAP</span>
+      <v-row justify="end">
+        <v-menu offset-y>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" fab icon small color="primary">
+              <v-icon small>fas fa-ellipsis-v</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item key="1" @click="showAccount">
+              <v-list-item-title>Account</v-list-item-title>
+            </v-list-item>
+            <v-list-item key="2" @click="logout">
+              <v-list-item-title>Logout</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </v-row>
     </v-app-bar>
 
@@ -19,24 +26,41 @@
         <nuxt></nuxt>
       </v-container>
     </v-content>
-    <v-footer height="20" class="ma-0 pa-0" color="primary" app>
-      <v-row class="success--text caption ml-3" justify="center"
-        >&copy; 2019</v-row
-      >
-    </v-footer>
   </v-app>
 </template>
 
 <script>
+import firebase from 'firebase'
 export default {
-  data: () => ({}),
+  data: () => ({
+    on: false
+  }),
   middleware: ['authCheck'],
   methods: {
     logout() {
       const vm = this
-      vm.$store.commit('user/USER_UPDATED', null)
-      vm.$router.push('/login')
+      firebase
+        .auth()
+        .signOut()
+        .then(function() {
+          // Sign-out successful.
+          vm.$store.commit('user/USER_UPDATED', null)
+          vm.$router.push('/login')
+        })
+        .catch(function(e) {
+          /* eslint-disable no-console */
+          console.error(e)
+        })
+    },
+    showAccount() {
+      // TODO
     }
   }
 }
 </script>
+<style scoped>
+.appTitle {
+  font-family: 'Turret Road', cursive;
+  font-weight: 900;
+}
+</style>
