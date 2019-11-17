@@ -44,7 +44,6 @@ export default {
         .signOut()
         .then(function() {
           // Sign-out successful.
-          vm.$store.commit('user/USER_UPDATED', null)
           vm.$router.push('/login')
         })
         .catch(function(e) {

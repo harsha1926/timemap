@@ -43,15 +43,9 @@
 
 <script>
 import firebase from 'firebase'
-import { mapGetters } from 'vuex'
 export default {
   data: () => ({}),
   layout: 'noNav',
-  computed: {
-    ...mapGetters({
-      user: 'user/user'
-    })
-  },
   mounted() {
     const vm = this
     vm.$nextTick(() => {
