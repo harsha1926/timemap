@@ -5,9 +5,9 @@
         <v-row align="start" justify="center">
           <v-col cols="12" sm="8" md="4">
             <v-card class="elevation-12">
-              <v-card-title class="appLoginHeading mb-5">
-                Sign in with phone
-              </v-card-title>
+              <v-card-title class="appLoginHeading mb-5"
+                >Sign in with phone</v-card-title
+              >
               <v-card-text>
                 <v-form ref="form" v-model="valid" lazy-validation>
                   <v-autocomplete
@@ -142,7 +142,6 @@ export default {
         vm.confirmationResult
           .confirm(vm.authCode)
           .then(function(result) {
-            vm.$store.commit('user/USER_UPDATED', result.user)
             vm.$router.push('/')
           })
           .catch(function(error) {

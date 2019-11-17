@@ -43,9 +43,15 @@
 
 <script>
 import firebase from 'firebase'
+import { mapGetters } from 'vuex'
 export default {
   data: () => ({}),
   layout: 'noNav',
+  computed: {
+    ...mapGetters({
+      user: 'user/user'
+    })
+  },
   mounted() {
     const vm = this
     vm.$nextTick(() => {
@@ -54,13 +60,26 @@ export default {
         .auth()
         .getRedirectResult()
         .then(function(result) {
-          vm.$nuxt.$loading.finish()
-          vm.$store.commit('user/USER_UPDATED', result.user)
           vm.$router.push('/')
+          vm.$nuxt.$loading.finish()
         })
         .catch(function(error) {
-          /* eslint-disable no-console */
-          console.error(error)
+          if (
+            error.email &&
+            error.credential &&
+            error.code === 'auth/account-exists-with-different-credential'
+          ) {
+            firebase
+              .auth()
+              .signInWithPopup(
+                new firebase.auth.GoogleAuthProvider().setCustomParameters({
+                  login_hint: error.email
+                })
+              )
+              .then((result) => {
+                result.user.linkWithCredential(error.credential)
+              })
+          }
         })
     })
   },
