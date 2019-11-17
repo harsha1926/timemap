@@ -104,6 +104,14 @@ export default {
       }
     }
   },
+  pwa: {
+    manifest: {
+      name: 'TIMEMAP',
+      short_name: 'TIMEMAP',
+      lang: 'en',
+      display: 'standalone'
+    }
+  },
   /*
    ** Build configuration
    */
