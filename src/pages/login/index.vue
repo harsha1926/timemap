@@ -6,9 +6,14 @@
           <v-col cols="12" sm="8" md="4">
             <v-card class="elevation-12">
               <v-card-title>
-                <v-row class="appTitle primary--text" justify="center"
-                  >TIMEMAP</v-row
+                <v-row
+                  class="appTitle primary--text"
+                  align="center"
+                  justify="center"
                 >
+                  <v-avatar tile> <v-img src="/icon.png"></v-img> </v-avatar
+                  >TIMEMAP
+                </v-row>
               </v-card-title>
               <v-card-subtitle class="mt-5">
                 <v-row class="appLoginHeading" justify="center"
