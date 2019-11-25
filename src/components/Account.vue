@@ -17,7 +17,7 @@
         </v-card-title>
       </v-img>
       <v-card-subtitle>
-        <v-row justify="space-between" align="center nameTitle" class="pa-2">
+        <v-row justify="space-between" align="center" class="pa-2 nameTitle">
           <v-col cols="11">{{ user.displayName }}</v-col>
           <v-col cols="1">
             <v-btn fab icon color="primary" small>

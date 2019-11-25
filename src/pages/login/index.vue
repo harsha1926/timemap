@@ -78,8 +78,6 @@ export default {
         .auth()
         .getRedirectResult()
         .then(function(result) {
-          vm.$router.push('/')
-          vm.$nuxt.$loading.finish()
           const user = result.user
           const ref = firebase.database().ref('users')
           ref.push().set({
@@ -88,6 +86,8 @@ export default {
             photoURL: user.photoURL,
             phoneNumber: user.phoneNumber
           })
+          vm.$router.push('/')
+          vm.$nuxt.$loading.finish()
         })
         .catch(function(error) {
           if (error.code === 'auth/account-exists-with-different-credential') {

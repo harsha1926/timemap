@@ -30,15 +30,27 @@
   </v-app>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import firebase from 'firebase'
 export default {
   data: () => ({
-    on: false
+    on: false,
+    user: null
   }),
   middleware: ['authCheck'],
-  computed: {
-    ...mapGetters({
-      user: 'user/user'
+  mounted() {
+    const vm = this
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (!user) {
+        // No user is signed in.
+        return vm.$router.push('/login')
+      } else {
+        firebase
+          .database()
+          .ref('users/' + user.uid)
+          .once('value', function(data) {
+            vm.user = data.val()
+          })
+      }
     })
   }
 }
