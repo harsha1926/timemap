@@ -93,7 +93,7 @@ export default {
           success: colors.green.accent3
         },
         light: {
-          primary: colors.orange.base,
+          primary: '#e67e22',
           accent: colors.grey.darken3,
           secondary: colors.amber.darken3,
           info: colors.teal.lighten1,

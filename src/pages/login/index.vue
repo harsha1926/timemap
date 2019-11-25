@@ -11,8 +11,10 @@
                   align="center"
                   justify="center"
                 >
-                  <v-avatar tile> <v-img src="/icon.png"></v-img> </v-avatar
-                  >TIMEMAP
+                  <v-avatar tile>
+                    <v-img src="/icon.png"></v-img>
+                  </v-avatar>
+                  <span class="ml-3">TIMEMAP</span>
                 </v-row>
               </v-card-title>
               <v-card-subtitle class="mt-5">
@@ -41,6 +43,21 @@
             </v-card>
           </v-col>
         </v-row>
+        <v-row>
+          <v-dialog v-model="accountAlreadyExistsError" max-width="400">
+            <v-card>
+              <v-card-text class="primary--text pa-5 sameEmailError">
+                <v-row align="center" justify="center" class="pa-2 ma-2">
+                  Sorry
+                  <v-icon class="ml-3" color="primary">far fa-frown</v-icon>
+                </v-row>
+                <v-row class="pa-2 ma-2" align="center" justify="center"
+                  >Account using same email address already exists!</v-row
+                >
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+        </v-row>
       </v-container>
     </v-content>
   </v-app>
@@ -49,7 +66,9 @@
 <script>
 import firebase from 'firebase'
 export default {
-  data: () => ({}),
+  data: () => ({
+    accountAlreadyExistsError: false
+  }),
   layout: 'noNav',
   mounted() {
     const vm = this
@@ -61,23 +80,19 @@ export default {
         .then(function(result) {
           vm.$router.push('/')
           vm.$nuxt.$loading.finish()
+          const user = result.user
+          const ref = firebase.database().ref('users')
+          ref.push().set({
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            phoneNumber: user.phoneNumber
+          })
         })
         .catch(function(error) {
-          if (
-            error.email &&
-            error.credential &&
-            error.code === 'auth/account-exists-with-different-credential'
-          ) {
-            firebase
-              .auth()
-              .signInWithPopup(
-                new firebase.auth.GoogleAuthProvider().setCustomParameters({
-                  login_hint: error.email
-                })
-              )
-              .then((result) => {
-                result.user.linkWithCredential(error.credential)
-              })
+          if (error.code === 'auth/account-exists-with-different-credential') {
+            vm.$nuxt.$loading.finish()
+            vm.accountAlreadyExistsError = true
           }
         })
     })
@@ -108,6 +123,10 @@ export default {
   font-family: 'Lexend Mega', sans-serif;
 }
 .appLoginInfo {
+  font-family: 'Lexend Mega', sans-serif;
+}
+.sameEmailError {
+  font-size: 16px;
   font-family: 'Lexend Mega', sans-serif;
 }
 </style>

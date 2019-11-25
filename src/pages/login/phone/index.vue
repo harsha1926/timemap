@@ -48,6 +48,7 @@
                 <v-form
                   ref="verificationCodeForm"
                   v-model="validVerificationCode"
+                  lazy-validation
                 >
                   <v-text-field
                     v-model="authCode"

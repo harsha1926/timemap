@@ -14,24 +14,11 @@
           class="appGreeting mr-5 d-none d-sm-block"
           >Hello {{ user.displayName }}</span
         >
-        <v-avatar v-if="user && user.photoURL" class size="40">
-          <v-img :src="user.photoURL"></v-img>
-        </v-avatar>
-        <v-menu offset-y>
-          <template v-slot:activator="{ on }">
-            <v-btn v-on="on" fab icon small color="primary">
-              <v-icon small>fas fa-ellipsis-v</v-icon>
-            </v-btn>
-          </template>
-          <v-list>
-            <v-list-item key="1" @click="showAccount">
-              <v-list-item-title>Account</v-list-item-title>
-            </v-list-item>
-            <v-list-item key="2" @click="logout">
-              <v-list-item-title>Logout</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
+        <v-btn fab icon to="/account">
+          <v-avatar v-if="user && user.photoURL" class size="40">
+            <v-img :src="user.photoURL"></v-img>
+          </v-avatar>
+        </v-btn>
       </v-row>
     </v-app-bar>
 
@@ -42,9 +29,7 @@
     </v-content>
   </v-app>
 </template>
-
 <script>
-import firebase from 'firebase'
 import { mapGetters } from 'vuex'
 export default {
   data: () => ({
@@ -55,25 +40,6 @@ export default {
     ...mapGetters({
       user: 'user/user'
     })
-  },
-  methods: {
-    logout() {
-      const vm = this
-      firebase
-        .auth()
-        .signOut()
-        .then(function() {
-          // Sign-out successful.
-          vm.$router.push('/login')
-        })
-        .catch(function(e) {
-          /* eslint-disable no-console */
-          console.error(e)
-        })
-    },
-    showAccount() {
-      // TODO
-    }
   }
 }
 </script>
