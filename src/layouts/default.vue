@@ -23,29 +23,25 @@
     </v-app-bar>
 
     <v-content>
-      <v-container class="fill-height" fluid>
+      <v-container fluid>
         <nuxt></nuxt>
       </v-container>
     </v-content>
 
-    <v-footer class="pa-0 ma-0" app>
-      <v-bottom-navigation :value="activeBtn" color="primary" class="pa-0 ma-0">
-        <v-btn>
-          <span>Friends</span>
-          <v-icon>mdi-heart</v-icon>
-        </v-btn>
-
-        <v-btn>
-          <span>Find Friends</span>
-          <v-icon>fas fa-search</v-icon>
-        </v-btn>
-
-        <v-btn>
-          <span>Family Tree</span>
-          <v-icon>fas fa-sitemap</v-icon>
-        </v-btn>
-      </v-bottom-navigation>
-    </v-footer>
+    <v-bottom-navigation :value="activeBtn" grow color="primary" app>
+      <v-btn>
+        <span>Friends</span>
+        <v-icon small>mdi-heart</v-icon>
+      </v-btn>
+      <v-btn>
+        <span>Find Friends</span>
+        <v-icon small>fas fa-search</v-icon>
+      </v-btn>
+      <v-btn>
+        <span>Family Tree</span>
+        <v-icon small>fas fa-sitemap</v-icon>
+      </v-btn>
+    </v-bottom-navigation>
   </v-app>
 </template>
 <script>
@@ -71,5 +67,11 @@ export default {
 .appGreeting {
   font-size: 12px;
   font-family: 'Lexend Mega', sans-serif;
+}
+.v-bottom-navigation {
+  padding: 1px !important;
+}
+.v-bottom-navigation .v-btn {
+  height: inherit !important;
 }
 </style>
