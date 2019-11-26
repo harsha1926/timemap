@@ -80,12 +80,28 @@ export default {
         .then(function(result) {
           const user = result.user
           const ref = firebase.database().ref('users')
-          ref.push().set({
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            phoneNumber: user.phoneNumber
-          })
+          ref
+            .orderByChild('email')
+            .equalTo(user.email)
+            .once('value', function(data) {
+              let activeUser = null
+              if (!data.val()) {
+                activeUser = {
+                  email: user.email,
+                  displayName: user.displayName,
+                  photoURL: user.photoURL,
+                  phoneNumber: user.phoneNumber
+                }
+                const newRef = ref.push(activeUser)
+                activeUser.uid = newRef.name
+              } else {
+                data.forEach(function(child) {
+                  activeUser = child.val()
+                  activeUser.uid = child.key
+                })
+              }
+              vm.$store.commit('user/USER_UPDATED', activeUser)
+            })
           vm.$router.push('/')
           vm.$nuxt.$loading.finish()
         })

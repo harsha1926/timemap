@@ -13,7 +13,7 @@
       >
         <v-row class="ma-2 userTime" justify="end">{{ user.time }}</v-row>
         <v-row class="ma-3 activityHeading" justify="start"
-          >{{ user.name }} {{ activityHeading }}</v-row
+          >{{ user.displayName }} {{ activityHeading }}</v-row
         >
         <v-card-text class="statusText">{{ statusText }}</v-card-text>
       </v-img>
@@ -22,7 +22,7 @@
         <v-row align="center">
           <v-flex>
             <v-avatar size="80" color="grey darken-3 ml-3 mr-3">
-              <v-img :src="user.photo" class="elevation-6"></v-img>
+              <v-img :src="user.photoURL" class="elevation-6"></v-img>
             </v-avatar>
           </v-flex>
           <v-flex>
@@ -35,18 +35,26 @@
               <v-icon>far fa-envelope</v-icon>
             </v-btn>
             <v-btn
-              @click="sendTextMessage(user.phone)"
+              @click="sendTextMessage(user.phoneNumber)"
+              :disabled="!user.phoneNumber"
               icon
               fab
               color="primary"
             >
               <v-icon>mdi-message</v-icon>
             </v-btn>
-            <v-btn @click="callPhone(user.phone)" icon fab color="primary">
+            <v-btn
+              @click="callPhone(user.phoneNumber)"
+              :disabled="!user.phoneNumber"
+              icon
+              fab
+              color="primary"
+            >
               <v-icon>fas fa-phone</v-icon>
             </v-btn>
             <v-btn
-              @click="sendWhatsAppMessage(user.phone)"
+              @click="sendWhatsAppMessage(user.phoneNumber)"
+              :disabled="!user.phoneNumber"
               icon
               fab
               color="primary"

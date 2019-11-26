@@ -27,30 +27,34 @@
         <nuxt></nuxt>
       </v-container>
     </v-content>
+    <v-bottom-navigation :value="activeBtn" color="primary">
+      <v-btn>
+        <span>Favorites</span>
+        <v-icon>mdi-heart</v-icon>
+      </v-btn>
+
+      <v-btn>
+        <span>Recents</span>
+        <v-icon>mdi-history</v-icon>
+      </v-btn>
+
+      <v-btn>
+        <span>Nearby</span>
+        <v-icon>mdi-map-marker</v-icon>
+      </v-btn>
+    </v-bottom-navigation>
   </v-app>
 </template>
 <script>
-import firebase from 'firebase'
+import { mapGetters } from 'vuex'
 export default {
   data: () => ({
     on: false,
-    user: null
+    activeBtn: 0
   }),
-  middleware: ['authCheck'],
-  mounted() {
-    const vm = this
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (!user) {
-        // No user is signed in.
-        return vm.$router.push('/login')
-      } else {
-        firebase
-          .database()
-          .ref('users/' + user.uid)
-          .once('value', function(data) {
-            vm.user = data.val()
-          })
-      }
+  computed: {
+    ...mapGetters({
+      user: 'user/user'
     })
   }
 }
