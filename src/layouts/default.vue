@@ -6,9 +6,6 @@
       </v-avatar>
       <span class="appTitle primary--text">TIMEMAP</span>
       <v-row justify="end" align="center">
-        <v-btn small fab icon color="primary" class="mr-5">
-          <v-icon>fas fa-search</v-icon>
-        </v-btn>
         <span
           v-if="user && user.displayName"
           class="appGreeting mr-5 d-none d-sm-block"
@@ -28,16 +25,16 @@
       </v-container>
     </v-content>
 
-    <v-bottom-navigation :value="activeBtn" grow color="primary" app>
-      <v-btn>
+    <v-bottom-navigation :value="activeTab" grow color="primary" app>
+      <v-btn to="/">
         <span>Friends</span>
         <v-icon small>mdi-heart</v-icon>
       </v-btn>
-      <v-btn>
+      <v-btn to="/findFriends">
         <span>Find Friends</span>
         <v-icon small>fas fa-search</v-icon>
       </v-btn>
-      <v-btn>
+      <v-btn to="/familyTree">
         <span>Family Tree</span>
         <v-icon small>fas fa-sitemap</v-icon>
       </v-btn>
@@ -49,12 +46,26 @@ import { mapGetters } from 'vuex'
 export default {
   data: () => ({
     on: false,
-    activeBtn: 0
+    activeTab: 0
   }),
   computed: {
     ...mapGetters({
       user: 'user/user'
     })
+  },
+  mounted() {
+    this.activeTab = this.getActiveTab()
+  },
+  methods: {
+    getActiveTab() {
+      if (this.$route.path.includes('findFriends')) {
+        return 1
+      }
+      if (this.$route.path.includes('familyTree')) {
+        return 2
+      }
+      return 0
+    }
   }
 }
 </script>
