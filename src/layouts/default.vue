@@ -27,22 +27,25 @@
         <nuxt></nuxt>
       </v-container>
     </v-content>
-    <v-bottom-navigation :value="activeBtn" color="primary">
-      <v-btn>
-        <span>Favorites</span>
-        <v-icon>mdi-heart</v-icon>
-      </v-btn>
 
-      <v-btn>
-        <span>Recents</span>
-        <v-icon>mdi-history</v-icon>
-      </v-btn>
+    <v-footer class="pa-0 ma-0" app>
+      <v-bottom-navigation :value="activeBtn" color="primary" class="pa-0 ma-0">
+        <v-btn>
+          <span>Friends</span>
+          <v-icon>mdi-heart</v-icon>
+        </v-btn>
 
-      <v-btn>
-        <span>Nearby</span>
-        <v-icon>mdi-map-marker</v-icon>
-      </v-btn>
-    </v-bottom-navigation>
+        <v-btn>
+          <span>Find Friends</span>
+          <v-icon>fas fa-search</v-icon>
+        </v-btn>
+
+        <v-btn>
+          <span>Family Tree</span>
+          <v-icon>fas fa-sitemap</v-icon>
+        </v-btn>
+      </v-bottom-navigation>
+    </v-footer>
   </v-app>
 </template>
 <script>

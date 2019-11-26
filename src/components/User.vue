@@ -99,7 +99,8 @@ export default {
         return 'https://media.tenor.com/images/c18c487d770dbaef16ea7521cfe4f7d2/tenor.gif'
       else if (this.user.activity === 'free')
         return 'https://media.tenor.com/images/86002300e062cd49c4e5eac9748f7546/tenor.gif'
-      else return ''
+      else
+        return 'https://media.tenor.com/images/86002300e062cd49c4e5eac9748f7546/tenor.gif'
     },
     activityHeading() {
       if (this.user.activity === 'sleep') return ' is sleeping now..'
