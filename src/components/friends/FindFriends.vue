@@ -6,13 +6,13 @@
           <v-text-field
             v-model="search"
             outlined
-            label="Find by name/email/phone"
+            label="Find by name, email address or phone number"
           ></v-text-field>
         </v-row>
       </v-col>
     </v-row>
-    <friend
-      v-for="friend in filteredFriends"
+    <add-friend
+      v-for="friend in tobeFriendsFiltered"
       :key="friend.email"
       :friend="friend"
     />
@@ -20,26 +20,30 @@
 </template>
 <script>
 import firebase from 'firebase'
-import Friend from './Friend'
+import { mapGetters } from 'vuex'
+import AddFriend from './AddFriend'
 export default {
   components: {
-    Friend
+    AddFriend
   },
   data() {
     return {
-      friends: [],
+      tobeFriends: [],
       search: null
     }
   },
   computed: {
-    filteredFriends() {
+    ...mapGetters({
+      user: 'user/user'
+    }),
+    tobeFriendsFiltered() {
       return this.search
-        ? this.friends.filter(
+        ? this.tobeFriends.filter(
             (o) =>
               this.searchFriendByDisplayName(o, this.search) ||
               this.searchFriendByEmail(o, this.search)
           )
-        : this.friends
+        : this.tobeFriends
     }
   },
   mounted() {
@@ -48,7 +52,9 @@ export default {
       .database()
       .ref('users')
       .on('child_added', function(data) {
-        vm.friends.push(data.val())
+        if (data.key !== vm.encodeEmail(vm.user.email)) {
+          vm.tobeFriends.push(data.val())
+        }
       })
   },
   methods: {

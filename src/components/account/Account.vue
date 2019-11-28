@@ -4,7 +4,7 @@
       <v-img
         v-if="user.photoURL"
         :src="user.photoURL"
-        height="350px"
+        height="300px"
         content
         class="align-end"
       >
@@ -24,6 +24,12 @@
           </v-btn>
         </v-row>
         <v-row justify="space-between" align="center" class="pa-2">
+          <span>{{ user.phoneNumber }}</span>
+          <v-btn fab icon color="primary">
+            <v-icon>fas fa-pen</v-icon>
+          </v-btn>
+        </v-row>
+        <v-row justify="space-between" align="center" class="pa-2">
           <span>{{ user.dailyUpdate }}</span>
           <v-btn fab icon color="primary">
             <v-icon>fas fa-pen</v-icon>
@@ -31,15 +37,15 @@
         </v-row>
       </v-card-subtitle>
       <v-card-actions>
-        <v-btn color="orange" text>Switch Account</v-btn>
-        <v-btn @click="logout" color="orange" text>Logout</v-btn>
+        <v-btn color="primary" text>Update your schedule</v-btn>
+        <v-btn @click="logout" color="primary" text>Logout</v-btn>
       </v-card-actions>
     </v-card>
   </v-row>
 </template>
 <script>
 import firebase from 'firebase'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   data: () => ({}),
   computed: {
@@ -48,6 +54,9 @@ export default {
     })
   },
   methods: {
+    ...mapActions({
+      clearUser: 'user/clearUser'
+    }),
     logout() {
       const vm = this
       firebase
@@ -55,7 +64,8 @@ export default {
         .signOut()
         .then(function() {
           // Sign-out successful.
-          vm.$router.push('/login')
+          vm.clearUser()
+          vm.$router.push('/')
         })
         .catch(function(e) {
           /* eslint-disable no-console */

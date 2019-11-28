@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import FindFriends from '~/components/FindFriends'
+import FindFriends from '~/components/friends/FindFriends'
 export default {
   components: {
     FindFriends

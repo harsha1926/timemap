@@ -5,14 +5,12 @@
         <v-img src="/icon.png"></v-img>
       </v-avatar>
       <span class="appTitle primary--text">TIMEMAP</span>
-      <v-row justify="end" align="center">
-        <span
-          v-if="user && user.displayName"
-          class="appGreeting mr-5 d-none d-sm-block"
+      <v-row v-if="user" justify="end" align="center">
+        <span v-if="user.displayName" class="appGreeting mr-5 d-none d-sm-block"
           >Hello {{ user.displayName }}</span
         >
         <v-btn fab icon to="/account">
-          <v-avatar v-if="user && user.photoURL" class size="40">
+          <v-avatar v-if="user.photoURL" class size="40">
             <v-img :src="user.photoURL"></v-img>
           </v-avatar>
         </v-btn>
@@ -21,11 +19,18 @@
 
     <v-content>
       <v-container fluid>
-        <nuxt></nuxt>
+        <nuxt v-if="user"></nuxt>
+        <login v-else></login>
       </v-container>
     </v-content>
 
-    <v-bottom-navigation :value="activeTab" grow color="primary" app>
+    <v-bottom-navigation
+      :value="activeTab"
+      v-if="user"
+      grow
+      color="primary"
+      app
+    >
       <v-btn to="/">
         <span>Friends</span>
         <v-icon small>mdi-heart</v-icon>
@@ -43,7 +48,11 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import Login from '~/components/login/Login'
 export default {
+  components: {
+    Login
+  },
   data: () => ({
     on: false,
     activeTab: 0

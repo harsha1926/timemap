@@ -1,12 +1,12 @@
 <template>
-  <users />
+  <friends />
 </template>
 
 <script>
-import Users from '~/components/Users'
+import Friends from '~/components/friends/Friends'
 export default {
   components: {
-    Users
+    Friends
   }
 }
 </script>

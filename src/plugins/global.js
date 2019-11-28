@@ -9,4 +9,11 @@ export default () => {
       })
     }
   })
+  Vue.mixin({
+    methods: {
+      encodeEmail(email) {
+        return email.replace(/[^a-zA-Z ]/g, '')
+      }
+    }
+  })
 }
