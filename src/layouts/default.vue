@@ -47,7 +47,8 @@
   </v-app>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import firebase from 'firebase'
+import { mapActions, mapGetters } from 'vuex'
 import Login from '~/components/login/Login'
 export default {
   components: {
@@ -63,9 +64,18 @@ export default {
     })
   },
   mounted() {
-    this.activeTab = this.getActiveTab()
+    const vm = this
+    vm.activeTab = this.getActiveTab()
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        vm.addUser(user)
+      }
+    })
   },
   methods: {
+    ...mapActions({
+      addUser: 'user/addUser'
+    }),
     getActiveTab() {
       if (this.$route.path.includes('findFriends')) {
         return 1

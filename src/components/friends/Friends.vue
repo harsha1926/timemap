@@ -24,6 +24,7 @@
 </template>
 <script>
 import firebase from 'firebase'
+import { mapGetters } from 'vuex'
 import Friend from './Friend'
 export default {
   components: {
@@ -36,22 +37,30 @@ export default {
       friendIds: []
     }
   },
+  computed: {
+    ...mapGetters({
+      user: 'user/user'
+    })
+  },
   mounted() {
-    const vm = this
-    firebase
-      .database()
-      .ref('users/' + firebase.auth().currentUser.uid + '/friends')
-      .once('value', function(friends) {
-        vm.friendIds = []
-        friends.forEach((friend) => {
-          vm.friendIds.push(friend.key)
-        })
-      })
+    this.fetchFriendsList()
   },
   methods: {
     friendRemoved(removedFriend) {
       this.removedFriendName = removedFriend.displayName
       this.showFriendRemovedSnackbar = true
+    },
+    fetchFriendsList() {
+      const vm = this
+      firebase
+        .database()
+        .ref('friends/' + vm.user.uid)
+        .once('value', function(friends) {
+          vm.friendIds = []
+          friends.forEach((friend) => {
+            vm.friendIds.push(friend.key)
+          })
+        })
     }
   }
 }

@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ friendId }}
     <v-skeleton-loader
       v-if="loading"
       class="mx-auto"
@@ -81,6 +80,7 @@
 </template>
 <script>
 import firebase from 'firebase'
+import { mapGetters } from 'vuex'
 export default {
   props: {
     friendId: {
@@ -97,6 +97,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      user: 'user/user'
+    }),
     activityIcon() {
       if (this.friend.activity === 'sleep') return 'fas fa-bed'
       else if (this.friend.activity === 'breakfast') return 'fas fa-utensils'
@@ -132,19 +135,15 @@ export default {
       else return ''
     }
   },
-  watch: {
-    friendId(newVal) {
-      if (newVal) {
-        const vm = this
-        firebase
-          .database()
-          .ref('users/' + newVal)
-          .once('value', function(data) {
-            vm.friend = data.val()
-          })
-      } else {
-        this.friend = null
-      }
+  mounted() {
+    if (this.friendId) {
+      const vm = this
+      firebase
+        .database()
+        .ref('users/' + this.friendId)
+        .once('value', function(data) {
+          vm.friend = data.val()
+        })
     }
   },
   methods: {
@@ -164,12 +163,7 @@ export default {
       const vm = this
       firebase
         .database()
-        .ref(
-          'users/' +
-            vm.encodeEmail(vm.user.email) +
-            '/friends/' +
-            vm.encodeEmail(vm.friend.email)
-        )
+        .ref('friends/' + vm.user.uid + '/' + vm.friendId)
         .set(null)
       vm.$emit('friendRemoved', vm.friend)
     }

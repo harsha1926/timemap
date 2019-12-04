@@ -20,6 +20,7 @@
 </template>
 <script>
 import firebase from 'firebase'
+import { mapGetters } from 'vuex'
 import AddFriend from './AddFriend'
 export default {
   components: {
@@ -31,11 +32,15 @@ export default {
       search: null
     }
   },
+  computed: {
+    ...mapGetters({
+      user: 'user/user'
+    })
+  },
   watch: {
     search(newVal) {
       const vm = this
       if (newVal) {
-        const currentUser = firebase.auth().currentUser
         if (this.validateEmail(newVal)) {
           firebase
             .database()
@@ -46,14 +51,14 @@ export default {
               vm.tobeFriends = []
               snapshot &&
                 snapshot.forEach((data) => {
-                  if (data.key !== currentUser.uid) {
+                  if (data.key !== vm.user.uid) {
                     const friend = data.val()
                     friend.uid = data.key
                     firebase
                       .database()
-                      .ref('user/' + currentUser.uid + '/friends/' + friend.uid)
+                      .ref('friends/' + vm.user.uid + '/' + friend.uid)
                       .once('value', function(data) {
-                        // if (data) friend.isFriendAlready = true
+                        if (data.val()) friend.isFriendAlready = true
                         vm.tobeFriends.push(friend)
                       })
                   }
@@ -69,14 +74,14 @@ export default {
               vm.tobeFriends = []
               snapshot &&
                 snapshot.forEach((data) => {
-                  if (data.key !== currentUser.uid) {
+                  if (data.key !== vm.user.uid) {
                     const friend = data.val()
                     friend.uid = data.key
                     firebase
                       .database()
-                      .ref('user/' + currentUser.uid + '/friends/' + friend.uid)
+                      .ref('friends/' + vm.user.uid + '/' + friend.uid)
                       .once('value', function(data) {
-                        if (data) friend.isFriendAlready = true
+                        if (data.val()) friend.isFriendAlready = true
                         vm.tobeFriends.push(friend)
                       })
                   }

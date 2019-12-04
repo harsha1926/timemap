@@ -41,6 +41,7 @@
 </template>
 <script>
 import firebase from 'firebase'
+import { mapGetters } from 'vuex'
 export default {
   props: {
     friend: {
@@ -53,17 +54,17 @@ export default {
   data: () => ({
     friendAdded: false
   }),
+  computed: {
+    ...mapGetters({
+      user: 'user/user'
+    })
+  },
   methods: {
     addFriend() {
       const vm = this
       firebase
         .database()
-        .ref(
-          'users/' +
-            firebase.auth().currentUser.uid +
-            '/friends/' +
-            vm.friend.uid
-        )
+        .ref('friends/' + vm.user.uid + '/' + vm.friend.uid)
         .set(true)
       this.friend.isFriendAlready = true
       this.friendAdded = true
