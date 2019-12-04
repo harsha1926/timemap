@@ -1,11 +1,12 @@
 <template>
   <div>
+    {{ friendId }}
     <v-skeleton-loader
       v-if="loading"
       class="mx-auto"
       type="card-avatar"
     ></v-skeleton-loader>
-    <v-card v-else>
+    <v-card v-else-if="friend">
       <v-img
         :src="activityPhoto"
         height="200px"
@@ -80,25 +81,22 @@
 </template>
 <script>
 import firebase from 'firebase'
-import { mapGetters, mapActions } from 'vuex'
 export default {
   props: {
-    friend: {
-      type: Object,
+    friendId: {
+      type: String,
       default() {
-        return {}
+        return null
       }
     }
   },
   data() {
     return {
-      loading: false
+      loading: false,
+      friend: null
     }
   },
   computed: {
-    ...mapGetters({
-      user: 'user/user'
-    }),
     activityIcon() {
       if (this.friend.activity === 'sleep') return 'fas fa-bed'
       else if (this.friend.activity === 'breakfast') return 'fas fa-utensils'
@@ -134,10 +132,22 @@ export default {
       else return ''
     }
   },
+  watch: {
+    friendId(newVal) {
+      if (newVal) {
+        const vm = this
+        firebase
+          .database()
+          .ref('users/' + newVal)
+          .once('value', function(data) {
+            vm.friend = data.val()
+          })
+      } else {
+        this.friend = null
+      }
+    }
+  },
   methods: {
-    ...mapActions({
-      removeFriendAction: 'friends/removeFriend'
-    }),
     callPhone(phone) {
       window.open('tel:' + phone)
     },
@@ -162,7 +172,6 @@ export default {
         )
         .set(null)
       vm.$emit('friendRemoved', vm.friend)
-      vm.removeFriendAction(vm.friend)
     }
   }
 }

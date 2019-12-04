@@ -19,7 +19,7 @@
         <v-col cols="3">
           <v-row align="center" justify="end" class="ma-2">
             <v-btn
-              v-if="!isFriendAlready"
+              v-if="!friend.isFriendAlready"
               @click="addFriend"
               x-small
               fab
@@ -41,7 +41,6 @@
 </template>
 <script>
 import firebase from 'firebase'
-import { mapGetters, mapActions } from 'vuex'
 export default {
   props: {
     friend: {
@@ -54,34 +53,20 @@ export default {
   data: () => ({
     friendAdded: false
   }),
-  computed: {
-    ...mapGetters({
-      user: 'user/user',
-      friends: 'friends/friends'
-    }),
-    isFriendAlready() {
-      return (
-        this.friends && this.friends.find((o) => o.email === this.friend.email)
-      )
-    }
-  },
   methods: {
-    ...mapActions({
-      addFriendAction: 'friends/addFriend'
-    }),
     addFriend() {
       const vm = this
       firebase
         .database()
         .ref(
           'users/' +
-            vm.encodeEmail(vm.user.email) +
+            firebase.auth().currentUser.uid +
             '/friends/' +
-            vm.encodeEmail(vm.friend.email)
+            vm.friend.uid
         )
         .set(true)
-      vm.addFriendAction(vm.friend)
-      vm.friendAdded = true
+      this.friend.isFriendAlready = true
+      this.friendAdded = true
     }
   }
 }

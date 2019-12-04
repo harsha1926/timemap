@@ -1,8 +1,8 @@
 <template>
   <v-row wrap>
     <v-flex
-      v-for="friend in friends"
-      :key="friend.email"
+      v-for="friendId in friendIds"
+      :key="friendId"
       xs12
       sm8
       md4
@@ -10,7 +10,7 @@
       xl2
       class="pa-1 mt-1"
     >
-      <friend :friend="friend" @friendRemoved="friendRemoved" />
+      <friend :friendId="friendId" @friendRemoved="friendRemoved" />
     </v-flex>
     <v-snackbar
       v-model="showFriendRemovedSnackbar"
@@ -24,7 +24,6 @@
 </template>
 <script>
 import firebase from 'firebase'
-import { mapGetters, mapActions } from 'vuex'
 import Friend from './Friend'
 export default {
   components: {
@@ -33,39 +32,23 @@ export default {
   data() {
     return {
       showFriendRemovedSnackbar: false,
-      removedFriendName: ''
+      removedFriendName: '',
+      friendIds: []
     }
-  },
-  computed: {
-    ...mapGetters({
-      user: 'user/user',
-      friends: 'friends/friends'
-    })
   },
   mounted() {
     const vm = this
-    vm.clearFriendsList()
-    if (vm.user) {
-      firebase
-        .database()
-        .ref('users/' + vm.encodeEmail(vm.user.email) + '/friends')
-        .once('value', function(friendsList) {
-          friendsList.forEach(function(data) {
-            firebase
-              .database()
-              .ref('users/' + data.key)
-              .on('value', function(data) {
-                if (data && data.val()) vm.addFriendAction(data.val())
-              })
-          })
+    firebase
+      .database()
+      .ref('users/' + firebase.auth().currentUser.uid + '/friends')
+      .once('value', function(friends) {
+        vm.friendIds = []
+        friends.forEach((friend) => {
+          vm.friendIds.push(friend.key)
         })
-    }
+      })
   },
   methods: {
-    ...mapActions({
-      addFriendAction: 'friends/addFriend',
-      clearFriendsList: 'friends/clearFriendsList'
-    }),
     friendRemoved(removedFriend) {
       this.removedFriendName = removedFriend.displayName
       this.showFriendRemovedSnackbar = true

@@ -71,7 +71,7 @@ export default {
             firebase
               .database()
               .ref('users')
-              .child(vm.encodeEmail(user.email))
+              .child(user.uid)
               .set({
                 email: user.email,
                 displayName: user.displayName,

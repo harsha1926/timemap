@@ -12,7 +12,7 @@
       </v-col>
     </v-row>
     <add-friend
-      v-for="friend in tobeFriendsFiltered"
+      v-for="friend in tobeFriends"
       :key="friend.email"
       :friend="friend"
     />
@@ -20,7 +20,6 @@
 </template>
 <script>
 import firebase from 'firebase'
-import { mapGetters } from 'vuex'
 import AddFriend from './AddFriend'
 export default {
   components: {
@@ -32,47 +31,73 @@ export default {
       search: null
     }
   },
-  computed: {
-    ...mapGetters({
-      user: 'user/user'
-    }),
-    tobeFriendsFiltered() {
-      return this.search
-        ? this.tobeFriends.filter(
-            (o) =>
-              this.searchFriendByDisplayName(o, this.search) ||
-              this.searchFriendByEmail(o, this.search)
-          )
-        : this.tobeFriends
+  watch: {
+    search(newVal) {
+      const vm = this
+      if (newVal) {
+        const currentUser = firebase.auth().currentUser
+        if (this.validateEmail(newVal)) {
+          firebase
+            .database()
+            .ref('users')
+            .orderByChild('email')
+            .equalTo(newVal)
+            .once('value', function(snapshot) {
+              vm.tobeFriends = []
+              snapshot &&
+                snapshot.forEach((data) => {
+                  if (data.key !== currentUser.uid) {
+                    const friend = data.val()
+                    friend.uid = data.key
+                    firebase
+                      .database()
+                      .ref('user/' + currentUser.uid + '/friends/' + friend.uid)
+                      .once('value', function(data) {
+                        // if (data) friend.isFriendAlready = true
+                        vm.tobeFriends.push(friend)
+                      })
+                  }
+                })
+            })
+        } else if (this.validatePhone(newVal)) {
+          firebase
+            .database()
+            .ref('users')
+            .orderByChild('phoneNumber')
+            .equalTo(newVal)
+            .once('value', function(snapshot) {
+              vm.tobeFriends = []
+              snapshot &&
+                snapshot.forEach((data) => {
+                  if (data.key !== currentUser.uid) {
+                    const friend = data.val()
+                    friend.uid = data.key
+                    firebase
+                      .database()
+                      .ref('user/' + currentUser.uid + '/friends/' + friend.uid)
+                      .once('value', function(data) {
+                        if (data) friend.isFriendAlready = true
+                        vm.tobeFriends.push(friend)
+                      })
+                  }
+                })
+            })
+        } else {
+          vm.tobeFriends = []
+        }
+      } else {
+        vm.tobeFriends = []
+      }
     }
   },
-  mounted() {
-    const vm = this
-    firebase
-      .database()
-      .ref('users')
-      .on('child_added', function(data) {
-        if (data.key !== vm.encodeEmail(vm.user.email)) {
-          vm.tobeFriends.push(data.val())
-        }
-      })
-  },
   methods: {
-    searchFriendByDisplayName(friend, search) {
-      return (
-        search &&
-        friend &&
-        friend.displayName &&
-        friend.displayName.toUpperCase().includes(search.toUpperCase())
-      )
+    validateEmail(email) {
+      const re = /\S+@\S+\.\S+/
+      return re.test(email)
     },
-    searchFriendByEmail(friend, search) {
-      return (
-        search &&
-        friend &&
-        friend.email &&
-        friend.email.toUpperCase().includes(search.toUpperCase())
-      )
+    validatePhone(phone) {
+      const phoneno = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/im
+      return phoneno.test(phone)
     }
   }
 }
