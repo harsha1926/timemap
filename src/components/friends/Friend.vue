@@ -140,9 +140,10 @@ export default {
       const vm = this
       firebase
         .database()
-        .ref('users/' + this.friendId)
+        .ref('users/' + vm.friendId)
         .once('value', function(data) {
           vm.friend = data.val()
+          vm.friend.uid = vm.friendId
         })
     }
   },

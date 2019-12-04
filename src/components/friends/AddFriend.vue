@@ -33,7 +33,7 @@
         </v-col>
       </v-row>
     </v-col>
-    <v-snackbar v-model="friendAdded" :timeout="3000" color="primary">
+    <v-snackbar v-model="friendAdded" :timeout="1000" color="primary">
       {{ friend.displayName }} is your friend now
       <v-icon>far fa-smile</v-icon>
     </v-snackbar>

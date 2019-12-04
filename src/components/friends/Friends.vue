@@ -14,7 +14,7 @@
     </v-flex>
     <v-snackbar
       v-model="showFriendRemovedSnackbar"
-      :timeout="3000"
+      :timeout="1000"
       color="primary"
     >
       {{ removedFriendName }} is not your friend anymore
@@ -47,8 +47,12 @@ export default {
   },
   methods: {
     friendRemoved(removedFriend) {
-      this.removedFriendName = removedFriend.displayName
-      this.showFriendRemovedSnackbar = true
+      const index = this.friendIds.findIndex((o) => o === removedFriend.uid)
+      if (index > -1) {
+        this.friendIds.splice(index, 1)
+        this.removedFriendName = removedFriend.displayName
+        this.showFriendRemovedSnackbar = true
+      }
     },
     fetchFriendsList() {
       const vm = this

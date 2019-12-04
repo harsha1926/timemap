@@ -13,7 +13,7 @@
     </v-row>
     <add-friend
       v-for="friend in tobeFriends"
-      :key="friend.email"
+      :key="friend.uid"
       :friend="friend"
     />
   </div>
