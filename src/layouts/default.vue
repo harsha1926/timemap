@@ -19,8 +19,9 @@
 
     <v-content>
       <v-container fluid>
-        <nuxt v-if="user"></nuxt>
-        <login v-else></login>
+        <login v-if="!user"></login>
+        <verify-phone v-else-if="user && !user.phoneNumber"></verify-phone>
+        <nuxt v-else-if="user && user.phoneNumber"></nuxt>
       </v-container>
     </v-content>
 
@@ -50,9 +51,12 @@
 import firebase from 'firebase'
 import { mapActions, mapGetters } from 'vuex'
 import Login from '~/components/login/Login'
+import VerifyPhone from '~/components/login/VerifyPhone'
+
 export default {
   components: {
-    Login
+    Login,
+    VerifyPhone
   },
   data: () => ({
     on: false,
