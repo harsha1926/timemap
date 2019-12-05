@@ -67,17 +67,19 @@ export default {
         .getRedirectResult()
         .then(function(result) {
           if (result && result.user) {
-            const user = result.user
+            const user = {
+              uid: result.user.uid,
+              email: result.user.email,
+              displayName: result.user.displayName,
+              photoURL: result.user.photoURL,
+              phoneNumber: result.user.phoneNumber
+            }
+
             firebase
               .database()
               .ref('users')
               .child(user.uid)
-              .set({
-                email: user.email,
-                displayName: user.displayName,
-                photoURL: user.photoURL,
-                phoneNumber: user.phoneNumber
-              })
+              .set(user)
             vm.addUser(user)
             vm.$router.push('/')
             vm.loading = false

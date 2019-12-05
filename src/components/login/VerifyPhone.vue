@@ -69,14 +69,11 @@
           v-if="confirmationResult"
           class="overline mt-1 ml-1 pt-3 pl-3 pr-3 primary--text"
           justify="center"
-          >Verification code sent successfully! Please enter the code to
-          proceed..</v-row
         >
-        <v-form
-          ref="verificationCodeForm"
-          v-model="validVerificationCode"
-          lazy-validation
-        >
+          Verification code sent successfully! Please enter the code to
+          proceed..
+        </v-row>
+        <v-form ref="verificationCodeForm" v-model="validVerificationCode">
           <v-text-field
             v-model="authCode"
             :rules="[rules.verificationCode]"
@@ -86,7 +83,7 @@
           ></v-text-field>
           <v-btn
             @click="submitPhoneNumberAuthCode()"
-            :disabled="!validVerificationCode || !valid"
+            :disabled="!validVerificationCode || !valid || !confirmationResult"
             color="primary"
             >LOGIN</v-btn
           >
@@ -144,7 +141,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      addUser: 'user/addUser'
+      addUserPhoneNumber: 'user/addPhoneNumber'
     }),
     submitPhoneNumberAuth() {
       if (this.$refs.form.validate()) {
@@ -177,8 +174,7 @@ export default {
               .update({
                 phoneNumber: '+' + vm.country.callingCodes[0] + vm.phone
               })
-            vm.addUser(result.user)
-            vm.$router.push('/')
+            vm.addUserPhoneNumber('+' + vm.country.callingCodes[0] + vm.phone)
           })
           .catch(function(error) {
             /* eslint-disable no-console */
