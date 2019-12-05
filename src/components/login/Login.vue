@@ -51,7 +51,12 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data: () => ({
     accountAlreadyExistsError: false,
-    loading: false
+    loading: false,
+    supportedSignInMethods: [
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+      firebase.auth.GithubAuthProvider.PROVIDER_ID
+    ]
   }),
   computed: {
     ...mapGetters({
@@ -74,24 +79,53 @@ export default {
               photoURL: result.user.photoURL,
               phoneNumber: result.user.phoneNumber
             }
-
             firebase
               .database()
               .ref('users')
               .child(user.uid)
               .set(user)
             vm.addUser(user)
-            vm.$router.push('/')
             vm.loading = false
           } else {
             vm.loading = false
           }
         })
         .catch(function(error) {
-          if (error.code === 'auth/account-exists-with-different-credential') {
-            vm.accountAlreadyExistsError = true
+          if (
+            error.email &&
+            error.credential &&
+            error.code === 'auth/account-exists-with-different-credential'
+          ) {
+            firebase
+              .auth()
+              .fetchSignInMethodsForEmail(error.email)
+              .then((providers) => {
+                const providerFound = providers.find((p) =>
+                  vm.supportedSignInMethods.includes(p)
+                )
+                const linkedProvider = vm.getProvider(providerFound)
+                firebase
+                  .auth()
+                  .signInWithPopup(
+                    linkedProvider.setCustomParameters({
+                      login_hint: error.email
+                    })
+                  )
+                  .then((result) => {
+                    result.user.linkWithCredential(error.credential)
+                    vm.addUser({
+                      uid: result.user.uid,
+                      email: result.user.email,
+                      displayName: result.user.displayName,
+                      photoURL: result.user.photoURL,
+                      phoneNumber: result.user.phoneNumber
+                    })
+                    vm.loading = false
+                  })
+              })
+          } else {
+            vm.loading = false
           }
-          vm.loading = false
         })
     })
   },
@@ -99,6 +133,16 @@ export default {
     ...mapActions({
       addUser: 'user/addUser'
     }),
+    getProvider(providerId) {
+      switch (providerId) {
+        case firebase.auth.GoogleAuthProvider.PROVIDER_ID:
+          return new firebase.auth.GoogleAuthProvider()
+        case firebase.auth.FacebookAuthProvider.PROVIDER_ID:
+          return new firebase.auth.FacebookAuthProvider()
+        default:
+          throw new Error(`No provider implemented for ${providerId}`)
+      }
+    },
     googleSignIn() {
       firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())
     },
