@@ -2,8 +2,8 @@ const addUser = (context, user) => {
   context.commit('USER_ADDED', user)
 }
 
-const addPhoneNumber = (context, phoneNumber) => {
-  context.commit('PHONE_NUMBER_ADDED', phoneNumber)
+const addPhoneNumber = (context, payload) => {
+  context.commit('PHONE_NUMBER_ADDED', payload)
 }
 
 const clearUser = (context) => {

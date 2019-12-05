@@ -59,7 +59,10 @@
           <v-btn
             id="signIn"
             ref="signIn"
-            @click="submitPhoneNumberAuth()"
+            @click="
+              submitPhoneNumberAuth()
+              errorMessage = null
+            "
             :disabled="!valid"
             color="primary"
             >GET VERIFICATION CODE</v-btn
@@ -88,6 +91,12 @@
             >LOGIN</v-btn
           >
         </v-form>
+        <v-row
+          v-if="errorMessage"
+          class="overline mt-1 ml-1 pt-3 pl-3 pr-3 error--text"
+          wrap
+          >{{ errorMessage }}</v-row
+        >
       </v-card-text>
     </v-card>
   </v-row>
@@ -99,6 +108,7 @@ import axios from 'axios'
 import { mapGetters, mapActions } from 'vuex'
 export default {
   data: () => ({
+    errorMessage: null,
     valid: false,
     validVerificationCode: false,
     rules: {
@@ -172,13 +182,18 @@ export default {
               .database()
               .ref('users/' + vm.user.uid)
               .update({
-                phoneNumber: '+' + vm.country.callingCodes[0] + vm.phone
+                countryCode: vm.country.callingCodes[0],
+                phoneNumber: vm.phone
               })
-            vm.addUserPhoneNumber('+' + vm.country.callingCodes[0] + vm.phone)
+            vm.addUserPhoneNumber({
+              countryCode: vm.country.callingCodes[0],
+              phoneNumber: vm.phone
+            })
           })
           .catch(function(error) {
             /* eslint-disable no-console */
             console.error(error)
+            vm.errorMessage = error.message
           })
       }
     }
