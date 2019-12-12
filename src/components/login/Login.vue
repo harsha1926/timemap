@@ -151,6 +151,7 @@ export default {
   },
   methods: {
     ...mapActions('user', ['addUser']),
+    ...mapActions('user/phone', ['addPhone']),
     getProvider(providerId) {
       switch (providerId) {
         case firebase.auth.GoogleAuthProvider.PROVIDER_ID:
