@@ -86,6 +86,7 @@ export default {
                     displayName: result.user.displayName,
                     photoURL: result.user.photoURL
                   })
+                  vm.addPhone(data.val().phone)
                 } else {
                   firebase
                     .database()
