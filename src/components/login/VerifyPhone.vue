@@ -125,9 +125,7 @@ export default {
     countries: []
   }),
   computed: {
-    ...mapGetters({
-      user: 'user/user'
-    }),
+    ...mapGetters('user', ['uid']),
     phone() {
       return this.phoneMasked ? this.phoneMasked.replace(/\D+/g, '') : null
     }
@@ -150,9 +148,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions({
-      addUserPhoneNumber: 'user/addPhoneNumber'
-    }),
+    ...mapActions('user/phone', ['addPhone']),
     submitPhoneNumberAuth() {
       if (this.$refs.form.validate()) {
         const vm = this
@@ -180,13 +176,18 @@ export default {
           .then(function(result) {
             firebase
               .database()
-              .ref('users/' + vm.user.uid)
+              .ref('users/' + vm.uid)
               .update({
-                countryCode: vm.country.callingCodes[0],
-                phoneNumber: vm.phone
+                phone: {
+                  countryCode: vm.country.alpha2Code,
+                  callingCode: vm.country.callingCodes[0],
+                  phoneNumber: vm.phone
+                }
               })
-            vm.addUserPhoneNumber({
-              countryCode: vm.country.callingCodes[0],
+
+            vm.addPhone({
+              countryCode: vm.country.alpha2Code,
+              callingCode: vm.country.callingCodes[0],
               phoneNumber: vm.phone
             })
           })

@@ -5,13 +5,13 @@
         <v-img src="/icon.png"></v-img>
       </v-avatar>
       <span class="appTitle primary--text">TIMEMAP</span>
-      <v-row v-if="user" justify="end" align="center">
-        <span v-if="user.displayName" class="appGreeting mr-5 d-none d-sm-block"
-          >Hello {{ user.displayName }}</span
+      <v-row justify="end" align="center">
+        <span v-if="displayName" class="appGreeting mr-5 d-none d-sm-block"
+          >Hello {{ displayName }}</span
         >
         <v-btn fab icon to="/account">
-          <v-avatar v-if="user.photoURL" class size="40">
-            <v-img :src="user.photoURL"></v-img>
+          <v-avatar v-if="photoURL" class size="40">
+            <v-img :src="photoURL"></v-img>
           </v-avatar>
         </v-btn>
       </v-row>
@@ -19,19 +19,13 @@
 
     <v-content>
       <v-container fluid>
-        <login v-if="!user"></login>
-        <verify-phone v-else-if="user && !user.phoneNumber"></verify-phone>
-        <nuxt v-else-if="user && user.phoneNumber"></nuxt>
+        <login v-if="!uid"></login>
+        <verify-phone v-else-if="uid && !phoneNumber"></verify-phone>
+        <nuxt v-else-if="uid && phoneNumber"></nuxt>
       </v-container>
     </v-content>
 
-    <v-bottom-navigation
-      :value="activeTab"
-      v-if="user"
-      grow
-      color="primary"
-      app
-    >
+    <v-bottom-navigation v-if="uid" :value="activeTab" grow color="primary" app>
       <v-btn to="/">
         <span>Friends</span>
         <v-icon small>mdi-heart</v-icon>
@@ -48,10 +42,10 @@
   </v-app>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
+import firebase from 'firebase'
 import Login from '~/components/login/Login'
 import VerifyPhone from '~/components/login/VerifyPhone'
-
 export default {
   components: {
     Login,
@@ -62,11 +56,20 @@ export default {
     activeTab: 0
   }),
   computed: {
-    ...mapGetters({
-      user: 'user/user'
-    })
+    ...mapGetters('user', ['uid', 'displayName', 'photoURL']),
+    ...mapGetters('user/phone', ['phoneNumber'])
+  },
+  watch: {
+    uid: {
+      handler(newVal) {
+        if (newVal) {
+          this.getUserCurrentLocation(newVal)
+        }
+      }
+    }
   },
   methods: {
+    ...mapActions('user/currentLocation', ['addCurrentLocation']),
     getActiveTab() {
       if (this.$route.path.includes('findFriends')) {
         return 1
@@ -75,6 +78,27 @@ export default {
         return 2
       }
       return 0
+    },
+    getUserCurrentLocation(uid) {
+      const vm = this
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          firebase
+            .database()
+            .ref('users')
+            .child(uid)
+            .update({
+              currentLocation: {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+              }
+            })
+          vm.addCurrentLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          })
+        })
+      }
     }
   }
 }

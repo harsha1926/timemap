@@ -47,7 +47,7 @@
 
 <script>
 import firebase from 'firebase'
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 export default {
   data: () => ({
     accountAlreadyExistsError: false,
@@ -58,11 +58,6 @@ export default {
       firebase.auth.GithubAuthProvider.PROVIDER_ID
     ]
   }),
-  computed: {
-    ...mapGetters({
-      user: 'user/user'
-    })
-  },
   mounted() {
     const vm = this
     vm.loading = true
@@ -72,19 +67,44 @@ export default {
         .getRedirectResult()
         .then(function(result) {
           if (result && result.user) {
-            const user = {
-              uid: result.user.uid,
-              email: result.user.email,
-              displayName: result.user.displayName,
-              photoURL: result.user.photoURL,
-              phoneNumber: result.user.phoneNumber
-            }
             firebase
               .database()
-              .ref('users')
-              .child(user.uid)
-              .set(user)
-            vm.addUser(user)
+              .ref('users/' + result.user.uid)
+              .once('value', function(data) {
+                if (data.val()) {
+                  firebase
+                    .database()
+                    .ref('users')
+                    .child(result.user.uid)
+                    .update({
+                      displayName: result.user.displayName,
+                      photoURL: result.user.photoURL
+                    })
+                  vm.addUser({
+                    uid: result.user.uid,
+                    email: result.user.email,
+                    displayName: result.user.displayName,
+                    photoURL: result.user.photoURL
+                  })
+                } else {
+                  firebase
+                    .database()
+                    .ref('users')
+                    .child(result.user.uid)
+                    .set({
+                      uid: result.user.uid,
+                      email: result.user.email,
+                      displayName: result.user.displayName,
+                      photoURL: result.user.photoURL
+                    })
+                  vm.addUser({
+                    uid: result.user.uid,
+                    email: result.user.email,
+                    displayName: result.user.displayName,
+                    photoURL: result.user.photoURL
+                  })
+                }
+              })
             vm.loading = false
           } else {
             vm.loading = false
@@ -117,8 +137,7 @@ export default {
                       uid: result.user.uid,
                       email: result.user.email,
                       displayName: result.user.displayName,
-                      photoURL: result.user.photoURL,
-                      phoneNumber: result.user.phoneNumber
+                      photoURL: result.user.photoURL
                     })
                     vm.loading = false
                   })
@@ -130,9 +149,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions({
-      addUser: 'user/addUser'
-    }),
+    ...mapActions('user', ['addUser']),
     getProvider(providerId) {
       switch (providerId) {
         case firebase.auth.GoogleAuthProvider.PROVIDER_ID:

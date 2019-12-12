@@ -33,9 +33,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      user: 'user/user'
-    })
+    ...mapGetters('user', ['uid'])
   },
   watch: {
     search(newVal) {
@@ -51,12 +49,11 @@ export default {
               vm.tobeFriends = []
               snapshot &&
                 snapshot.forEach((data) => {
-                  if (data.key !== vm.user.uid) {
+                  if (data.key !== vm.uid) {
                     const friend = data.val()
-                    friend.uid = data.key
                     firebase
                       .database()
-                      .ref('friends/' + vm.user.uid + '/' + friend.uid)
+                      .ref('friends/' + vm.uid + '/' + friend.uid)
                       .once('value', function(data) {
                         if (data.val()) friend.isFriendAlready = true
                         vm.tobeFriends.push(friend)
@@ -68,18 +65,17 @@ export default {
           firebase
             .database()
             .ref('users')
-            .orderByChild('phoneNumber')
+            .orderByChild('phone')
             .equalTo(newVal)
             .once('value', function(snapshot) {
               vm.tobeFriends = []
               snapshot &&
                 snapshot.forEach((data) => {
-                  if (data.key !== vm.user.uid) {
+                  if (data.key !== vm.uid) {
                     const friend = data.val()
-                    friend.uid = data.key
                     firebase
                       .database()
-                      .ref('friends/' + vm.user.uid + '/' + friend.uid)
+                      .ref('friends/' + vm.uid + '/' + friend.uid)
                       .once('value', function(data) {
                         if (data.val()) friend.isFriendAlready = true
                         vm.tobeFriends.push(friend)

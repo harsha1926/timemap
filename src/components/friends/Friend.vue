@@ -35,8 +35,14 @@
               <v-icon>far fa-envelope</v-icon>
             </v-btn>
             <v-btn
-              @click="sendTextMessage(friend.phoneNumber)"
-              :disabled="!friend.phoneNumber"
+              @click="
+                sendTextMessage(
+                  friend.phone
+                    ? '+' + friend.phone.callingCode + friend.phone.phoneNumber
+                    : ''
+                )
+              "
+              :disabled="!friend.phone"
               icon
               fab
               color="primary"
@@ -44,8 +50,14 @@
               <v-icon>mdi-message</v-icon>
             </v-btn>
             <v-btn
-              @click="callPhone(friend.phoneNumber)"
-              :disabled="!friend.phoneNumber"
+              @click="
+                callPhone(
+                  friend.phone
+                    ? '+' + friend.phone.callingCode + friend.phone.phoneNumber
+                    : ''
+                )
+              "
+              :disabled="!friend.phone"
               icon
               fab
               color="primary"
@@ -53,8 +65,14 @@
               <v-icon>fas fa-phone</v-icon>
             </v-btn>
             <v-btn
-              @click="sendWhatsAppMessage(friend.phoneNumber)"
-              :disabled="!friend.phoneNumber"
+              @click="
+                sendWhatsAppMessage(
+                  friend.phone
+                    ? '+' + friend.phone.callingCode + friend.phone.phoneNumber
+                    : ''
+                )
+              "
+              :disabled="!friend.phone"
               icon
               fab
               color="primary"
@@ -97,9 +115,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      user: 'user/user'
-    }),
+    ...mapGetters('user', ['uid']),
     activityIcon() {
       if (this.friend.activity === 'sleep') return 'fas fa-bed'
       else if (this.friend.activity === 'breakfast') return 'fas fa-utensils'
@@ -127,7 +143,7 @@ export default {
       else return ''
     },
     statusText() {
-      if (this.friend.status) return this.user.status
+      if (this.friend.status) return this.status
       else if (this.friend.activity === 'sleep') return 'Sleeping now..'
       else if (this.friend.activity === 'breakfast') return 'Eating...'
       else if (this.friend.activity === 'work') return 'Busy now..'
@@ -164,7 +180,7 @@ export default {
       const vm = this
       firebase
         .database()
-        .ref('friends/' + vm.user.uid + '/' + vm.friendId)
+        .ref('friends/' + vm.uid + '/' + vm.friendId)
         .set(null)
       vm.$emit('friendRemoved', vm.friend)
     }

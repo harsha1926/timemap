@@ -55,16 +55,14 @@ export default {
     friendAdded: false
   }),
   computed: {
-    ...mapGetters({
-      user: 'user/user'
-    })
+    ...mapGetters('user', ['uid'])
   },
   methods: {
     addFriend() {
       const vm = this
       firebase
         .database()
-        .ref('friends/' + vm.user.uid + '/' + vm.friend.uid)
+        .ref('friends/' + vm.uid + '/' + vm.friend.uid)
         .set(true)
       this.friend.isFriendAlready = true
       this.friendAdded = true

@@ -1,6 +1,9 @@
 const getDefaultState = () => {
   return {
-    user: null
+    uid: null,
+    email: null,
+    displayName: null,
+    photoURL: null
   }
 }
 

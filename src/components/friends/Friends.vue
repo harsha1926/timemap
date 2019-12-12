@@ -38,9 +38,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      user: 'user/user'
-    })
+    ...mapGetters('user', ['uid'])
   },
   mounted() {
     this.fetchFriendsList()
@@ -58,7 +56,7 @@ export default {
       const vm = this
       firebase
         .database()
-        .ref('friends/' + vm.user.uid)
+        .ref('friends/' + vm.uid)
         .once('value', function(friends) {
           vm.friendIds = []
           friends.forEach((friend) => {

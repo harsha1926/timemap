@@ -1,9 +1,9 @@
 <template>
-  <v-row v-if="user" wrap justify="center" class="pa-2">
+  <v-row wrap justify="center" class="pa-2">
     <v-card max-width="400">
       <v-img
-        v-if="user.photoURL"
-        :src="user.photoURL"
+        v-if="photoURL"
+        :src="photoURL"
         height="300px"
         content
         class="align-end"
@@ -18,19 +18,15 @@
       </v-img>
       <v-card-subtitle>
         <v-row justify="space-between" align="center" class="pa-2 nameTitle">
-          <span>{{ user.displayName }}</span>
+          <span v-if="displayName">{{ displayName }}</span>
           <v-btn fab icon color="primary">
             <v-icon>fas fa-pen</v-icon>
           </v-btn>
         </v-row>
-        <v-row justify="space-between" align="center" class="pa-2">
-          <span>{{ user.phoneNumber }}</span>
-          <v-btn fab icon color="primary">
-            <v-icon>fas fa-pen</v-icon>
-          </v-btn>
-        </v-row>
-        <v-row justify="space-between" align="center" class="pa-2">
-          <span>{{ user.dailyUpdate }}</span>
+        <v-row justify="space-between" align="center" class="pa-2 nameTitle">
+          <span v-if="callingCode && phoneNumber"
+            >+ {{ callingCode }} {{ phoneNumber }}</span
+          >
           <v-btn fab icon color="primary">
             <v-icon>fas fa-pen</v-icon>
           </v-btn>
@@ -49,14 +45,11 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data: () => ({}),
   computed: {
-    ...mapGetters({
-      user: 'user/user'
-    })
+    ...mapGetters('user', ['displayName', 'photoURL']),
+    ...mapGetters('user/phone', ['callingCode', 'phoneNumber'])
   },
   methods: {
-    ...mapActions({
-      clearUser: 'user/clearUser'
-    }),
+    ...mapActions('user', ['removeUser']),
     logout() {
       const vm = this
       firebase
@@ -64,7 +57,7 @@ export default {
         .signOut()
         .then(function() {
           // Sign-out successful.
-          vm.clearUser()
+          vm.removeUser()
           vm.$router.push('/')
         })
         .catch(function(e) {
