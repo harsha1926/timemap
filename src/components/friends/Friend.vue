@@ -17,61 +17,31 @@
 
       <v-card-actions>
         <v-row align="center">
-          <v-flex>
-            <v-avatar size="80" color="grey darken-3 ml-3 mr-3">
+          <v-col cols="3">
+            <v-avatar color="grey darken-3">
               <v-img :src="friend.photoURL" class="elevation-6"></v-img>
             </v-avatar>
-          </v-flex>
-          <v-flex>
-            <v-btn @click="sendEmailMessage(friend.email)" icon fab color="primary">
-              <v-icon>far fa-envelope</v-icon>
-            </v-btn>
-            <v-btn
-              @click="
-                sendTextMessage(
-                  friend.phone
-                    ? '+' + friend.phone.callingCode + friend.phone.phoneNumber
-                    : ''
-                )
-              "
-              :disabled="!friend.phone"
-              icon
-              fab
-              color="primary"
-            >
-              <v-icon>mdi-message</v-icon>
-            </v-btn>
-            <v-btn
-              @click="
-                callPhone(
-                  friend.phone
-                    ? '+' + friend.phone.callingCode + friend.phone.phoneNumber
-                    : ''
-                )
-              "
-              :disabled="!friend.phone"
-              icon
-              fab
-              color="primary"
-            >
-              <v-icon>fas fa-phone</v-icon>
-            </v-btn>
-            <v-btn
-              @click="
-                sendWhatsAppMessage(
-                  friend.phone
-                    ? '+' + friend.phone.callingCode + friend.phone.phoneNumber
-                    : ''
-                )
-              "
-              :disabled="!friend.phone"
-              icon
-              fab
-              color="primary"
-            >
-              <v-icon>fab fa-whatsapp</v-icon>
-            </v-btn>
-          </v-flex>
+          </v-col>
+          <v-col cols="2">
+            <v-avatar @click="sendEmailMessage(friend.email)">
+              <v-icon color="primary">far fa-envelope</v-icon>
+            </v-avatar>
+          </v-col>
+          <v-col cols="2">
+            <v-avatar @click="sendTextMessage(fullPhoneNumber)" :disabled="!friend.phone">
+              <v-icon color="primary">mdi-message</v-icon>
+            </v-avatar>
+          </v-col>
+          <v-col cols="2">
+            <v-avatar @click="callPhone(fullPhoneNumber)" :disabled="!friend.phone">
+              <v-icon color="primary">fas fa-phone</v-icon>
+            </v-avatar>
+          </v-col>
+          <v-col cols="2">
+            <v-avatar @click="sendWhatsAppMessage(fullPhoneNumber)" :disabled="!friend.phone">
+              <v-icon color="primary">fab fa-whatsapp</v-icon>
+            </v-avatar>
+          </v-col>
         </v-row>
       </v-card-actions>
       <v-btn @click="removeFriend" color="primary" x-small absolute top right fab>
@@ -95,22 +65,39 @@ export default {
   },
   data() {
     return {
-      offset: null,
+      timeZone: null,
       loading: false,
-      friend: null
+      friend: null,
+      now: new Date()
     }
+  },
+  created() {
+    var vm = this
+    setInterval(function() {
+      vm.now = new Date()
+    }, 60000)
   },
   computed: {
     ...mapGetters('user', ['uid']),
     localTime() {
-      if (this.offset) {
-        let d = new Date()
-        let utc = d.getTime() + d.getTimezoneOffset() * 60000
-        let nd = new Date(utc + this.offset)
-        return nd.toLocaleString()
+      if (this.timeZone) {
+        return this.now.toLocaleString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          timeZone: this.timeZone
+        })
       } else {
         return '...'
       }
+    },
+    fullPhoneNumber() {
+      if (this.friend)
+        return (
+          '+' + this.friend.phone.callingCode + this.friend.phone.phoneNumber
+        )
+      else return null
     },
     activityIcon() {
       if (this.friend.activity === 'sleep') return 'fas fa-bed'
@@ -161,14 +148,13 @@ export default {
               vm.friend.currentLocation.longitude,
               Date.now() / 1000
             ).then((res) => {
-              vm.offset = res.data.rawOffset
+              vm.timeZone = res.data.timeZoneId
             })
           }
         })
     }
   },
   methods: {
-    getLocalTime() {},
     callPhone(phone) {
       window.open('tel:' + phone)
     },
