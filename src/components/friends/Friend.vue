@@ -1,20 +1,17 @@
 <template>
   <div>
-    <v-skeleton-loader
-      v-if="loading"
-      class="mx-auto"
-      type="card-avatar"
-    ></v-skeleton-loader>
+    <v-skeleton-loader v-if="loading" class="mx-auto" type="card-avatar"></v-skeleton-loader>
     <v-card v-else-if="friend">
       <v-img
         :src="activityPhoto"
         height="200px"
         gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
       >
-        <v-row class="ma-2 userTime" justify="end">{{ friend.time }}</v-row>
-        <v-row class="ma-3 activityHeading" justify="start"
-          >{{ friend.displayName }} {{ activityHeading }}</v-row
-        >
+        <v-row class="ma-2 userTime" justify="end">{{ localTime }}</v-row>
+        <v-row
+          class="ma-3 activityHeading"
+          justify="start"
+        >{{ friend.displayName }} {{ activityHeading }}</v-row>
         <v-card-text class="statusText">{{ statusText }}</v-card-text>
       </v-img>
 
@@ -26,12 +23,7 @@
             </v-avatar>
           </v-flex>
           <v-flex>
-            <v-btn
-              @click="sendEmailMessage(friend.email)"
-              icon
-              fab
-              color="primary"
-            >
+            <v-btn @click="sendEmailMessage(friend.email)" icon fab color="primary">
               <v-icon>far fa-envelope</v-icon>
             </v-btn>
             <v-btn
@@ -82,15 +74,7 @@
           </v-flex>
         </v-row>
       </v-card-actions>
-      <v-btn
-        @click="removeFriend"
-        color="primary"
-        x-small
-        absolute
-        top
-        right
-        fab
-      >
+      <v-btn @click="removeFriend" color="primary" x-small absolute top right fab>
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-card>
@@ -99,6 +83,7 @@
 <script>
 import firebase from 'firebase'
 import { mapGetters } from 'vuex'
+import { fetchTimezone } from '@/api/timezone'
 export default {
   props: {
     friendId: {
@@ -110,12 +95,23 @@ export default {
   },
   data() {
     return {
+      offset: null,
       loading: false,
       friend: null
     }
   },
   computed: {
     ...mapGetters('user', ['uid']),
+    localTime() {
+      if (this.offset) {
+        let d = new Date()
+        let utc = d.getTime() + d.getTimezoneOffset() * 60000
+        let nd = new Date(utc + this.offset)
+        return nd.toLocaleString()
+      } else {
+        return '...'
+      }
+    },
     activityIcon() {
       if (this.friend.activity === 'sleep') return 'fas fa-bed'
       else if (this.friend.activity === 'breakfast') return 'fas fa-utensils'
@@ -159,11 +155,20 @@ export default {
         .ref('users/' + vm.friendId)
         .once('value', function(data) {
           vm.friend = data.val()
-          vm.friend.uid = vm.friendId
+          if (vm.friend.currentLocation) {
+            fetchTimezone(
+              vm.friend.currentLocation.latitude,
+              vm.friend.currentLocation.longitude,
+              Date.now() / 1000
+            ).then((res) => {
+              vm.offset = res.data.rawOffset
+            })
+          }
         })
     }
   },
   methods: {
+    getLocalTime() {},
     callPhone(phone) {
       window.open('tel:' + phone)
     },
