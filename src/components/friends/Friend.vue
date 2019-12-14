@@ -8,7 +8,8 @@
         gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
       >
         <v-row class="ma-2 userTime" justify="start">{{ localTimeFormattedString }}</v-row>
-        <v-row class="ma-3 activityHeading" justify="start">{{ activityHeading }}</v-row>
+        <v-row class="ma-2 activityHeading" justify="start">{{ activityHeading }}</v-row>
+        <v-row class="ma-3 quote" justify="start">{{ activityQuote }}</v-row>
       </v-img>
 
       <v-card-text class="mt-0 mb-0 pt-0 pb-0">
@@ -80,7 +81,8 @@ export default {
       schedule: null,
       now: new Date(),
       dummyDate: '06/19/1990',
-      activityPhoto: ''
+      activityPhoto: '',
+      activityQuote: ''
     }
   },
   created() {
@@ -146,6 +148,10 @@ export default {
                 }
               })
           }
+
+          if (!activity) {
+            activity = 'free'
+          }
         }
 
         if (activity) {
@@ -159,6 +165,18 @@ export default {
             .once('value', function(snapshot) {
               snapshot.forEach((data) => {
                 if (data.val()) vm.activityPhoto = data.val().url
+              })
+            })
+
+          firebase
+            .database()
+            .ref('quotes')
+            .orderByChild('activity')
+            .limitToLast(1)
+            .equalTo(activity)
+            .once('value', function(snapshot) {
+              snapshot.forEach((data) => {
+                if (data.val()) vm.activityQuote = data.val().quote
               })
             })
         }
@@ -268,15 +286,16 @@ export default {
 .activityHeading {
   font-family: 'Lexend Mega', sans-serif;
   color: #ffffff;
+  font-size: 20px;
 }
 .userTime {
   font-family: 'Lexend Mega', sans-serif;
   color: #ffffff;
+  font-size: 12px;
 }
-.statusText {
+.quote {
   font-family: 'Lexend Mega', sans-serif;
   font-size: 10px;
-  font-weight: 100;
-  color: #d1cdcd;
+  color: #dad5d5;
 }
 </style>

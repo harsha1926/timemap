@@ -1,17 +1,10 @@
 <template>
   <v-row align="center" justify="center">
     <v-card max-width="600" :disabled="loading">
-      <v-card-title>Add GIF</v-card-title>
+      <v-card-title>Add Quote</v-card-title>
       <v-card-text>
         <v-form v-model="valid" ref="form">
-          <v-text-field v-model="url" :rules="[rules.required]" label="URL" outlined clearable></v-text-field>
-          <v-card v-if="url" class="mb-5">
-            <v-img
-              :src="url"
-              height="200px"
-              gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
-            ></v-img>
-          </v-card>
+          <v-text-field v-model="quote" :rules="[rules.required]" label="Quote" outlined clearable></v-text-field>
           <v-autocomplete
             :items="activities"
             v-model="activity"
@@ -34,7 +27,7 @@
           align="center"
           justify="center"
           class="overline primary--text ma-2 pa-2"
-        >GIF added successfully..</v-row>
+        >Quote added successfully..</v-row>
         <v-row
           v-if="error"
           align="center"
@@ -44,7 +37,7 @@
       </v-card-text>
       <v-card-actions>
         <v-row justify="end" class="ma-2 pa-2">
-          <v-btn @click="addGIF" color="primary">SUBMIT</v-btn>
+          <v-btn @click="addQuote" color="primary">SUBMIT</v-btn>
         </v-row>
       </v-card-actions>
     </v-card>
@@ -64,21 +57,21 @@ export default {
       activities: ['free'],
       category: null,
       categories: [],
-      url: null,
+      quote: null,
       rules: {
         required: (value) => !!value || 'Required.'
       }
     }
   },
   methods: {
-    addGIF() {
+    addQuote() {
       let vm = this
       vm.loading = true
       firebase
         .database()
-        .ref('gifs')
+        .ref('quotes')
         .push({
-          url: vm.url,
+          quote: vm.quote,
           activity: vm.activity,
           category: vm.category
         })
