@@ -1,7 +1,13 @@
 <template>
   <v-row wrap justify="center" class="pa-2">
     <v-card max-width="400">
-      <v-img v-if="photoURL" :src="photoURL" height="300px" content class="align-end">
+      <v-img
+        v-if="photoURL"
+        :src="photoURL"
+        height="300px"
+        content
+        class="align-end"
+      >
         <v-card-title>
           <v-row class="ma-1 pa-1 white--text" align="start" justify="start">
             <span v-if="displayName">{{ displayName }}</span>
@@ -10,7 +16,9 @@
       </v-img>
       <v-card-subtitle>
         <v-row justify="space-between" align="center" class="pa-2 nameTitle">
-          <span v-if="callingCode && phoneNumber">+ {{ callingCode }} {{ phoneNumber }}</span>
+          <span v-if="callingCode && phoneNumber"
+            >+ {{ callingCode }} {{ phoneNumber }}</span
+          >
         </v-row>
       </v-card-subtitle>
       <v-card-actions>

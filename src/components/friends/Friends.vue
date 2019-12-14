@@ -1,9 +1,26 @@
 <template>
   <v-row wrap>
-    <v-flex v-for="friendId in friendIds" :key="friendId" xs12 sm8 md4 la2 xl2 class="pa-1 mt-1">
-      <friend :friendId="friendId" @friendRemoved="friendRemoved" :activities="activities" />
+    <v-flex
+      v-for="friendId in friendIds"
+      :key="friendId"
+      xs12
+      sm8
+      md4
+      la2
+      xl2
+      class="pa-1 mt-1"
+    >
+      <friend
+        :friendId="friendId"
+        @friendRemoved="friendRemoved"
+        :activities="activities"
+      />
     </v-flex>
-    <v-snackbar v-model="showFriendRemovedSnackbar" :timeout="1000" color="primary">
+    <v-snackbar
+      v-model="showFriendRemovedSnackbar"
+      :timeout="1000"
+      color="primary"
+    >
       {{ removedFriendName }} is not your friend anymore
       <v-icon>far fa-frown</v-icon>
     </v-snackbar>
@@ -29,7 +46,7 @@ export default {
     ...mapGetters('user', ['uid'])
   },
   mounted() {
-    let vm = this
+    const vm = this
     vm.fetchFriendsList()
     firebase
       .database()

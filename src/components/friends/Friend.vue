@@ -1,14 +1,22 @@
 <template>
   <div>
-    <v-skeleton-loader v-if="loading" class="mx-auto" type="card-avatar"></v-skeleton-loader>
+    <v-skeleton-loader
+      v-if="loading"
+      class="mx-auto"
+      type="card-avatar"
+    ></v-skeleton-loader>
     <v-card v-else-if="friend">
       <v-img
         :src="activityPhoto"
         height="200px"
         gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
       >
-        <v-row class="ma-2 userTime" justify="start">{{ localTimeFormattedString }}</v-row>
-        <v-row class="ma-2 activityHeading" justify="start">{{ activityHeading }}</v-row>
+        <v-row class="ma-2 userTime" justify="start">
+          {{ localTimeFormattedString }}
+        </v-row>
+        <v-row class="ma-2 activityHeading" justify="start">
+          {{ activityHeading }}
+        </v-row>
         <v-row class="ma-3 quote" justify="start">{{ activityQuote }}</v-row>
       </v-img>
 
@@ -20,7 +28,9 @@
             </v-avatar>
           </v-col>
           <v-col cols="9">
-            <span class="displayName font-weight-bold">{{ friend.displayName }}</span>
+            <span class="displayName font-weight-bold">
+              {{ friend.displayName }}
+            </span>
           </v-col>
         </v-row>
       </v-card-text>
@@ -32,23 +42,40 @@
             </v-avatar>
           </v-col>
           <v-col cols="3">
-            <v-avatar @click="sendTextMessage(fullPhoneNumber)" :disabled="!friend.phone">
+            <v-avatar
+              @click="sendTextMessage(fullPhoneNumber)"
+              :disabled="!friend.phone"
+            >
               <v-icon color="primary">mdi-message</v-icon>
             </v-avatar>
           </v-col>
           <v-col cols="3">
-            <v-avatar @click="callPhone(fullPhoneNumber)" :disabled="!friend.phone">
+            <v-avatar
+              @click="callPhone(fullPhoneNumber)"
+              :disabled="!friend.phone"
+            >
               <v-icon color="primary">fas fa-phone</v-icon>
             </v-avatar>
           </v-col>
           <v-col cols="3">
-            <v-avatar @click="sendWhatsAppMessage(fullPhoneNumber)" :disabled="!friend.phone">
+            <v-avatar
+              @click="sendWhatsAppMessage(fullPhoneNumber)"
+              :disabled="!friend.phone"
+            >
               <v-icon color="primary">fab fa-whatsapp</v-icon>
             </v-avatar>
           </v-col>
         </v-row>
       </v-card-actions>
-      <v-btn @click="removeFriend" color="primary" x-small absolute top right fab>
+      <v-btn
+        @click="removeFriend"
+        color="primary"
+        x-small
+        absolute
+        top
+        right
+        fab
+      >
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-card>
@@ -84,12 +111,6 @@ export default {
       activityPhoto: '',
       activityQuote: ''
     }
-  },
-  created() {
-    var vm = this
-    setInterval(function() {
-      vm.now = new Date()
-    }, 60000)
   },
   computed: {
     ...mapGetters('user', ['uid']),
@@ -155,7 +176,7 @@ export default {
         }
 
         if (activity) {
-          let vm = this
+          const vm = this
           firebase
             .database()
             .ref('gifs')
@@ -199,7 +220,12 @@ export default {
       }
     }
   },
-  watch: {},
+  created() {
+    const vm = this
+    setInterval(function() {
+      vm.now = new Date()
+    }, 60000)
+  },
   mounted() {
     if (this.friendId) {
       const vm = this
