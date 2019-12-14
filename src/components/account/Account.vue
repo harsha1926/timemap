@@ -1,40 +1,20 @@
 <template>
   <v-row wrap justify="center" class="pa-2">
     <v-card max-width="400">
-      <v-img
-        v-if="photoURL"
-        :src="photoURL"
-        height="300px"
-        content
-        class="align-end"
-      >
+      <v-img v-if="photoURL" :src="photoURL" height="300px" content class="align-end">
         <v-card-title>
-          <v-row align="end" justify="end">
-            <v-btn fab icon color="primary">
-              <v-icon>fas fa-pen</v-icon>
-            </v-btn>
+          <v-row class="ma-1 pa-1 white--text" align="start" justify="start">
+            <span v-if="displayName">{{ displayName }}</span>
           </v-row>
         </v-card-title>
       </v-img>
       <v-card-subtitle>
         <v-row justify="space-between" align="center" class="pa-2 nameTitle">
-          <span v-if="displayName">{{ displayName }}</span>
-          <v-btn fab icon color="primary">
-            <v-icon>fas fa-pen</v-icon>
-          </v-btn>
-        </v-row>
-        <v-row justify="space-between" align="center" class="pa-2 nameTitle">
-          <span v-if="callingCode && phoneNumber"
-            >+ {{ callingCode }} {{ phoneNumber }}</span
-          >
-          <v-btn fab icon color="primary">
-            <v-icon>fas fa-pen</v-icon>
-          </v-btn>
+          <span v-if="callingCode && phoneNumber">+ {{ callingCode }} {{ phoneNumber }}</span>
         </v-row>
       </v-card-subtitle>
       <v-card-actions>
         <v-btn color="primary" text>Update your schedule</v-btn>
-        <v-btn @click="logout" color="primary" text>Logout</v-btn>
       </v-card-actions>
     </v-card>
   </v-row>

@@ -1,11 +1,7 @@
 <template>
   <v-container fluid fill-height style="height: 85vh; max-height: 85%;">
     <v-row align="start" justify="center">
-      <v-progress-circular
-        v-if="loading"
-        indeterminate
-        color="primary"
-      ></v-progress-circular>
+      <v-progress-circular v-if="loading" indeterminate color="primary"></v-progress-circular>
       <v-col v-else cols="12" sm="8" md="4">
         <v-card class="elevation-12">
           <v-card-subtitle class="mt-5">
@@ -35,9 +31,11 @@
               Sorry
               <v-icon class="ml-3" color="primary">far fa-frown</v-icon>
             </v-row>
-            <v-row class="pa-2 ma-2" align="center" justify="center"
-              >Account using same email address already exists!</v-row
-            >
+            <v-row
+              class="pa-2 ma-2"
+              align="center"
+              justify="center"
+            >Account using same email address already exists!</v-row>
           </v-card-text>
         </v-card>
       </v-dialog>
@@ -78,6 +76,7 @@ export default {
                     .child(result.user.uid)
                     .update({
                       displayName: result.user.displayName,
+                      nameLowerCase: result.user.displayName.toLowerCase(),
                       photoURL: result.user.photoURL
                     })
                   vm.addUser({
@@ -96,6 +95,7 @@ export default {
                       uid: result.user.uid,
                       email: result.user.email,
                       displayName: result.user.displayName,
+                      nameLowerCase: result.user.displayName.toLowerCase(),
                       photoURL: result.user.photoURL
                     })
                   vm.addUser({

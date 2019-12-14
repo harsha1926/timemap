@@ -3,19 +3,11 @@
     <v-row align="center" justify="center" class="pa-2">
       <v-col cols="12" sm="6" xl="4">
         <v-row align="center" justify="center">
-          <v-text-field
-            v-model="search"
-            outlined
-            label="Find by name, email address or phone number"
-          ></v-text-field>
+          <v-text-field v-model="search" outlined label="Find by email address.."></v-text-field>
         </v-row>
       </v-col>
     </v-row>
-    <add-friend
-      v-for="friend in tobeFriends"
-      :key="friend.uid"
-      :friend="friend"
-    />
+    <add-friend v-for="friend in tobeFriends" :key="friend.uid" :friend="friend" />
   </div>
 </template>
 <script>
@@ -61,30 +53,6 @@ export default {
                   }
                 })
             })
-        } else if (this.validatePhone(newVal)) {
-          firebase
-            .database()
-            .ref('users')
-            .orderByChild('phone')
-            .equalTo(newVal)
-            .once('value', function(snapshot) {
-              vm.tobeFriends = []
-              snapshot &&
-                snapshot.forEach((data) => {
-                  if (data.key !== vm.uid) {
-                    const friend = data.val()
-                    firebase
-                      .database()
-                      .ref('friends/' + vm.uid + '/' + friend.uid)
-                      .once('value', function(data) {
-                        if (data.val()) friend.isFriendAlready = true
-                        vm.tobeFriends.push(friend)
-                      })
-                  }
-                })
-            })
-        } else {
-          vm.tobeFriends = []
         }
       } else {
         vm.tobeFriends = []

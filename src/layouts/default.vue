@@ -29,12 +29,8 @@
         <v-icon small>mdi-heart</v-icon>
       </v-btn>
       <v-btn to="/findFriends">
-        <span>Find Friends</span>
+        <span>Add Friends</span>
         <v-icon small>fas fa-search</v-icon>
-      </v-btn>
-      <v-btn to="/familyTree">
-        <span>Family Tree</span>
-        <v-icon small>fas fa-sitemap</v-icon>
       </v-btn>
     </v-bottom-navigation>
   </v-app>
