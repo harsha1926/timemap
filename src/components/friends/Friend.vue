@@ -64,6 +64,12 @@ export default {
       default() {
         return null
       }
+    },
+    activities: {
+      type: Array,
+      default() {
+        return []
+      }
     }
   },
   data() {
@@ -73,7 +79,8 @@ export default {
       friend: null,
       schedule: null,
       now: new Date(),
-      dummyDate: '06/19/1990'
+      dummyDate: '06/19/1990',
+      activityPhoto: ''
     }
   },
   created() {
@@ -119,60 +126,44 @@ export default {
     activity() {
       if (!this.schedule) return null
       else {
-        if (this.localTime) {
-          let dayStartTime = this.schedule.awake.startTime
-          let dayEndTime = this.schedule.awake.endTime
-          if (this.isAfter(dayStartTime) && this.isBefore(dayEndTime)) {
-            let breakfastStartTime = this.schedule.breakfast.startTime
-            let breakfastEndTime = this.schedule.breakfast.endTime
-            if (
-              this.isAfter(breakfastStartTime) &&
-              this.isBefore(breakfastEndTime)
-            ) {
-              return 'breakfast'
-            }
-            let lunchStartTime = this.schedule.lunch.startTime
-            let lunchEndTime = this.schedule.lunch.endTime
-            if (this.isAfter(lunchStartTime) && this.isBefore(lunchEndTime)) {
-              return 'lunch'
-            }
-            let workStartTime = this.schedule.work.startTime
-            let workEndTime = this.schedule.work.endTime
-            if (this.isAfter(workStartTime) && this.isBefore(workEndTime)) {
-              return 'work'
-            }
-            let dinnerStartTime = this.schedule.dinner.startTime
-            let dinnerEndTime = this.schedule.dinner.endTime
-            if (this.isAfter(dinnerStartTime) && this.isBefore(dinnerEndTime)) {
-              return 'dinner'
-            } else {
-              return 'free'
-            }
-          } else {
-            return 'sleep'
+        let activity = null
+        if (this.localTime && this.activities) {
+          this.activities
+            .filter((o) => o.priority === 1)
+            .map((eachActivity) => {
+              if (this.schedule[eachActivity.activity]) {
+                if (this.isActivityActive(eachActivity.activity))
+                  activity = eachActivity.activity
+              }
+            })
+          if (!activity) {
+            this.activities
+              .filter((o) => o.priority === 2)
+              .map((eachActivity) => {
+                if (this.schedule[eachActivity.activity]) {
+                  if (this.isActivityActive(eachActivity.activity))
+                    activity = eachActivity.activity
+                }
+              })
           }
-        } else {
-          return null
         }
-      }
-    },
-    activityPhoto() {
-      if (this.activity) {
-        if (this.activity === 'sleep')
-          return 'https://media.tenor.com/images/e498a53565bac7f47dd901c0676ccc53/tenor.gif'
-        else if (this.activity === 'breakfast')
-          return 'https://i.pinimg.com/originals/49/41/f7/4941f71d1121dd336e50bf2ec1c0f817.gif'
-        else if (this.activity === 'work')
-          return 'https://media.tenor.com/images/c18c487d770dbaef16ea7521cfe4f7d2/tenor.gif'
-        else if (this.activity === 'lunch')
-          return 'https://i.pinimg.com/originals/49/41/f7/4941f71d1121dd336e50bf2ec1c0f817.gif'
-        else if (this.activity === 'dinner')
-          return 'https://i.pinimg.com/originals/49/41/f7/4941f71d1121dd336e50bf2ec1c0f817.gif'
-        else if (this.activity === 'free')
-          return 'https://media.tenor.com/images/86002300e062cd49c4e5eac9748f7546/tenor.gif'
-        else return ''
-      } else {
-        return ''
+
+        if (activity) {
+          let vm = this
+          firebase
+            .database()
+            .ref('gifs')
+            .orderByChild('activity')
+            .limitToLast(1)
+            .equalTo(activity)
+            .once('value', function(snapshot) {
+              snapshot.forEach((data) => {
+                if (data.val()) vm.activityPhoto = data.val().url
+              })
+            })
+        }
+
+        return activity
       }
     },
     activityHeading() {
@@ -190,6 +181,7 @@ export default {
       }
     }
   },
+  watch: {},
   mounted() {
     if (this.friendId) {
       const vm = this
@@ -225,6 +217,15 @@ export default {
     }
   },
   methods: {
+    isActivityActive(activity) {
+      return this.isBetween(
+        this.schedule[activity].startTime,
+        this.schedule[activity].endTime
+      )
+    },
+    isBetween(time1, time2) {
+      return this.isAfter(time1) && this.isBefore(time2)
+    },
     isAfter(time) {
       return (
         Date.parse(this.dummyDate + ' ' + this.localTime) >
