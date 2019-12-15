@@ -39,7 +39,7 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import firebase from 'firebase'
+import { firebaseDB } from '@/services/firebaseInit.js'
 import Login from '~/components/login/Login'
 import VerifyPhone from '~/components/login/VerifyPhone'
 export default {
@@ -78,22 +78,27 @@ export default {
     getUserCurrentLocation(uid) {
       const vm = this
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          firebase
-            .database()
-            .ref('users')
-            .child(uid)
-            .update({
-              currentLocation: {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude
-              }
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            firebaseDB
+              .ref('users')
+              .child(uid)
+              .update({
+                currentLocation: {
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude
+                }
+              })
+            vm.addCurrentLocation({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
             })
-          vm.addCurrentLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          })
-        })
+          },
+          (error) => {
+            console.error(error)
+          },
+          { timeout: 10000 }
+        )
       }
     }
   }

@@ -82,9 +82,11 @@
   </div>
 </template>
 <script>
-import firebase from 'firebase'
 import { mapGetters } from 'vuex'
+import moment from 'moment'
+import momentTimezone from 'moment-timezone'
 import { fetchTimezone } from '@/api/timezone'
+import { firebaseDB } from '@/services/firebaseInit.js'
 export default {
   props: {
     friendId: {
@@ -102,12 +104,11 @@ export default {
   },
   data() {
     return {
-      timeZone: null,
+      timezone: null,
       loading: false,
       friend: null,
       schedule: null,
       now: new Date(),
-      dummyDate: '06/19/1990',
       activityPhoto: '',
       activityQuote: ''
     }
@@ -115,26 +116,17 @@ export default {
   computed: {
     ...mapGetters('user', ['uid']),
     localTimeFormattedString() {
-      if (this.timeZone) {
-        return this.now.toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          timeZone: this.timeZone
-        })
+      if (this.timezone) {
+        return momentTimezone(this.now)
+          .tz(this.timezone)
+          .format('ddd MMM DD, hh:mm A')
       } else {
         return '...'
       }
     },
     localTime() {
-      if (this.timeZone) {
-        return this.now.toLocaleString('en-US', {
-          hour: 'numeric',
-          minute: 'numeric',
-          hour12: false,
-          timeZone: this.timeZone
-        })
+      if (this.timezone) {
+        return momentTimezone(this.now).tz(this.timezone)
       } else {
         return null
       }
@@ -151,25 +143,33 @@ export default {
       else {
         let activity = null
         if (this.localTime && this.activities) {
-          this.activities
-            .filter((o) => o.priority === 1)
-            .map((eachActivity) => {
-              if (this.schedule[eachActivity.activity]) {
-                if (this.isActivityActive(eachActivity.activity))
-                  activity = eachActivity.activity
+          let activities = this.activities.filter((o) => o.priority === 1)
+          for (let i = 0; i < activities.length; i++) {
+            const eachActivity = activities[i]
+            if (this.schedule[eachActivity.activity]) {
+              if (this.isActivityActive(this.schedule[eachActivity.activity])) {
+                activity = eachActivity.activity
+                break
               }
-            })
-          if (!activity) {
-            this.activities
-              .filter((o) => o.priority === 2)
-              .map((eachActivity) => {
-                if (this.schedule[eachActivity.activity]) {
-                  if (this.isActivityActive(eachActivity.activity))
-                    activity = eachActivity.activity
-                }
-              })
+            }
           }
 
+          if (!activity) {
+            activities = this.activities.filter((o) => o.priority === 2)
+            for (let j = 0; j < activities.length; j++) {
+              const eachActivity = activities[j]
+              if (this.schedule[eachActivity.activity]) {
+                if (
+                  this.isActivityActive(this.schedule[eachActivity.activity])
+                ) {
+                  activity = eachActivity.activity
+                  break
+                }
+              }
+            }
+          }
+
+          console.log('activity', activity)
           if (!activity) {
             activity = 'free'
           }
@@ -177,8 +177,7 @@ export default {
 
         if (activity) {
           const vm = this
-          firebase
-            .database()
+          firebaseDB
             .ref('gifs')
             .orderByChild('activity')
             .limitToLast(1)
@@ -189,8 +188,7 @@ export default {
               })
             })
 
-          firebase
-            .database()
+          firebaseDB
             .ref('quotes')
             .orderByChild('activity')
             .limitToLast(1)
@@ -229,58 +227,35 @@ export default {
   mounted() {
     if (this.friendId) {
       const vm = this
-      firebase
-        .database()
-        .ref('users/' + vm.friendId)
-        .once('value', function(data) {
-          vm.friend = data.val()
-          if (vm.friend.currentLocation) {
-            fetchTimezone(
-              vm.friend.currentLocation.latitude,
-              vm.friend.currentLocation.longitude,
-              Date.now() / 1000
-            ).then((res) => {
-              vm.timeZone = res.data.timeZoneId
-            })
-          }
-        })
+      firebaseDB.ref('users/' + vm.friendId).once('value', function(data) {
+        vm.friend = data.val()
+        if (vm.friend.currentLocation) {
+          fetchTimezone(
+            vm.friend.currentLocation.latitude,
+            vm.friend.currentLocation.longitude,
+            Date.now() / 1000
+          ).then((res) => {
+            vm.timezone = res.data.timeZoneId
+          })
+        }
+      })
 
-      firebase
-        .database()
-        .ref('schedule/' + vm.friendId)
-        .once('value', function(data) {
-          if (data.val()) vm.schedule = data.val()
-          else
-            firebase
-              .database()
-              .ref('schedule/default')
-              .once('value', function(data) {
-                vm.schedule = data.val()
-              })
-        })
+      firebaseDB.ref('schedule/' + vm.friendId).once('value', function(data) {
+        if (data.val()) vm.schedule = data.val()
+        else
+          firebaseDB.ref('schedule/default').once('value', function(data) {
+            vm.schedule = data.val()
+          })
+      })
     }
   },
   methods: {
-    isActivityActive(activity) {
-      return this.isBetween(
-        this.schedule[activity].startTime,
-        this.schedule[activity].endTime
-      )
-    },
-    isBetween(time1, time2) {
-      return this.isAfter(time1) && this.isBefore(time2)
-    },
-    isAfter(time) {
-      return (
-        Date.parse(this.dummyDate + ' ' + this.localTime) >
-        Date.parse(this.dummyDate + ' ' + time)
-      )
-    },
-    isBefore(time) {
-      return (
-        Date.parse(this.dummyDate + ' ' + this.localTime) <
-        Date.parse(this.dummyDate + ' ' + time)
-      )
+    isActivityActive(schedule) {
+      const format = 'HH:mm'
+      const startTime = moment(schedule.startTime, format)
+      const endTime = moment(startTime.add(schedule.duration, 'h'))
+      const currentTime = moment(this.localTime.format(format))
+      return currentTime.isBefore(endTime)
     },
     callPhone(phone) {
       window.open('tel:' + phone)
@@ -296,10 +271,7 @@ export default {
     },
     removeFriend() {
       const vm = this
-      firebase
-        .database()
-        .ref('friends/' + vm.uid + '/' + vm.friendId)
-        .set(null)
+      firebaseDB.ref('friends/' + vm.uid + '/' + vm.friendId).set(null)
       vm.$emit('friendRemoved', vm.friend)
     }
   }

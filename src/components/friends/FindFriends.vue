@@ -19,9 +19,9 @@
   </div>
 </template>
 <script>
-import firebase from 'firebase'
 import { mapGetters } from 'vuex'
 import AddFriend from './AddFriend'
+import { firebaseDB } from '@/services/firebaseInit.js'
 export default {
   components: {
     AddFriend
@@ -40,8 +40,7 @@ export default {
       const vm = this
       if (newVal) {
         if (this.validateEmail(newVal)) {
-          firebase
-            .database()
+          firebaseDB
             .ref('users')
             .orderByChild('email')
             .equalTo(newVal)
@@ -51,8 +50,7 @@ export default {
                 snapshot.forEach((data) => {
                   if (data.key !== vm.uid) {
                     const friend = data.val()
-                    firebase
-                      .database()
+                    firebaseDB
                       .ref('friends/' + vm.uid + '/' + friend.uid)
                       .once('value', function(data) {
                         if (data.val()) friend.isFriendAlready = true

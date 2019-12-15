@@ -52,7 +52,7 @@
   </v-row>
 </template>
 <script>
-import firebase from 'firebase'
+import { firebaseDB } from '@/services/firebaseInit.js'
 export default {
   data() {
     return {
@@ -73,35 +73,29 @@ export default {
   },
   mounted() {
     const vm = this
-    firebase
-      .database()
-      .ref('activities')
-      .once('value', function(snapshot) {
-        snapshot.forEach((data) => {
-          vm.activities.push(data.key)
-        })
+    firebaseDB.ref('activities').once('value', function(snapshot) {
+      snapshot.forEach((data) => {
+        vm.activities.push(data.key)
       })
-    firebase
-      .database()
-      .ref('categories')
-      .once('value', function(snapshot) {
-        snapshot.forEach((data) => {
-          vm.categories.push(data.key)
-        })
+    })
+    firebaseDB.ref('categories').once('value', function(snapshot) {
+      snapshot.forEach((data) => {
+        vm.categories.push(data.key)
       })
+    })
   },
   methods: {
     addQuote() {
       const vm = this
       vm.loading = true
-      firebase
-        .database()
+      const payload = {
+        quote: vm.quote,
+        activity: vm.activity,
+        category: vm.category
+      }
+      firebaseDB
         .ref('quotes')
-        .push({
-          quote: vm.quote,
-          activity: vm.activity,
-          category: vm.category
-        })
+        .push(payload)
         .then(() => {
           vm.success = true
         })

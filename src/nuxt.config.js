@@ -45,10 +45,9 @@ export default {
    ** Plugins to load before mounting the App
    */
   plugins: [
-    { src: '~/plugins/localStorage.js', ssr: false },
     '~/plugins/i18n.js',
     '~/plugins/global.js',
-    '~/plugins/firebase.js',
+    '~/plugins/firebaseAuth.js',
     '~/plugins/vuetify.js',
     '~/plugins/mask.js'
   ],

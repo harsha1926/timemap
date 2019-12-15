@@ -1,9 +1,13 @@
 import actions from './actions'
 import getters from './getters'
 import mutations from './mutations'
-import { getDefaultState } from './defaultState'
+export const state = () => ({
+  countryCode: null,
+  callingCode: null,
+  phoneNumber: null
+})
 export default {
-  getDefaultState,
+  state,
   actions,
   getters,
   mutations

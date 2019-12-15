@@ -27,9 +27,9 @@
   </v-row>
 </template>
 <script>
-import firebase from 'firebase'
 import { mapGetters } from 'vuex'
 import Friend from './Friend'
+import { firebaseDB } from '@/services/firebaseInit.js'
 export default {
   components: {
     Friend
@@ -48,14 +48,11 @@ export default {
   mounted() {
     const vm = this
     vm.fetchFriendsList()
-    firebase
-      .database()
-      .ref('activities')
-      .once('value', function(snapshot) {
-        snapshot.forEach((data) => {
-          vm.activities.push({ activity: data.key, priority: data.val() })
-        })
+    firebaseDB.ref('activities').once('value', function(snapshot) {
+      snapshot.forEach((data) => {
+        vm.activities.push({ activity: data.key, priority: data.val() })
       })
+    })
   },
   methods: {
     friendRemoved(removedFriend) {
@@ -68,15 +65,12 @@ export default {
     },
     fetchFriendsList() {
       const vm = this
-      firebase
-        .database()
-        .ref('friends/' + vm.uid)
-        .once('value', function(friends) {
-          vm.friendIds = []
-          friends.forEach((friend) => {
-            vm.friendIds.push(friend.key)
-          })
+      firebaseDB.ref('friends/' + vm.uid).once('value', function(friends) {
+        vm.friendIds = []
+        friends.forEach((friend) => {
+          vm.friendIds.push(friend.key)
         })
+      })
     }
   }
 }

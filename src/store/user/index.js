@@ -1,9 +1,15 @@
 import actions from './actions'
 import getters from './getters'
 import mutations from './mutations'
-import { getDefaultState } from './defaultState'
+export const state = () => ({
+  uid: null,
+  email: null,
+  displayName: null,
+  photoURL: null
+})
+
 export default {
-  getDefaultState,
+  state,
   actions,
   getters,
   mutations

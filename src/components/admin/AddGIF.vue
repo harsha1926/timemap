@@ -40,15 +40,17 @@
           align="center"
           justify="center"
           class="overline primary--text ma-2 pa-2"
-          >GIF added successfully..</v-row
         >
+          GIF added successfully..
+        </v-row>
         <v-row
           v-if="error"
           align="center"
           justify="center"
           class="overline error--text ma-2 pa-2"
-          >{{ errorMsg }}</v-row
         >
+          {{ errorMsg }}
+        </v-row>
       </v-card-text>
       <v-card-actions>
         <v-row justify="end" class="ma-2 pa-2">
@@ -59,7 +61,7 @@
   </v-row>
 </template>
 <script>
-import firebase from 'firebase'
+import { firebaseDB } from '@/services/firebaseInit.js'
 export default {
   data() {
     return {
@@ -80,35 +82,29 @@ export default {
   },
   mounted() {
     const vm = this
-    firebase
-      .database()
-      .ref('activities')
-      .once('value', function(snapshot) {
-        snapshot.forEach((data) => {
-          vm.activities.push(data.key)
-        })
+    firebaseDB.ref('activities').once('value', function(snapshot) {
+      snapshot.forEach((data) => {
+        vm.activities.push(data.key)
       })
-    firebase
-      .database()
-      .ref('categories')
-      .once('value', function(snapshot) {
-        snapshot.forEach((data) => {
-          vm.categories.push(data.key)
-        })
+    })
+    firebaseDB.ref('categories').once('value', function(snapshot) {
+      snapshot.forEach((data) => {
+        vm.categories.push(data.key)
       })
+    })
   },
   methods: {
     addGIF() {
       const vm = this
       vm.loading = true
-      firebase
-        .database()
+      const payload = {
+        url: vm.url,
+        activity: vm.activity,
+        category: vm.category
+      }
+      firebaseDB
         .ref('gifs')
-        .push({
-          url: vm.url,
-          activity: vm.activity,
-          category: vm.category
-        })
+        .push(payload)
         .then(() => {
           vm.success = true
         })

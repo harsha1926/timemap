@@ -25,152 +25,54 @@
                 <v-icon>fab fa-facebook-f</v-icon>
               </v-btn>
             </v-row>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-dialog v-model="accountAlreadyExistsError" max-width="400">
-        <v-card>
-          <v-card-text class="primary--text pa-5 sameEmailError">
-            <v-row align="center" justify="center" class="pa-2 ma-2">
-              Sorry
-              <v-icon class="ml-3" color="primary">far fa-frown</v-icon>
-            </v-row>
-            <v-row class="pa-2 ma-2" align="center" justify="center"
-              >Account using same email address already exists!</v-row
+            <v-row
+              v-if="errorMessage"
+              class="overline mt-1 ml-1 pt-3 pl-3 pr-3 error--text"
+              wrap
+              >{{ errorMessage }}</v-row
             >
           </v-card-text>
         </v-card>
-      </v-dialog>
+      </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import firebase from 'firebase'
-import { mapActions } from 'vuex'
+import {
+  auth,
+  GoogleProvider,
+  FacebookProvider
+} from '@/services/firebaseInit.js'
 export default {
   data: () => ({
-    accountAlreadyExistsError: false,
     loading: false,
-    supportedSignInMethods: [
-      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-      firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-      firebase.auth.GithubAuthProvider.PROVIDER_ID
-    ]
+    errorMessage: null
   }),
-  mounted() {
-    const vm = this
-    vm.loading = true
-    vm.$nextTick(() => {
-      firebase
-        .auth()
-        .getRedirectResult()
-        .then(function(result) {
-          if (result && result.user) {
-            firebase
-              .database()
-              .ref('users/' + result.user.uid)
-              .once('value', function(data) {
-                if (data.val()) {
-                  firebase
-                    .database()
-                    .ref('users')
-                    .child(result.user.uid)
-                    .update({
-                      displayName: result.user.displayName,
-                      nameLowerCase: result.user.displayName.toLowerCase(),
-                      photoURL: result.user.photoURL
-                    })
-                  vm.addUser({
-                    uid: result.user.uid,
-                    email: result.user.email,
-                    displayName: result.user.displayName,
-                    photoURL: result.user.photoURL
-                  })
-                  vm.addPhone(data.val().phone)
-                } else {
-                  firebase
-                    .database()
-                    .ref('users')
-                    .child(result.user.uid)
-                    .set({
-                      uid: result.user.uid,
-                      email: result.user.email,
-                      displayName: result.user.displayName,
-                      nameLowerCase: result.user.displayName.toLowerCase(),
-                      photoURL: result.user.photoURL
-                    })
-                  vm.addUser({
-                    uid: result.user.uid,
-                    email: result.user.email,
-                    displayName: result.user.displayName,
-                    photoURL: result.user.photoURL
-                  })
-                }
-              })
-            vm.loading = false
-          } else {
-            vm.loading = false
-          }
-        })
-        .catch(function(error) {
-          if (
-            error.email &&
-            error.credential &&
-            error.code === 'auth/account-exists-with-different-credential'
-          ) {
-            firebase
-              .auth()
-              .fetchSignInMethodsForEmail(error.email)
-              .then((providers) => {
-                const providerFound = providers.find((p) =>
-                  vm.supportedSignInMethods.includes(p)
-                )
-                const linkedProvider = vm.getProvider(providerFound)
-                firebase
-                  .auth()
-                  .signInWithPopup(
-                    linkedProvider.setCustomParameters({
-                      login_hint: error.email
-                    })
-                  )
-                  .then((result) => {
-                    result.user.linkWithCredential(error.credential)
-                    vm.addUser({
-                      uid: result.user.uid,
-                      email: result.user.email,
-                      displayName: result.user.displayName,
-                      photoURL: result.user.photoURL
-                    })
-                    vm.loading = false
-                  })
-              })
-          } else {
-            vm.loading = false
-          }
-        })
-    })
-  },
   methods: {
-    ...mapActions('user', ['addUser']),
-    ...mapActions('user/phone', ['addPhone']),
-    getProvider(providerId) {
-      switch (providerId) {
-        case firebase.auth.GoogleAuthProvider.PROVIDER_ID:
-          return new firebase.auth.GoogleAuthProvider()
-        case firebase.auth.FacebookAuthProvider.PROVIDER_ID:
-          return new firebase.auth.FacebookAuthProvider()
-        default:
-          throw new Error(`No provider implemented for ${providerId}`)
-      }
-    },
     googleSignIn() {
-      firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())
+      const vm = this
+      vm.loading = true
+      auth
+        .signInWithPopup(GoogleProvider)
+        .catch((error) => {
+          vm.errorMessage = error.message
+        })
+        .finally(() => {
+          vm.loading = false
+        })
     },
     facebookSignIn() {
-      firebase
-        .auth()
-        .signInWithRedirect(new firebase.auth.FacebookAuthProvider())
+      const vm = this
+      vm.loading = true
+      auth
+        .signInWithPopup(FacebookProvider)
+        .catch((error) => {
+          vm.errorMessage = error.message
+        })
+        .finally(() => {
+          vm.loading = false
+        })
     }
   }
 }

@@ -103,9 +103,10 @@
 </template>
 
 <script>
-import firebase from 'firebase'
+import * as firebase from 'firebase/app'
 import axios from 'axios'
 import { mapGetters, mapActions } from 'vuex'
+import { auth, firebaseDB } from '@/services/firebaseInit.js'
 export default {
   data: () => ({
     errorMessage: null,
@@ -153,9 +154,8 @@ export default {
       if (this.$refs.form.validate()) {
         const vm = this
         const appVerifier = window.recaptchaVerifier
-        firebase
-          .auth()
-          .currentUser.linkWithPhoneNumber(
+        auth.currentUser
+          .linkWithPhoneNumber(
             '+' + vm.country.callingCodes[0] + vm.phone,
             appVerifier
           )
@@ -163,7 +163,6 @@ export default {
             vm.confirmationResult = confirmationResult
           })
           .catch(function(error) {
-            /* eslint-disable no-console */
             console.error(error)
           })
       }
@@ -174,16 +173,13 @@ export default {
         vm.confirmationResult
           .confirm(vm.authCode)
           .then(function(result) {
-            firebase
-              .database()
-              .ref('users/' + vm.uid)
-              .update({
-                phone: {
-                  countryCode: vm.country.alpha2Code,
-                  callingCode: vm.country.callingCodes[0],
-                  phoneNumber: vm.phone
-                }
-              })
+            firebaseDB.ref('users/' + vm.uid).update({
+              phone: {
+                countryCode: vm.country.alpha2Code,
+                callingCode: vm.country.callingCodes[0],
+                phoneNumber: vm.phone
+              }
+            })
 
             vm.addPhone({
               countryCode: vm.country.alpha2Code,
@@ -192,7 +188,6 @@ export default {
             })
           })
           .catch(function(error) {
-            /* eslint-disable no-console */
             console.error(error)
             vm.errorMessage = error.message
           })

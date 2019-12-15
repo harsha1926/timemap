@@ -40,8 +40,8 @@
   </v-row>
 </template>
 <script>
-import firebase from 'firebase'
 import { mapGetters } from 'vuex'
+import { firebaseDB } from '@/services/firebaseInit.js'
 export default {
   props: {
     friend: {
@@ -60,10 +60,7 @@ export default {
   methods: {
     addFriend() {
       const vm = this
-      firebase
-        .database()
-        .ref('friends/' + vm.uid + '/' + vm.friend.uid)
-        .set(true)
+      firebaseDB.ref('friends/' + vm.uid + '/' + vm.friend.uid).set(true)
       this.friend.isFriendAlready = true
       this.friendAdded = true
     }

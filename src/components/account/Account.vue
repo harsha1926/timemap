@@ -28,10 +28,9 @@
   </v-row>
 </template>
 <script>
-import firebase from 'firebase'
 import { mapGetters, mapActions } from 'vuex'
+import { auth } from '@/services/firebaseInit.js'
 export default {
-  data: () => ({}),
   computed: {
     ...mapGetters('user', ['displayName', 'photoURL']),
     ...mapGetters('user/phone', ['callingCode', 'phoneNumber'])
@@ -40,21 +39,15 @@ export default {
     ...mapActions('user', ['removeUser']),
     logout() {
       const vm = this
-      firebase
-        .auth()
+      auth
         .signOut()
         .then(function() {
-          // Sign-out successful.
           vm.removeUser()
           vm.$router.push('/')
         })
         .catch(function(e) {
-          /* eslint-disable no-console */
           console.error(e)
         })
-    },
-    switchAccount() {
-      // TODO
     }
   }
 }
