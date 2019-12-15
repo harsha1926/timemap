@@ -30,11 +30,20 @@ const removePhotoURL = (context) => {
   context.commit('PHOTO_URL_REMOVED')
 }
 
+const addPhoneNumber = (context, phoneNumber) => {
+  context.commit('PHONE_NUMBER_ADDED', phoneNumber)
+}
+
+const removePhoneNumber = (context) => {
+  context.commit('PHONE_NUMBER_REMOVED')
+}
+
 const addUser = (context, payload) => {
   addUID(context, payload.uid)
   addEmail(context, payload.email)
   addDisplayName(context, payload.displayName)
   addPhotoURL(context, payload.photoURL)
+  addPhoneNumber(context, payload.phoneNumber)
 }
 
 const removeUser = (context) => {
@@ -42,8 +51,7 @@ const removeUser = (context) => {
   removeEmail(context)
   removeDisplayName(context)
   removePhotoURL(context)
-  context.dispatch('phone/removePhone')
-  context.dispatch('currentLocation/removeCurrentLocation')
+  removePhoneNumber(context)
 }
 
 export default {
@@ -56,5 +64,7 @@ export default {
   addPhotoURL,
   removePhotoURL,
   addUser,
-  removeUser
+  removeUser,
+  addPhoneNumber,
+  removePhoneNumber
 }

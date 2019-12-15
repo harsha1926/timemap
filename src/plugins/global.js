@@ -1,5 +1,4 @@
 import Vue from 'vue'
-
 export default () => {
   Vue.directive('uppercase', {
     bind(el, _, vnode) {

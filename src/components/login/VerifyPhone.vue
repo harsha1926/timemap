@@ -149,7 +149,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions('user/phone', ['addPhone']),
+    ...mapActions('user', ['addPhoneNumber']),
     submitPhoneNumberAuth() {
       if (this.$refs.form.validate()) {
         const vm = this
@@ -174,18 +174,9 @@ export default {
           .confirm(vm.authCode)
           .then(function(result) {
             firebaseDB.ref('users/' + vm.uid).update({
-              phone: {
-                countryCode: vm.country.alpha2Code,
-                callingCode: vm.country.callingCodes[0],
-                phoneNumber: vm.phone
-              }
+              phoneNumber: '+' + vm.country.callingCodes[0] + vm.phone
             })
-
-            vm.addPhone({
-              countryCode: vm.country.alpha2Code,
-              callingCode: vm.country.callingCodes[0],
-              phoneNumber: vm.phone
-            })
+            vm.addPhoneNumber('+' + vm.country.callingCodes[0] + vm.phone)
           })
           .catch(function(error) {
             console.error(error)

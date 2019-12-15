@@ -16,9 +16,7 @@
       </v-img>
       <v-card-subtitle>
         <v-row justify="space-between" align="center" class="pa-2 nameTitle">
-          <span v-if="callingCode && phoneNumber"
-            >+ {{ callingCode }} {{ phoneNumber }}</span
-          >
+          <span v-if="phoneNumber">{{ phoneNumber }}</span>
         </v-row>
       </v-card-subtitle>
       <v-card-actions>
@@ -32,8 +30,7 @@ import { mapGetters, mapActions } from 'vuex'
 import { auth } from '@/services/firebaseInit.js'
 export default {
   computed: {
-    ...mapGetters('user', ['displayName', 'photoURL']),
-    ...mapGetters('user/phone', ['callingCode', 'phoneNumber'])
+    ...mapGetters('user', ['displayName', 'photoURL', 'phoneNumber'])
   },
   methods: {
     ...mapActions('user', ['removeUser']),

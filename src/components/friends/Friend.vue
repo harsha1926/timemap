@@ -94,12 +94,6 @@ export default {
       default() {
         return null
       }
-    },
-    activities: {
-      type: Array,
-      default() {
-        return []
-      }
     }
   },
   data() {
@@ -142,64 +136,16 @@ export default {
       if (!this.schedule) return null
       else {
         let activity = null
-        if (this.localTime && this.activities) {
-          let activities = this.activities.filter((o) => o.priority === 1)
-          for (let i = 0; i < activities.length; i++) {
-            const eachActivity = activities[i]
-            if (this.schedule[eachActivity.activity]) {
-              if (this.isActivityActive(this.schedule[eachActivity.activity])) {
-                activity = eachActivity.activity
-                break
-              }
+        if (this.localTime) {
+          if (this.isDayActive()) {
+            activity = this.getActiveActivity()
+            if (!activity) {
+              activity = 'free'
             }
-          }
-
-          if (!activity) {
-            activities = this.activities.filter((o) => o.priority === 2)
-            for (let j = 0; j < activities.length; j++) {
-              const eachActivity = activities[j]
-              if (this.schedule[eachActivity.activity]) {
-                if (
-                  this.isActivityActive(this.schedule[eachActivity.activity])
-                ) {
-                  activity = eachActivity.activity
-                  break
-                }
-              }
-            }
-          }
-
-          console.log('activity', activity)
-          if (!activity) {
-            activity = 'free'
+          } else {
+            activity = 'sleep'
           }
         }
-
-        if (activity) {
-          const vm = this
-          firebaseDB
-            .ref('gifs')
-            .orderByChild('activity')
-            .limitToLast(1)
-            .equalTo(activity)
-            .once('value', function(snapshot) {
-              snapshot.forEach((data) => {
-                if (data.val()) vm.activityPhoto = data.val().url
-              })
-            })
-
-          firebaseDB
-            .ref('quotes')
-            .orderByChild('activity')
-            .limitToLast(1)
-            .equalTo(activity)
-            .once('value', function(snapshot) {
-              snapshot.forEach((data) => {
-                if (data.val()) vm.activityQuote = data.val().quote
-              })
-            })
-        }
-
         return activity
       }
     },
@@ -215,6 +161,36 @@ export default {
         else return ''
       } else {
         return ''
+      }
+    }
+  },
+  watch: {
+    activity: {
+      handler(newVal) {
+        if (newVal) {
+          const vm = this
+          firebaseDB
+            .ref('gifs')
+            .orderByChild('activity')
+            .limitToLast(1)
+            .equalTo(newVal)
+            .once('value', function(snapshot) {
+              snapshot.forEach((data) => {
+                if (data.val()) vm.activityPhoto = data.val().url
+              })
+            })
+
+          firebaseDB
+            .ref('quotes')
+            .orderByChild('activity')
+            .limitToLast(1)
+            .equalTo(newVal)
+            .once('value', function(snapshot) {
+              snapshot.forEach((data) => {
+                if (data.val()) vm.activityQuote = data.val().quote
+              })
+            })
+        }
       }
     }
   },
@@ -250,12 +226,52 @@ export default {
     }
   },
   methods: {
-    isActivityActive(schedule) {
-      const format = 'HH:mm'
-      const startTime = moment(schedule.startTime, format)
-      const endTime = moment(startTime.add(schedule.duration, 'h'))
-      const currentTime = moment(this.localTime.format(format))
-      return currentTime.isBefore(endTime)
+    getSchedule() {
+      let schedule = this.schedule.weekday
+      if (this.localTime.weekday() === 0 || this.localTime.weekday() === 6) {
+        schedule = this.schedule.weekend
+      }
+      return schedule
+    },
+    getActiveActivity() {
+      const routine = this.getSchedule().routine
+      for (const activity in routine) {
+        const activityStartTime = this.getMomentDateWithTime(
+          routine[activity].startTime
+        )
+        const activityEndTime = this.getMomentDateWithTime(
+          moment(routine[activity].startTime, 'HH:mm:ss')
+            .add(routine[activity].duration, 'h')
+            .format('HH:mm:ss')
+        )
+        if (
+          this.localTime.isAfter(activityStartTime) &&
+          this.localTime.isBefore(activityEndTime)
+        ) {
+          return activity
+        }
+      }
+    },
+    isDayActive() {
+      const schedule = this.getSchedule()
+      const dayStartTime = this.getMomentDateWithTime(schedule.dayStartTime)
+      const dayEndTime = this.getMomentDateWithTime(schedule.dayEndTime)
+      if (
+        this.localTime.isAfter(dayStartTime) &&
+        this.localTime.isBefore(dayEndTime)
+      ) {
+        return true
+      } else {
+        return false
+      }
+    },
+    getMomentDateWithTime(timeStr) {
+      const time = moment(timeStr, 'HH:mm:ss')
+      return moment().set({
+        hour: time.get('hour'),
+        minute: time.get('minute'),
+        second: time.get('second')
+      })
     },
     callPhone(phone) {
       window.open('tel:' + phone)

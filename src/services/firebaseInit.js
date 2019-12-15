@@ -2,9 +2,9 @@ import * as firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/database'
-
+export const apiKey = 'AIzaSyAy3NsjnLLa6xRIRbWMXjvHq_0jMZO0YTY'
 const config = {
-  apiKey: 'AIzaSyAy3NsjnLLa6xRIRbWMXjvHq_0jMZO0YTY',
+  apiKey,
   authDomain: 'timemap-cf037.firebaseapp.com',
   databaseURL: 'https://timemap-cf037.firebaseio.com',
   projectId: 'timemap-cf037',
@@ -13,7 +13,6 @@ const config = {
   appId: '1:205365316539:web:bb9cf306b440c6409d929e',
   measurementId: 'G-XKQ63X5YGR'
 }
-
 if (!firebase.apps.length) firebase.initializeApp(config)
 export const GoogleProvider = new firebase.auth.GoogleAuthProvider()
 export const FacebookProvider = new firebase.auth.FacebookAuthProvider()

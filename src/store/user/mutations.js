@@ -30,6 +30,14 @@ const PHOTO_URL_REMOVED = (state) => {
   state.photoURL = null
 }
 
+const PHONE_NUMBER_ADDED = (state, phoneNumber) => {
+  state.phoneNumber = phoneNumber
+}
+
+const PHONE_NUMBER_REMOVED = (state) => {
+  state.phoneNumber = null
+}
+
 export default {
   UID_ADDED,
   UID_REMOVED,
@@ -38,5 +46,7 @@ export default {
   DISPLAY_NAME_ADDED,
   DISPLAY_NAME_REMOVED,
   PHOTO_URL_ADDED,
-  PHOTO_URL_REMOVED
+  PHOTO_URL_REMOVED,
+  PHONE_NUMBER_ADDED,
+  PHONE_NUMBER_REMOVED
 }

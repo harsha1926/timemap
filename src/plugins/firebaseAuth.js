@@ -12,10 +12,37 @@ export default (context) => {
               .update({
                 displayName: user.displayName,
                 nameLowerCase: user.displayName.toLowerCase(),
-                photoURL: user.photoURL
+                photoURL: user.photoURL,
+                phoneNumber: user.phoneNumber
               })
-            if (data.val().phone)
-              store.dispatch('user/phone/addPhone', data.val().phone)
+              .then(() => {
+                if (navigator.geolocation) {
+                  navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                      firebaseDB
+                        .ref('users')
+                        .child(user.uid)
+                        .update({
+                          currentLocation: {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude
+                          }
+                        })
+                      store.dispatch(
+                        'user/currentLocation/addCurrentLocation',
+                        {
+                          latitude: position.coords.latitude,
+                          longitude: position.coords.longitude
+                        }
+                      )
+                    },
+                    (error) => {
+                      console.error(error)
+                    },
+                    { timeout: 10000 }
+                  )
+                }
+              })
           } else {
             firebaseDB
               .ref('users')
@@ -25,7 +52,36 @@ export default (context) => {
                 email: user.email,
                 displayName: user.displayName,
                 nameLowerCase: user.displayName.toLowerCase(),
-                photoURL: user.photoURL
+                photoURL: user.photoURL,
+                phoneNumber: user.phoneNumber
+              })
+              .then(() => {
+                if (navigator.geolocation) {
+                  navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                      firebaseDB
+                        .ref('users')
+                        .child(user.uid)
+                        .update({
+                          currentLocation: {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude
+                          }
+                        })
+                      store.dispatch(
+                        'user/currentLocation/addCurrentLocation',
+                        {
+                          latitude: position.coords.latitude,
+                          longitude: position.coords.longitude
+                        }
+                      )
+                    },
+                    (error) => {
+                      console.error(error)
+                    },
+                    { timeout: 10000 }
+                  )
+                }
               })
           }
         })
@@ -35,7 +91,8 @@ export default (context) => {
             uid: user.uid,
             email: user.email,
             displayName: user.displayName,
-            photoURL: user.photoURL
+            photoURL: user.photoURL,
+            phoneNumber: user.phoneNumber
           })
         )
       }

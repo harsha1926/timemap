@@ -10,11 +10,7 @@
       xl2
       class="pa-1 mt-1"
     >
-      <friend
-        :friendId="friendId"
-        @friendRemoved="friendRemoved"
-        :activities="activities"
-      />
+      <friend :friendId="friendId" @friendRemoved="friendRemoved" />
     </v-flex>
     <v-snackbar
       v-model="showFriendRemovedSnackbar"
@@ -38,8 +34,7 @@ export default {
     return {
       showFriendRemovedSnackbar: false,
       removedFriendName: '',
-      friendIds: [],
-      activities: []
+      friendIds: []
     }
   },
   computed: {
@@ -48,11 +43,6 @@ export default {
   mounted() {
     const vm = this
     vm.fetchFriendsList()
-    firebaseDB.ref('activities').once('value', function(snapshot) {
-      snapshot.forEach((data) => {
-        vm.activities.push({ activity: data.key, priority: data.val() })
-      })
-    })
   },
   methods: {
     friendRemoved(removedFriend) {

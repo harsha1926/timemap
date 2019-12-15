@@ -62,7 +62,7 @@ export default {
       loading: false,
       valid: null,
       activity: null,
-      activities: ['free'],
+      activities: [],
       category: null,
       categories: [],
       quote: null,

@@ -5,9 +5,9 @@ export const state = () => ({
   uid: null,
   email: null,
   displayName: null,
-  photoURL: null
+  photoURL: null,
+  phoneNumber: null
 })
-
 export default {
   state,
   actions,
