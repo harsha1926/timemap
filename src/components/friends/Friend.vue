@@ -228,7 +228,10 @@ export default {
   methods: {
     getSchedule() {
       let schedule = this.schedule.weekday
-      if (this.localTime.weekday() === 0 || this.localTime.weekday() === 6) {
+      const day = moment()
+        .tz(this.timezone)
+        .format('dddd')
+      if (day === 'Saturday' || day === 'Sunday') {
         schedule = this.schedule.weekend
       }
       return schedule
@@ -244,9 +247,12 @@ export default {
             .add(routine[activity].duration, 'h')
             .format('HH:mm:ss')
         )
+        const currentTime = this.getMomentDateWithTime(
+          moment.tz(this.timezone).format('HH:mm:ss')
+        )
         if (
-          this.localTime.isAfter(activityStartTime) &&
-          this.localTime.isBefore(activityEndTime)
+          currentTime.isAfter(activityStartTime) &&
+          currentTime.isBefore(activityEndTime)
         ) {
           return activity
         }
@@ -256,9 +262,12 @@ export default {
       const schedule = this.getSchedule()
       const dayStartTime = this.getMomentDateWithTime(schedule.dayStartTime)
       const dayEndTime = this.getMomentDateWithTime(schedule.dayEndTime)
+      const currentTime = this.getMomentDateWithTime(
+        moment.tz(this.timezone).format('HH:mm:ss')
+      )
       if (
-        this.localTime.isAfter(dayStartTime) &&
-        this.localTime.isBefore(dayEndTime)
+        currentTime.isAfter(dayStartTime) &&
+        currentTime.isBefore(dayEndTime)
       ) {
         return true
       } else {
@@ -266,11 +275,11 @@ export default {
       }
     },
     getMomentDateWithTime(timeStr) {
-      const time = moment(timeStr, 'HH:mm:ss')
+      const timeArr = timeStr.split(':')
       return moment().set({
-        hour: time.get('hour'),
-        minute: time.get('minute'),
-        second: time.get('second')
+        hour: timeArr[0],
+        minute: timeArr[1],
+        second: timeArr[2]
       })
     },
     callPhone(phone) {
