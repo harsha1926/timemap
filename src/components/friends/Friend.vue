@@ -43,24 +43,24 @@
           </v-col>
           <v-col cols="3">
             <v-avatar
-              @click="sendTextMessage(fullPhoneNumber)"
-              :disabled="!friend.phone"
+              @click="sendTextMessage(friend.phoneNumber)"
+              :disabled="!friend.phoneNumber"
             >
               <v-icon color="primary">mdi-message</v-icon>
             </v-avatar>
           </v-col>
           <v-col cols="3">
             <v-avatar
-              @click="callPhone(fullPhoneNumber)"
-              :disabled="!friend.phone"
+              @click="callPhone(friend.phoneNumber)"
+              :disabled="!friend.phoneNumber"
             >
               <v-icon color="primary">fas fa-phone</v-icon>
             </v-avatar>
           </v-col>
           <v-col cols="3">
             <v-avatar
-              @click="sendWhatsAppMessage(fullPhoneNumber)"
-              :disabled="!friend.phone"
+              @click="sendWhatsAppMessage(friend.phoneNumber)"
+              :disabled="!friend.phoneNumber"
             >
               <v-icon color="primary">fab fa-whatsapp</v-icon>
             </v-avatar>
@@ -124,13 +124,6 @@ export default {
       } else {
         return null
       }
-    },
-    fullPhoneNumber() {
-      if (this.friend)
-        return (
-          '+' + this.friend.phone.callingCode + this.friend.phone.phoneNumber
-        )
-      else return null
     },
     activity() {
       if (!this.schedule) return null
@@ -283,16 +276,16 @@ export default {
       })
     },
     callPhone(phone) {
-      window.open('tel:' + phone)
+      window.open('tel:' + phone, '_self')
     },
     sendTextMessage(phone) {
-      window.open('sms:' + phone)
+      window.open('sms:' + phone, '_self')
     },
     sendWhatsAppMessage(phone) {
-      window.open('https://wa.me/' + phone)
+      window.open('https://wa.me/' + phone, '_self')
     },
     sendEmailMessage(email) {
-      window.open('mailto:' + email)
+      window.open('mailto:' + email, '_self')
     },
     removeFriend() {
       const vm = this
@@ -309,7 +302,7 @@ export default {
 .activityHeading {
   font-family: 'Lexend Mega', sans-serif;
   color: #ffffff;
-  font-size: 20px;
+  font-size: 22px;
 }
 .userTime {
   font-family: 'Lexend Mega', sans-serif;

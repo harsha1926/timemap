@@ -117,6 +117,11 @@ export default {
           vm.$refs.form.reset()
         })
     }
+  },
+  watch: {
+    url: function() {
+      this.success = false
+    }
   }
 }
 </script>
