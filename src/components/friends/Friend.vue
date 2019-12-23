@@ -1,22 +1,14 @@
 <template>
   <div>
-    <v-skeleton-loader
-      v-if="loading"
-      class="mx-auto"
-      type="card-avatar"
-    ></v-skeleton-loader>
+    <v-skeleton-loader v-if="loading" class="mx-auto" type="card-avatar"></v-skeleton-loader>
     <v-card v-else-if="friend">
       <v-img
         :src="activityPhoto"
         height="200px"
         gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
       >
-        <v-row class="ma-2 userTime" justify="start">
-          {{ localTimeFormattedString }}
-        </v-row>
-        <v-row class="ma-2 activityHeading" justify="start">
-          {{ activityHeading }}
-        </v-row>
+        <v-row class="ma-2 userTime" justify="start">{{ localTimeFormattedString }}</v-row>
+        <v-row class="ma-2 activityHeading" justify="start">{{ activityHeading }}</v-row>
         <v-row class="ma-3 quote" justify="start">{{ activityQuote }}</v-row>
       </v-img>
 
@@ -28,9 +20,7 @@
             </v-avatar>
           </v-col>
           <v-col cols="9">
-            <span class="displayName font-weight-bold">
-              {{ displayNameCaptilize }}
-            </span>
+            <span class="displayName font-weight-bold">{{ displayNameCaptilize }}</span>
           </v-col>
         </v-row>
       </v-card-text>
@@ -42,18 +32,12 @@
             </v-avatar>
           </v-col>
           <v-col cols="3">
-            <v-avatar
-              @click="sendTextMessage(friend.phoneNumber)"
-              :disabled="!friend.phoneNumber"
-            >
+            <v-avatar @click="sendTextMessage(friend.phoneNumber)" :disabled="!friend.phoneNumber">
               <v-icon color="primary">mdi-message</v-icon>
             </v-avatar>
           </v-col>
           <v-col cols="3">
-            <v-avatar
-              @click="callPhone(friend.phoneNumber)"
-              :disabled="!friend.phoneNumber"
-            >
+            <v-avatar @click="callPhone(friend.phoneNumber)" :disabled="!friend.phoneNumber">
               <v-icon color="primary">fas fa-phone</v-icon>
             </v-avatar>
           </v-col>
@@ -67,23 +51,16 @@
           </v-col>
         </v-row>
       </v-card-actions>
-      <v-btn
-        @click="removeFriendWarning"
-        color="primary"
-        x-small
-        absolute
-        top
-        right
-        fab
-      >
+      <v-row>
+        <span class="lastUpdated mb-3 ml-5">Last updated at {{ lastUpdatedString }}</span>
+      </v-row>
+      <v-btn @click="removeFriendWarning" color="primary" x-small absolute top right fab>
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-card>
-    <v-dialog v-model="showRemoveFriendWarning" max-width="300">
+    <v-dialog v-model="showRemoveFriendWarning" max-width="400">
       <v-card>
-        <v-card-title class="removeFriendWarning">
-          Are you sure?
-        </v-card-title>
+        <v-card-title class="removeFriendWarning">Are you sure?</v-card-title>
         <v-card-actions>
           <v-btn @click="removeFriend">Yes</v-btn>
           <v-btn color="primary" @click="showRemoveFriendWarning = false">No</v-btn>
@@ -116,6 +93,7 @@ export default {
       now: new Date(),
       activityPhoto: '',
       activityQuote: '',
+      lastUpdated: null,
       showRemoveFriendWarning: false
     }
   },
@@ -130,10 +108,19 @@ export default {
         return '...'
       }
     },
+    lastUpdatedString() {
+      if (this.lastUpdated) {
+        return momentTimezone(this.lastUpdated).format('ddd MMM DD, hh:mm A')
+      } else {
+        return '...'
+      }
+    },
     displayNameCaptilize() {
-      if(!this.friend || (this.friend && !this.friend.displayName))
-        return ""
-      return this.friend.displayName.split(' ').map(o => this.capitalizeFirstLetter(o)).join(' ')
+      if (!this.friend || (this.friend && !this.friend.displayName)) return ''
+      return this.friend.displayName
+        .split(' ')
+        .map((o) => this.capitalizeFirstLetter(o))
+        .join(' ')
     },
     localTime() {
       if (this.timezone) {
@@ -170,7 +157,7 @@ export default {
         else if (this.activity === 'free') return 'I am free now..'
         else return ''
       } else {
-        return ''
+        return "I don't know.."
       }
     }
   },
@@ -216,6 +203,7 @@ export default {
       firebaseDB.ref('users/' + vm.friendId).once('value', function(data) {
         vm.friend = data.val()
         if (vm.friend.currentLocation) {
+          vm.lastUpdated = vm.friend.currentLocation.lastUpdated
           fetchTimezone(
             vm.friend.currentLocation.latitude,
             vm.friend.currentLocation.longitude,
@@ -223,6 +211,17 @@ export default {
           ).then((res) => {
             vm.timezone = res.data.timeZoneId
           })
+        } else {
+          firebaseDB
+            .ref('gifs')
+            .orderByChild('category')
+            .limitToLast(1)
+            .equalTo('sad')
+            .once('value', function(snapshot) {
+              snapshot.forEach((data) => {
+                if (data.val()) vm.activityPhoto = data.val().url
+              })
+            })
         }
       })
 
@@ -336,6 +335,11 @@ export default {
   font-family: 'Lexend Mega', sans-serif;
   font-size: 10px;
   color: #dad5d5;
+}
+.lastUpdated {
+  font-family: 'Lexend Mega', sans-serif;
+  font-size: 9px;
+  color: #c0bcbc;
 }
 .removeFriendWarning {
   font-family: 'Lexend Mega', sans-serif;
