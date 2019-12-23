@@ -29,7 +29,7 @@
           </v-col>
           <v-col cols="9">
             <span class="displayName font-weight-bold">
-              {{ friend.displayName }}
+              {{ displayNameCaptilize }}
             </span>
           </v-col>
         </v-row>
@@ -129,6 +129,11 @@ export default {
       } else {
         return '...'
       }
+    },
+    displayNameCaptilize() {
+      if(!this.friend || (this.friend && !this.friend.displayName))
+        return ""
+      return this.friend.displayName.split(' ').map(o => this.capitalizeFirstLetter(o)).join(' ')
     },
     localTime() {
       if (this.timezone) {
@@ -231,6 +236,9 @@ export default {
     }
   },
   methods: {
+    capitalizeFirstLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1)
+    },
     removeFriendWarning() {
       this.showRemoveFriendWarning = true
     },
