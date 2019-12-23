@@ -68,7 +68,7 @@
         </v-row>
       </v-card-actions>
       <v-btn
-        @click="removeFriend"
+        @click="removeFriendWarning"
         color="primary"
         x-small
         absolute
@@ -79,6 +79,17 @@
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-card>
+    <v-dialog v-model="showRemoveFriendWarning" max-width="300">
+      <v-card>
+        <v-card-title class="removeFriendWarning">
+          Are you sure?
+        </v-card-title>
+        <v-card-actions>
+          <v-btn @click="removeFriend">Yes</v-btn>
+          <v-btn color="primary" @click="showRemoveFriendWarning = false">No</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
@@ -104,7 +115,8 @@ export default {
       schedule: null,
       now: new Date(),
       activityPhoto: '',
-      activityQuote: ''
+      activityQuote: '',
+      showRemoveFriendWarning: false
     }
   },
   computed: {
@@ -219,6 +231,9 @@ export default {
     }
   },
   methods: {
+    removeFriendWarning() {
+      this.showRemoveFriendWarning = true
+    },
     getSchedule() {
       let schedule = this.schedule.weekday
       const day = moment()
@@ -313,5 +328,9 @@ export default {
   font-family: 'Lexend Mega', sans-serif;
   font-size: 10px;
   color: #dad5d5;
+}
+.removeFriendWarning {
+  font-family: 'Lexend Mega', sans-serif;
+  font-size: 20px;
 }
 </style>
