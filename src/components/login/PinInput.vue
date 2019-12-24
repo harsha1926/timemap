@@ -6,24 +6,12 @@
       @input="checkIfValid"
       type="tel"
       pattern="[0-9]*"
+      name="pinInput"
     />
   </v-row>
 </template>
 <script>
 export default {
-  props: {
-    focus: {
-      type: Boolean,
-      default() {
-        return false
-      }
-    }
-  },
-  watch: {
-    focus(newVal) {
-      if (newVal) this.$refs.pinInput.focus()
-    }
-  },
   methods: {
     checkIfValid(event) {
       if (
@@ -38,6 +26,9 @@ export default {
         })
       else this.$emit('validate', { value: event.target.value, valid: false })
     }
+  },
+  mounted: function() {
+    this.$refs.pinInput.focus()
   }
 }
 </script>

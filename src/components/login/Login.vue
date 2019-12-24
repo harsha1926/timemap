@@ -18,10 +18,10 @@
           </v-card-subtitle>
           <v-card-text>
             <v-row justify="center">
-              <v-btn @click="googleSignIn" fab icon color="primary">
+              <v-btn name="googleLoginBtn" @click="googleSignIn" fab icon color="primary">
                 <v-icon>fab fa-google</v-icon>
               </v-btn>
-              <v-btn @click="facebookSignIn" fab icon color="primary">
+              <v-btn name="facebookLoginBtn" @click="facebookSignIn" fab icon color="primary">
                 <v-icon>fab fa-facebook-f</v-icon>
               </v-btn>
             </v-row>
