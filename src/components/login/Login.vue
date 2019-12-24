@@ -1,18 +1,14 @@
 <template>
   <v-container fluid fill-height style="height: 85vh; max-height: 85%;">
     <v-row align="start" justify="center">
-      <v-progress-circular
-        v-if="loading"
-        indeterminate
-        color="primary"
-      ></v-progress-circular>
+      <v-progress-circular v-if="loading" indeterminate color="primary"></v-progress-circular>
       <v-col v-else cols="12" sm="8" md="4">
         <v-card class="elevation-12">
           <v-card-subtitle class="mt-5">
             <v-row class="appLoginHeading" justify="center">Hi, there.</v-row>
             <v-row class="appLoginInfo ma-5" justify="center">
               Thanks for showing your interest in Timemap. We hope our fun
-              filled cute app can help you know more about your loved ones.
+              filled app can help you know more about your loved ones.
               Please login,
             </v-row>
           </v-card-subtitle>
@@ -27,10 +23,9 @@
             </v-row>
             <v-row
               v-if="errorMessage"
-              class="overline mt-1 ml-1 pt-3 pl-3 pr-3 error--text"
+              class="overline ma-2 pa-2 error--text"
               wrap
-              >{{ errorMessage }}</v-row
-            >
+            >{{ errorMessage }}</v-row>
           </v-card-text>
         </v-card>
       </v-col>
@@ -54,7 +49,7 @@ export default {
       const vm = this
       vm.loading = true
       auth
-        .signInWithPopup(GoogleProvider)
+        .signInWithRedirect(GoogleProvider)
         .catch((error) => {
           vm.errorMessage = error.message
         })
@@ -66,7 +61,7 @@ export default {
       const vm = this
       vm.loading = true
       auth
-        .signInWithPopup(FacebookProvider)
+        .signInWithRedirect(FacebookProvider)
         .catch((error) => {
           vm.errorMessage = error.message
         })

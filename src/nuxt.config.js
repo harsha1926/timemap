@@ -49,7 +49,9 @@ export default {
     '~/plugins/global.js',
     '~/plugins/firebaseAuth.js',
     '~/plugins/vuetify.js',
-    '~/plugins/mask.js'
+    '~/plugins/mask.js',
+    '~/plugins/telephoneInput.js',
+    '~/plugins/verificationCode.js'
   ],
   /*
    ** Nuxt.js dev-modules
@@ -118,6 +120,6 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {}
+    extend(config, ctx) { }
   }
 }

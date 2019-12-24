@@ -46,7 +46,12 @@
     </v-card>
     <v-dialog max-width="400" v-model="showEditDisplayNameDialog">
       <v-card>
-        <v-text-field :value="displayName" @input="updateDisplayName" class="ma-2 pa-2"></v-text-field>
+        <v-text-field
+          @keydown.enter="showEditDisplayNameDialog = false"
+          :value="displayName"
+          @input="updateDisplayName"
+          class="ma-2 pa-2"
+        ></v-text-field>
       </v-card>
     </v-dialog>
   </v-row>

@@ -1,104 +1,55 @@
 <template>
-  <v-row align="center" justify="center">
-    <v-card class="elevation-12" width="400">
-      <v-card-title class="appLoginHeading mb-5">Verify phone</v-card-title>
-      <v-card-text>
-        <v-form ref="form" v-model="valid" lazy-validation>
-          <v-autocomplete
-            :items="countries"
-            v-model="country"
-            :rules="[rules.required]"
-            label="Country"
-            outlined
-            return-object
-            item-text="name"
-            item-value="alpha2Code"
-            clearable
-          >
-            <template v-slot:item="data">
-              <v-row align="center" class="ma-2">
-                <v-flex>
-                  <v-avatar tile size="30" class="mr-2">
-                    <v-img
-                      :src="
-                        'https://www.countryflags.io/' +
-                          data.item.alpha2Code +
-                          '/shiny/64.png'
-                      "
-                    ></v-img>
-                  </v-avatar>
-                  {{ data.item.name }}
-                </v-flex>
-              </v-row>
-            </template>
-            <template v-slot:selection="data">
-              <v-row align="center" class="ma-2">
-                <v-flex>
-                  <v-avatar tile size="30" class="mr-2">
-                    <v-img
-                      :src="
-                        'https://www.countryflags.io/' +
-                          data.item.alpha2Code +
-                          '/shiny/64.png'
-                      "
-                    ></v-img>
-                  </v-avatar>
-                  {{ data.item.name }}
-                </v-flex>
-              </v-row>
-            </template>
-          </v-autocomplete>
+  <v-row justify="center" align="center">
+    <v-col cols="12" sm="8" md="4">
+      <v-stepper v-model="step">
+        <v-stepper-header>
+          <v-stepper-step :complete="step > 1" step="1"></v-stepper-step>
+          <v-divider></v-divider>
+          <v-stepper-step :complete="step > 2" step="2"></v-stepper-step>
+        </v-stepper-header>
 
-          <v-text-field
-            v-mask="'(###)-###-####'"
-            v-model="phoneMasked"
-            :rules="[rules.required, rules.phoneNumber]"
-            label="Phone"
-            outlined
-          ></v-text-field>
-          <v-btn
-            id="signIn"
-            ref="signIn"
-            @click="
-              submitPhoneNumberAuth()
-              errorMessage = null
-            "
-            :disabled="!valid"
-            color="primary"
-            >GET VERIFICATION CODE</v-btn
-          >
-        </v-form>
-        <v-row
-          v-if="confirmationResult"
-          class="overline mt-1 ml-1 pt-3 pl-3 pr-3 primary--text"
-          justify="center"
-        >
-          Verification code sent successfully! Please enter the code to
-          proceed..
-        </v-row>
-        <v-form ref="verificationCodeForm" v-model="validVerificationCode">
-          <v-text-field
-            v-model="authCode"
-            :rules="[rules.verificationCode]"
-            class="mt-8"
-            label="Verification Code"
-            outlined
-          ></v-text-field>
-          <v-btn
-            @click="submitPhoneNumberAuthCode()"
-            :disabled="!validVerificationCode || !valid || !confirmationResult"
-            color="primary"
-            >LOGIN</v-btn
-          >
-        </v-form>
-        <v-row
-          v-if="errorMessage"
-          class="overline mt-1 ml-1 pt-3 pl-3 pr-3 error--text"
-          wrap
-          >{{ errorMessage }}</v-row
-        >
-      </v-card-text>
-    </v-card>
+        <v-stepper-items>
+          <v-stepper-content step="1">
+            <v-card>
+              <v-card-text>
+                <vue-tel-input
+                  @validate="isValid"
+                  :enabledCountryCode="true"
+                  :validCharactersOnly="true"
+                ></vue-tel-input>
+              </v-card-text>
+              <v-card-actions>
+                <v-btn
+                  :loading="loading"
+                  ref="signIn"
+                  @click="submitPhoneNumberAuth()"
+                  :disabled="!valid"
+                  color="primary"
+                >GET VERIFICATION CODE</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-stepper-content>
+
+          <v-stepper-content step="2">
+            <v-text-field
+              v-model="authCode"
+              :rules="[rules.verificationCode]"
+              label="Verification Code"
+              outlined
+            ></v-text-field>
+            <div class="input-wrapper">
+              <PincodeInput v-model="code" placeholder="0" :length="6" />
+            </div>
+            <v-btn
+              @click="submitPhoneNumberAuthCode()"
+              :disabled="!validVerificationCode || !valid || !confirmationResult"
+              color="primary"
+            >LOGIN</v-btn>
+          </v-stepper-content>
+        </v-stepper-items>
+      </v-stepper>
+      <v-row v-if="errorMessage" class="overline ma-2 pa-2 error--text" wrap>{{ errorMessage }}</v-row>
+    </v-col>
   </v-row>
 </template>
 
@@ -109,13 +60,13 @@ import { mapGetters, mapActions } from 'vuex'
 import { auth, firebaseDB } from '@/services/firebaseInit.js'
 export default {
   data: () => ({
+    loading: false,
+    phone: null,
+    step: 1,
     errorMessage: null,
     valid: false,
     validVerificationCode: false,
     rules: {
-      required: (value) => !!value || 'Required.',
-      phoneNumber: (value) =>
-        (!!value && value.length === 14) || 'Invalid phone number.',
       verificationCode: (value) =>
         (!!value && value.length === 6) || 'Invalid verification code.'
     },
@@ -126,10 +77,7 @@ export default {
     countries: []
   }),
   computed: {
-    ...mapGetters('user', ['uid']),
-    phone() {
-      return this.phoneMasked ? this.phoneMasked.replace(/\D+/g, '') : null
-    }
+    ...mapGetters('user', ['uid'])
   },
   mounted() {
     const vm = this
@@ -150,22 +98,26 @@ export default {
   },
   methods: {
     ...mapActions('user', ['addPhoneNumber']),
-    submitPhoneNumberAuth() {
-      if (this.$refs.form.validate()) {
-        const vm = this
-        const appVerifier = window.recaptchaVerifier
-        auth.currentUser
-          .linkWithPhoneNumber(
-            '+' + vm.country.callingCodes[0] + vm.phone,
-            appVerifier
-          )
-          .then(function(confirmationResult) {
-            vm.confirmationResult = confirmationResult
-          })
-          .catch(function(error) {
-            console.error(error)
-          })
+    isValid(isValid) {
+      this.valid = isValid.valid
+      if (isValid.valid) {
+        this.phone = isValid.number.e164
       }
+    },
+    submitPhoneNumberAuth() {
+      const vm = this
+      vm.loading = true
+      const appVerifier = window.recaptchaVerifier
+      auth.currentUser
+        .linkWithPhoneNumber(vm.phone, appVerifier)
+        .then(function(confirmationResult) {
+          vm.confirmationResult = confirmationResult
+          vm.step = 2
+          vm.loading = false
+        })
+        .catch(function(error) {
+          console.error(error)
+        })
     },
     submitPhoneNumberAuthCode() {
       if (this.$refs.verificationCodeForm.validate()) {
