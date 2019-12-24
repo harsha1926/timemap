@@ -1,14 +1,22 @@
 <template>
   <div>
-    <v-skeleton-loader v-if="loading" class="mx-auto" type="card-avatar"></v-skeleton-loader>
+    <v-skeleton-loader
+      v-if="loading"
+      class="mx-auto"
+      type="card-avatar"
+    ></v-skeleton-loader>
     <v-card v-else-if="friend">
       <v-img
         :src="activityPhoto"
         height="200px"
         gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
       >
-        <v-row class="ma-2 userTime" justify="start">{{ localTimeFormattedString }}</v-row>
-        <v-row class="ma-2 activityHeading" justify="start">{{ activityHeading }}</v-row>
+        <v-row class="ma-2 userTime" justify="start">{{
+          localTimeFormattedString
+        }}</v-row>
+        <v-row class="ma-2 activityHeading" justify="start">{{
+          activityHeading
+        }}</v-row>
         <v-row class="ma-3 quote" justify="start">{{ activityQuote }}</v-row>
       </v-img>
 
@@ -20,7 +28,9 @@
             </v-avatar>
           </v-col>
           <v-col cols="9">
-            <span class="displayName font-weight-bold">{{ displayNameCaptilize }}</span>
+            <span class="displayName font-weight-bold">{{
+              displayNameCaptilize
+            }}</span>
           </v-col>
         </v-row>
       </v-card-text>
@@ -32,12 +42,18 @@
             </v-avatar>
           </v-col>
           <v-col cols="3">
-            <v-avatar @click="sendTextMessage(friend.phoneNumber)" :disabled="!friend.phoneNumber">
+            <v-avatar
+              @click="sendTextMessage(friend.phoneNumber)"
+              :disabled="!friend.phoneNumber"
+            >
               <v-icon color="primary">mdi-message</v-icon>
             </v-avatar>
           </v-col>
           <v-col cols="3">
-            <v-avatar @click="callPhone(friend.phoneNumber)" :disabled="!friend.phoneNumber">
+            <v-avatar
+              @click="callPhone(friend.phoneNumber)"
+              :disabled="!friend.phoneNumber"
+            >
               <v-icon color="primary">fas fa-phone</v-icon>
             </v-avatar>
           </v-col>
@@ -52,9 +68,19 @@
         </v-row>
       </v-card-actions>
       <v-row>
-        <span class="lastUpdated mb-3 ml-5">Last updated at {{ lastUpdatedString }}</span>
+        <span class="lastUpdated mb-3 ml-5"
+          >Last updated at {{ lastUpdatedString }}</span
+        >
       </v-row>
-      <v-btn @click="removeFriendWarning" color="primary" x-small absolute top right fab>
+      <v-btn
+        @click="removeFriendWarning"
+        color="primary"
+        x-small
+        absolute
+        top
+        right
+        fab
+      >
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-card>
@@ -63,7 +89,9 @@
         <v-card-title class="removeFriendWarning">Are you sure?</v-card-title>
         <v-card-actions>
           <v-btn @click="removeFriend">Yes</v-btn>
-          <v-btn color="primary" @click="showRemoveFriendWarning = false">No</v-btn>
+          <v-btn @click="showRemoveFriendWarning = false" color="primary"
+            >No</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>

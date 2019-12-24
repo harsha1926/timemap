@@ -31,8 +31,7 @@ export default () => {
               this.$store.dispatch('user/currentLocation/addCurrentLocation', {
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude
-              }
-              )
+              })
             },
             (error) => {
               console.error(error)

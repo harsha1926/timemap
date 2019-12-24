@@ -1,7 +1,13 @@
 <template>
   <v-row wrap justify="center" class="pa-2">
     <v-card max-width="400">
-      <v-img v-if="photoURL" :src="photoURL" height="300px" content class="align-end">
+      <v-img
+        v-if="photoURL"
+        :src="photoURL"
+        height="300px"
+        content
+        class="align-end"
+      >
         <v-row justify="end" align="center" class="ma-2">
           <v-btn color="primary" fab icon>
             <v-icon>mdi-pencil</v-icon>
@@ -11,7 +17,12 @@
       <v-card-subtitle>
         <v-row justify="space-between" align="center" class="pa-2 nameTitle">
           <span v-if="displayName">{{ displayName }}</span>
-          <v-btn color="primary" fab icon @click="showEditDisplayNameDialog = true">
+          <v-btn
+            @click="showEditDisplayNameDialog = true"
+            color="primary"
+            fab
+            icon
+          >
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-row>
@@ -28,7 +39,7 @@
             <v-btn color="primary">Update your schedule</v-btn>
             <v-menu offset-y left>
               <template v-slot:activator="{ on }">
-                <v-btn color="primary" fab icon v-on="on">
+                <v-btn v-on="on" color="primary" fab icon>
                   <v-icon>mdi-dots-vertical</v-icon>
                 </v-btn>
               </template>
@@ -44,7 +55,7 @@
         </v-container>
       </v-card-actions>
     </v-card>
-    <v-dialog max-width="400" v-model="showEditDisplayNameDialog">
+    <v-dialog v-model="showEditDisplayNameDialog" max-width="400">
       <v-card>
         <v-text-field
           @keydown.enter="showEditDisplayNameDialog = false"

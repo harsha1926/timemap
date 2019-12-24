@@ -3,8 +3,8 @@
 </template>
 
 <script>
-import Friends from '~/components/friends/Friends'
 import { mapGetters } from 'vuex'
+import Friends from '~/components/friends/Friends'
 export default {
   components: {
     Friends
@@ -12,7 +12,7 @@ export default {
   computed: {
     ...mapGetters('user', ['uid'])
   },
-  mounted: function() {
+  mounted() {
     this.getUserCurrentLocation(this.uid)
   }
 }

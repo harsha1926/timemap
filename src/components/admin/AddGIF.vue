@@ -80,6 +80,11 @@ export default {
       }
     }
   },
+  watch: {
+    url() {
+      this.success = false
+    }
+  },
   mounted() {
     const vm = this
     firebaseDB.ref('activities').once('value', function(snapshot) {
@@ -116,11 +121,6 @@ export default {
           vm.loading = false
           vm.$refs.form.reset()
         })
-    }
-  },
-  watch: {
-    url: function() {
-      this.success = false
     }
   }
 }
