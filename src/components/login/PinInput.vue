@@ -12,6 +12,9 @@
 </template>
 <script>
 export default {
+  mounted() {
+    this.$refs.pinInput.focus()
+  },
   methods: {
     checkIfValid(event) {
       if (
@@ -26,9 +29,6 @@ export default {
         })
       else this.$emit('validate', { value: event.target.value, valid: false })
     }
-  },
-  mounted: function() {
-    this.$refs.pinInput.focus()
   }
 }
 </script>

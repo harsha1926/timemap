@@ -3,31 +3,57 @@
     <v-row justify="center" align="center">
       <v-col cols="12" sm="8" md="4">
         <v-card v-if="!confirmationResult">
-          <v-card-title class="appLoginInfo">Verify your phone number</v-card-title>
+          <v-card-title class="appLoginInfo"
+            >Verify your phone number</v-card-title
+          >
           <v-card-text>
-            <vue-tel-input ref="telInput" @validate="isValidPhone" :validCharactersOnly="true" 
-              placeholder="Enter your phone number"
+            <vue-tel-input
+              ref="telInput"
+              @validate="isValidPhone"
+              :validCharactersOnly="true"
               :dropdownOptions="dropdownOptions"
               :preferredCountries="['CA', 'IN', 'US']"
+              placeholder="Enter your phone number"
               name="telInput"
             >
             </vue-tel-input>
           </v-card-text>
           <v-card-actions>
-            <v-btn name="submitPhoneBtn" ref="signIn" :loading="loading" @click="submitPhoneNumberAuth()" :disabled="!validPhone || !phone" color="primary">GET VERIFICATION CODE</v-btn>
+            <v-btn
+              ref="signIn"
+              :loading="loading"
+              @click="submitPhoneNumberAuth()"
+              :disabled="!validPhone || !phone"
+              name="submitPhoneBtn"
+              color="primary"
+              >GET VERIFICATION CODE</v-btn
+            >
           </v-card-actions>
         </v-card>
 
         <v-card v-else>
-          <v-card-title class="appLoginInfo">Enter verfication code</v-card-title>
+          <v-card-title class="appLoginInfo"
+            >Enter verfication code</v-card-title
+          >
           <v-card-text>
             <pin-input @validate="isValidCode"></pin-input>
           </v-card-text>
           <v-card-actions>
-            <v-btn name="submitCodeBtn" @click="submitPhoneNumberAuthCode()" :disabled="!validVerificationCode || !authCode" color="primary">LOGIN</v-btn>
+            <v-btn
+              @click="submitPhoneNumberAuthCode()"
+              :disabled="!validVerificationCode || !authCode"
+              name="submitCodeBtn"
+              color="primary"
+              >LOGIN</v-btn
+            >
           </v-card-actions>
-        </v-card>  
-        <v-row v-if="errorMessage" class="overline ma-2 pa-2 error--text" wrap>{{ errorMessage }}</v-row>
+        </v-card>
+        <v-row
+          v-if="errorMessage"
+          class="overline ma-2 pa-2 error--text"
+          wrap
+          >{{ errorMessage }}</v-row
+        >
       </v-col>
     </v-row>
   </v-container>

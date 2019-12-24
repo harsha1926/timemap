@@ -3,9 +3,9 @@ export default (context) => {
   const { store } = context
   return new Promise((resolve) => {
     auth.onAuthStateChanged((user) => {
-      console.log("user", user)
+      console.log('user', user)
       if (user) {
-        firebaseDB.ref('users/' + user.uid).once('value', function (data) {
+        firebaseDB.ref('users/' + user.uid).once('value', function(data) {
           if (data.val() && data.val().uid) {
             store.dispatch('user/addUser', {
               uid: data.val().uid,
