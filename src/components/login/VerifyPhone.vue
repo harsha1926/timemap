@@ -13,42 +13,39 @@
             <v-card>
               <v-card-text>
                 <vue-tel-input
-                  @validate="isValid"
+                  @validate="isValidPhone"
                   :enabledCountryCode="true"
                   :validCharactersOnly="true"
+                  :autofocus="true"
                 ></vue-tel-input>
               </v-card-text>
               <v-card-actions>
                 <v-btn
-                  :loading="loading"
                   ref="signIn"
+                  :loading="loading"
                   @click="submitPhoneNumberAuth()"
-                  :disabled="!valid"
+                  :disabled="!validPhone || !phone"
                   color="primary"
-                >GET VERIFICATION CODE</v-btn>
+                  >GET VERIFICATION CODE</v-btn
+                >
               </v-card-actions>
             </v-card>
           </v-stepper-content>
 
           <v-stepper-content step="2">
-            <v-text-field
-              v-model="authCode"
-              :rules="[rules.verificationCode]"
-              label="Verification Code"
-              outlined
-            ></v-text-field>
-            <div class="input-wrapper">
-              <PincodeInput v-model="code" placeholder="0" :length="6" />
-            </div>
+            <pin-input :focus="step == 2" @validate="isValidCode"></pin-input>
             <v-btn
               @click="submitPhoneNumberAuthCode()"
-              :disabled="!validVerificationCode || !valid || !confirmationResult"
+              :disabled="!validVerificationCode || !authCode"
               color="primary"
-            >LOGIN</v-btn>
+              >LOGIN</v-btn
+            >
           </v-stepper-content>
         </v-stepper-items>
       </v-stepper>
-      <v-row v-if="errorMessage" class="overline ma-2 pa-2 error--text" wrap>{{ errorMessage }}</v-row>
+      <v-row v-if="errorMessage" class="overline ma-2 pa-2 error--text" wrap>{{
+        errorMessage
+      }}</v-row>
     </v-col>
   </v-row>
 </template>
@@ -57,24 +54,21 @@
 import * as firebase from 'firebase/app'
 import axios from 'axios'
 import { mapGetters, mapActions } from 'vuex'
+import PinInput from './PinInput'
 import { auth, firebaseDB } from '@/services/firebaseInit.js'
 export default {
+  components: {
+    PinInput
+  },
   data: () => ({
     loading: false,
     phone: null,
     step: 1,
     errorMessage: null,
-    valid: false,
+    validPhone: false,
     validVerificationCode: false,
-    rules: {
-      verificationCode: (value) =>
-        (!!value && value.length === 6) || 'Invalid verification code.'
-    },
-    country: null,
-    phoneMasked: null,
     authCode: null,
-    confirmationResult: null,
-    countries: []
+    confirmationResult: null
   }),
   computed: {
     ...mapGetters('user', ['uid'])
@@ -98,10 +92,16 @@ export default {
   },
   methods: {
     ...mapActions('user', ['addPhoneNumber']),
-    isValid(isValid) {
-      this.valid = isValid.valid
+    isValidPhone(isValid) {
+      this.validPhone = isValid.valid
       if (isValid.valid) {
         this.phone = isValid.number.e164
+      }
+    },
+    isValidCode(isValid) {
+      this.validVerificationCode = isValid.valid
+      if (isValid.valid) {
+        this.authCode = isValid.value
       }
     },
     submitPhoneNumberAuth() {
@@ -120,21 +120,19 @@ export default {
         })
     },
     submitPhoneNumberAuthCode() {
-      if (this.$refs.verificationCodeForm.validate()) {
-        const vm = this
-        vm.confirmationResult
-          .confirm(vm.authCode)
-          .then(function(result) {
-            firebaseDB.ref('users/' + vm.uid).update({
-              phoneNumber: '+' + vm.country.callingCodes[0] + vm.phone
-            })
-            vm.addPhoneNumber('+' + vm.country.callingCodes[0] + vm.phone)
+      const vm = this
+      vm.confirmationResult
+        .confirm(vm.authCode)
+        .then(function(result) {
+          firebaseDB.ref('users/' + vm.uid).update({
+            phoneNumber: vm.phone
           })
-          .catch(function(error) {
-            console.error(error)
-            vm.errorMessage = error.message
-          })
-      }
+          vm.addPhoneNumber(vm.phone)
+        })
+        .catch(function(error) {
+          console.error(error)
+          vm.errorMessage = error.message
+        })
     }
   }
 }
