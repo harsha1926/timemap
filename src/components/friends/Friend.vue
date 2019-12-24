@@ -228,6 +228,7 @@ export default {
   mounted() {
     if (this.friendId) {
       const vm = this
+      vm.loading = true
       firebaseDB.ref('users/' + vm.friendId).once('value', function(data) {
         vm.friend = data.val()
         if (vm.friend.currentLocation) {
@@ -251,6 +252,8 @@ export default {
               })
             })
         }
+      }).finally(() => {
+        vm.loading = false
       })
 
       firebaseDB.ref('schedule/' + vm.friendId).once('value', function(data) {
