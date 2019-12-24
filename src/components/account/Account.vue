@@ -28,7 +28,7 @@
         </v-row>
         <v-row justify="space-between" align="center" class="pa-2 nameTitle">
           <span v-if="phoneNumber">{{ phoneNumber }}</span>
-          <v-btn color="primary" fab icon>
+          <v-btn color="primary" fab icon to="/account/updatePhone">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-row>

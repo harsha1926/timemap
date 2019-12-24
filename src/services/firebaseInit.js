@@ -16,6 +16,7 @@ const config = {
 if (!firebase.apps.length) firebase.initializeApp(config)
 export const GoogleProvider = new firebase.auth.GoogleAuthProvider()
 export const FacebookProvider = new firebase.auth.FacebookAuthProvider()
+export const PhoneProvider = new firebase.auth.PhoneAuthProvider()
 export const auth = firebase.auth()
 export const firebaseDB = firebase.database()
 export const firebaseStore = firebase.firestore()

@@ -2,9 +2,9 @@
   <v-container fluid fill-height style="height: 70vh; max-height: 85%;">
     <v-row justify="center" align="center">
       <v-col cols="12" sm="8" md="4">
-        <v-card v-if="!confirmationResult">
+        <v-card v-if="!verificationId">
           <v-card-title class="appLoginInfo"
-            >Verify your phone number</v-card-title
+            >Change your phone number</v-card-title
           >
           <v-card-text>
             <vue-tel-input
@@ -13,7 +13,7 @@
               :validCharactersOnly="true"
               :dropdownOptions="dropdownOptions"
               :preferredCountries="['CA', 'IN', 'US']"
-              placeholder="Enter your phone number"
+              placeholder="Enter your new phone number"
               name="telInput"
             >
             </vue-tel-input>
@@ -42,7 +42,7 @@
           <v-card-actions>
             <v-row justify="end" class="mr-5 mb-2">
               <v-btn
-                @click="confirmationResult = null; errorMessage = null"
+                @click="navigateToDashboard"
                 name="canceBtn"
                 >Cancel</v-btn>
               <v-btn
@@ -50,7 +50,7 @@
                 :disabled="!validVerificationCode || !authCode"
                 name="submitCodeBtn"
                 color="primary"
-                >Confirm and Login</v-btn>
+                >Save</v-btn>
             </v-row>
           </v-card-actions>
         </v-card>
@@ -69,7 +69,7 @@
 import * as firebase from 'firebase/app'
 import { mapGetters, mapActions } from 'vuex'
 import PinInput from '~/components/common/PinInput'
-import { auth, firebaseDB } from '@/services/firebaseInit.js'
+import { auth, firebaseDB, PhoneProvider } from '@/services/firebaseInit.js'
 export default {
   components: {
     PinInput
@@ -82,7 +82,7 @@ export default {
     validPhone: false,
     validVerificationCode: false,
     authCode: null,
-    confirmationResult: null
+    verificationId: null
   }),
   computed: {
     ...mapGetters('user', ['uid'])
@@ -101,6 +101,9 @@ export default {
   },
   methods: {
     ...mapActions('user', ['addPhoneNumber']),
+    navigateToDashboard: function() {
+      this.$router.push("/")
+    },
     isValidPhone(isValid) {
       this.validPhone = isValid.valid
       if (isValid.valid) {
@@ -117,30 +120,26 @@ export default {
       const vm = this
       vm.loading = true
       const appVerifier = window.recaptchaVerifier
-      auth.currentUser
-        .linkWithPhoneNumber(vm.phone, appVerifier)
-        .then(function(confirmationResult) {
-          vm.confirmationResult = confirmationResult
-          vm.loading = false
-        })
-        .catch(function(error) {
-          console.error(error)
-        })
+      PhoneProvider.verifyPhoneNumber(vm.phone, appVerifier).then(function(verificationId) {
+        vm.verificationId = verificationId
+        vm.loading = false
+      }).catch(function(error) {
+        console.error(error)
+      })
     },
     submitVerficationCode() {
       const vm = this
-      vm.confirmationResult
-        .confirm(vm.authCode)
-        .then(function(result) {
-          firebaseDB.ref('users/' + vm.uid).update({
-            phoneNumber: vm.phone
-          })
-          vm.addPhoneNumber(vm.phone)
+      var cred = firebase.auth.PhoneAuthProvider.credential(vm.verificationId, vm.authCode)
+      auth.currentUser.updatePhoneNumber(cred).then(function(result) {
+        firebaseDB.ref('users/' + vm.uid).update({
+          phoneNumber: vm.phone
         })
-        .catch(function(error) {
-          console.error(error)
-          vm.errorMessage = error.message
-        })
+        vm.addPhoneNumber(vm.phone)
+        vm.navigateToDashboard()
+      }).catch(function(error) {
+        console.error(error)
+        vm.errorMessage = error.message
+      })
     }
   }
 }
