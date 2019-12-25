@@ -6,9 +6,7 @@
       </v-avatar>
       <span class="appTitle primary--text">TIMEMAP</span>
       <v-row justify="end" align="center">
-        <span v-if="displayName" class="appGreeting mr-5 d-none d-sm-block"
-          >Hello {{ displayName }}</span
-        >
+        <span v-if="displayName" class="appGreeting mr-5 d-none d-sm-block">Hello {{ displayName }}</span>
         <v-btn fab icon to="/account">
           <v-avatar v-if="photoURL" class size="40">
             <v-img :src="photoURL"></v-img>
@@ -25,7 +23,7 @@
       </v-container>
     </v-content>
 
-    <v-bottom-navigation v-if="uid" :value="activeTab" grow color="primary" app>
+    <v-bottom-navigation v-if="uid" :value="activeTab" grow color="primary" app height="65">
       <v-btn to="/">
         <span>Friends</span>
         <v-icon small>mdi-heart</v-icon>
@@ -33,6 +31,10 @@
       <v-btn to="/findFriends">
         <span>Add Friends</span>
         <v-icon small>fas fa-search</v-icon>
+      </v-btn>
+      <v-btn to="/share">
+        <span>Share</span>
+        <v-icon small>fas fa-share</v-icon>
       </v-btn>
     </v-bottom-navigation>
   </v-app>
