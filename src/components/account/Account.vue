@@ -1,10 +1,17 @@
 <template>
   <v-row wrap justify="center" class="pa-2">
-    <input v-show="false" accept="image/*" ref="imageUpdate" type="file">
+    <input ref="imageUpdate" v-show="false" accept="image/*" type="file" />
     <v-card max-width="400">
-      <v-img @click="openImageSelector" v-if="photoURL" :src="photoURL" height="300px" content class="align-end">
+      <v-img
+        @click="openImageSelector"
+        v-if="photoURL"
+        :src="photoURL"
+        height="300px"
+        content
+        class="align-end"
+      >
         <v-row justify="end" align="center" class="ma-2">
-          <v-btn color="primary" fab icon @click="openImageSelector">
+          <v-btn @click="openImageSelector" color="primary" fab icon>
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-row>
@@ -26,7 +33,7 @@
       <v-card-actions>
         <v-container>
           <v-row justify="space-between" align="center">
-            <v-btn color="primary">Update your schedule</v-btn>
+            <v-btn to="/schedule" color="primary">Update your schedule</v-btn>
             <v-menu offset-y left>
               <template v-slot:activator="{ on }">
                 <v-btn v-on="on" color="primary" fab icon>
@@ -69,11 +76,10 @@ export default {
   },
   methods: {
     ...mapActions('user', ['removeUser', 'addDisplayName']),
-    openImageSelector: function() {
-
+    openImageSelector() {
       this.$refs.imageUpdate.click()
     },
-    openEditDisplayNameDialog: function() {
+    openEditDisplayNameDialog() {
       this.showEditDisplayNameDialog = true
     },
     logout() {

@@ -27,7 +27,8 @@
                 :disabled="!validPhone || !phone"
                 name="submitPhoneBtn"
                 color="primary"
-                >GET VERIFICATION CODE</v-btn>
+                >GET VERIFICATION CODE</v-btn
+              >
             </v-row>
           </v-card-actions>
         </v-card>
@@ -41,16 +42,14 @@
           </v-card-text>
           <v-card-actions>
             <v-row justify="end" class="mr-5 mb-2">
-              <v-btn
-                @click="navigateToDashboard"
-                name="canceBtn"
-                >Cancel</v-btn>
+              <v-btn @click="navigateToDashboard" name="canceBtn">Cancel</v-btn>
               <v-btn
                 @click="submitVerficationCode()"
                 :disabled="!validVerificationCode || !authCode"
                 name="submitCodeBtn"
                 color="primary"
-                >Save</v-btn>
+                >Save</v-btn
+              >
             </v-row>
           </v-card-actions>
         </v-card>
@@ -101,8 +100,8 @@ export default {
   },
   methods: {
     ...mapActions('user', ['addPhoneNumber']),
-    navigateToDashboard: function() {
-      this.$router.push("/")
+    navigateToDashboard() {
+      this.$router.push('/')
     },
     isValidPhone(isValid) {
       this.validPhone = isValid.valid
@@ -120,26 +119,34 @@ export default {
       const vm = this
       vm.loading = true
       const appVerifier = window.recaptchaVerifier
-      PhoneProvider.verifyPhoneNumber(vm.phone, appVerifier).then(function(verificationId) {
-        vm.verificationId = verificationId
-        vm.loading = false
-      }).catch(function(error) {
-        console.error(error)
-      })
+      PhoneProvider.verifyPhoneNumber(vm.phone, appVerifier)
+        .then(function(verificationId) {
+          vm.verificationId = verificationId
+          vm.loading = false
+        })
+        .catch(function(error) {
+          console.error(error)
+        })
     },
     submitVerficationCode() {
       const vm = this
-      var cred = firebase.auth.PhoneAuthProvider.credential(vm.verificationId, vm.authCode)
-      auth.currentUser.updatePhoneNumber(cred).then(function(result) {
-        firebaseDB.ref('users/' + vm.uid).update({
-          phoneNumber: vm.phone
+      const cred = firebase.auth.PhoneAuthProvider.credential(
+        vm.verificationId,
+        vm.authCode
+      )
+      auth.currentUser
+        .updatePhoneNumber(cred)
+        .then(function(result) {
+          firebaseDB.ref('users/' + vm.uid).update({
+            phoneNumber: vm.phone
+          })
+          vm.addPhoneNumber(vm.phone)
+          vm.navigateToDashboard()
         })
-        vm.addPhoneNumber(vm.phone)
-        vm.navigateToDashboard()
-      }).catch(function(error) {
-        console.error(error)
-        vm.errorMessage = error.message
-      })
+        .catch(function(error) {
+          console.error(error)
+          vm.errorMessage = error.message
+        })
     }
   }
 }

@@ -229,32 +229,35 @@ export default {
     if (this.friendId) {
       const vm = this
       vm.loading = true
-      firebaseDB.ref('users/' + vm.friendId).once('value', function(data) {
-        vm.friend = data.val()
-        if (vm.friend.currentLocation) {
-          vm.lastUpdated = vm.friend.currentLocation.lastUpdated
-          fetchTimezone(
-            vm.friend.currentLocation.latitude,
-            vm.friend.currentLocation.longitude,
-            Date.now() / 1000
-          ).then((res) => {
-            vm.timezone = res.data.timeZoneId
-          })
-        } else {
-          firebaseDB
-            .ref('gifs')
-            .orderByChild('category')
-            .limitToLast(1)
-            .equalTo('sad')
-            .once('value', function(snapshot) {
-              snapshot.forEach((data) => {
-                if (data.val()) vm.activityPhoto = data.val().url
-              })
+      firebaseDB
+        .ref('users/' + vm.friendId)
+        .once('value', function(data) {
+          vm.friend = data.val()
+          if (vm.friend.currentLocation) {
+            vm.lastUpdated = vm.friend.currentLocation.lastUpdated
+            fetchTimezone(
+              vm.friend.currentLocation.latitude,
+              vm.friend.currentLocation.longitude,
+              Date.now() / 1000
+            ).then((res) => {
+              vm.timezone = res.data.timeZoneId
             })
-        }
-      }).finally(() => {
-        vm.loading = false
-      })
+          } else {
+            firebaseDB
+              .ref('gifs')
+              .orderByChild('category')
+              .limitToLast(1)
+              .equalTo('sad')
+              .once('value', function(snapshot) {
+                snapshot.forEach((data) => {
+                  if (data.val()) vm.activityPhoto = data.val().url
+                })
+              })
+          }
+        })
+        .finally(() => {
+          vm.loading = false
+        })
 
       firebaseDB.ref('schedule/' + vm.friendId).once('value', function(data) {
         if (data.val()) vm.schedule = data.val()

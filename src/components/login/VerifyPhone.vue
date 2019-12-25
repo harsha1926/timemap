@@ -27,7 +27,8 @@
                 :disabled="!validPhone || !phone"
                 name="submitPhoneBtn"
                 color="primary"
-                >GET VERIFICATION CODE</v-btn>
+                >GET VERIFICATION CODE</v-btn
+              >
             </v-row>
           </v-card-actions>
         </v-card>
@@ -42,15 +43,20 @@
           <v-card-actions>
             <v-row justify="end" class="mr-5 mb-2">
               <v-btn
-                @click="confirmationResult = null; errorMessage = null"
+                @click="
+                  confirmationResult = null
+                  errorMessage = null
+                "
                 name="canceBtn"
-                >Cancel</v-btn>
+                >Cancel</v-btn
+              >
               <v-btn
                 @click="submitVerficationCode()"
                 :disabled="!validVerificationCode || !authCode"
                 name="submitCodeBtn"
                 color="primary"
-                >Confirm and Login</v-btn>
+                >Confirm and Login</v-btn
+              >
             </v-row>
           </v-card-actions>
         </v-card>
