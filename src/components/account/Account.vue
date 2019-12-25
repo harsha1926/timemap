@@ -1,13 +1,7 @@
 <template>
   <v-row wrap justify="center" class="pa-2">
     <v-card max-width="400">
-      <v-img
-        v-if="photoURL"
-        :src="photoURL"
-        height="300px"
-        content
-        class="align-end"
-      >
+      <v-img v-if="photoURL" :src="photoURL" height="300px" content class="align-end">
         <v-row justify="end" align="center" class="ma-2">
           <v-btn color="primary" fab icon>
             <v-icon>mdi-pencil</v-icon>
@@ -17,12 +11,7 @@
       <v-card-subtitle>
         <v-row justify="space-between" align="center" class="pa-2 nameTitle">
           <span v-if="displayName">{{ displayName }}</span>
-          <v-btn
-            @click="showEditDisplayNameDialog = true"
-            color="primary"
-            fab
-            icon
-          >
+          <v-btn @click="openEditDisplayNameDialog" color="primary" fab icon>
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-row>
@@ -56,14 +45,14 @@
       </v-card-actions>
     </v-card>
     <v-dialog v-model="showEditDisplayNameDialog" max-width="400">
-      <v-card>
-        <v-text-field
-          @keydown.enter="showEditDisplayNameDialog = false"
-          :value="displayName"
-          @input="updateDisplayName"
-          class="ma-2 pa-2"
-        ></v-text-field>
-      </v-card>
+      <v-text-field
+        @keydown.enter="showEditDisplayNameDialog = false"
+        :value="displayName"
+        @input="updateDisplayName"
+        hide-details
+        single-line
+        solo
+      ></v-text-field>
     </v-dialog>
   </v-row>
 </template>
@@ -79,6 +68,9 @@ export default {
   },
   methods: {
     ...mapActions('user', ['removeUser', 'addDisplayName']),
+    openEditDisplayNameDialog: function() {
+      this.showEditDisplayNameDialog = true
+    },
     logout() {
       const vm = this
       auth
