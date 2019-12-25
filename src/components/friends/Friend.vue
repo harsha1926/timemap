@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container fluid>
     <v-skeleton-loader
       v-if="loading"
       class="mx-auto"
@@ -83,19 +83,19 @@
       >
         <v-icon>mdi-close</v-icon>
       </v-btn>
+      <v-dialog v-model="showRemoveFriendWarning" max-width="400">
+        <v-card>
+          <v-card-title class="removeFriendWarning">Are you sure?</v-card-title>
+          <v-card-actions>
+            <v-btn @click="removeFriend">Yes</v-btn>
+            <v-btn @click="showRemoveFriendWarning = false" color="primary"
+              >No</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-card>
-    <v-dialog v-model="showRemoveFriendWarning" max-width="400">
-      <v-card>
-        <v-card-title class="removeFriendWarning">Are you sure?</v-card-title>
-        <v-card-actions>
-          <v-btn @click="removeFriend">Yes</v-btn>
-          <v-btn @click="showRemoveFriendWarning = false" color="primary"
-            >No</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+  </v-container>
 </template>
 <script>
 import { mapGetters } from 'vuex'

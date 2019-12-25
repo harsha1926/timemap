@@ -1,22 +1,9 @@
 <template>
   <v-row wrap>
-    <v-flex
-      v-for="friendId in friendIds"
-      :key="friendId"
-      xs12
-      sm8
-      md4
-      la2
-      xl2
-      class="pa-1 mt-1"
-    >
+    <v-flex v-for="friendId in friendIds" :key="friendId" xs12 sm6 md4 la3 xl2>
       <friend :friendId="friendId" @friendRemoved="friendRemoved" />
     </v-flex>
-    <v-snackbar
-      v-model="showFriendRemovedSnackbar"
-      :timeout="1000"
-      color="primary"
-    >
+    <v-snackbar v-model="showFriendRemovedSnackbar" :timeout="1000" color="primary">
       {{ removedFriendName }} is not your friend anymore
       <v-icon>far fa-frown</v-icon>
     </v-snackbar>

@@ -1,16 +1,10 @@
 <template>
   <v-row align="center" justify="center">
-    <v-card :disabled="loading" max-width="600">
+    <v-card :disabled="loading" max-width="400">
       <v-card-title>Add GIF</v-card-title>
       <v-card-text>
         <v-form ref="form" v-model="valid">
-          <v-text-field
-            v-model="url"
-            :rules="[rules.required]"
-            label="URL"
-            outlined
-            clearable
-          ></v-text-field>
+          <v-text-field v-model="url" :rules="[rules.required]" label="URL" outlined clearable></v-text-field>
           <v-card v-if="url" class="mb-5">
             <v-img
               :src="url"
@@ -33,24 +27,26 @@
             label="Category"
             outlined
             clearable
-          ></v-autocomplete>
+          >
+            <template v-slot:append>
+              <v-btn icon color="primary" small>
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </template>
+          </v-autocomplete>
         </v-form>
         <v-row
           v-if="success"
           align="center"
           justify="center"
           class="overline primary--text ma-2 pa-2"
-        >
-          GIF added successfully..
-        </v-row>
+        >GIF added successfully..</v-row>
         <v-row
           v-if="error"
           align="center"
           justify="center"
           class="overline error--text ma-2 pa-2"
-        >
-          {{ errorMsg }}
-        </v-row>
+        >{{ errorMsg }}</v-row>
       </v-card-text>
       <v-card-actions>
         <v-row justify="end" class="ma-2 pa-2">

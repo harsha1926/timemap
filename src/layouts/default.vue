@@ -23,7 +23,7 @@
       </v-container>
     </v-content>
 
-    <v-bottom-navigation v-if="uid" :value="activeTab" grow color="primary" app height="65">
+    <v-bottom-navigation v-if="uid" :value="activeTab" grow color="primary" app>
       <v-btn to="/">
         <span>Friends</span>
         <v-icon small>mdi-heart</v-icon>

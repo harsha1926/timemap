@@ -1,6 +1,6 @@
 <template>
   <v-row align="center" justify="center">
-    <v-card :disabled="loading" max-width="600">
+    <v-card :disabled="loading" max-width="400">
       <v-card-title>Add Quote</v-card-title>
       <v-card-text>
         <v-form ref="form" v-model="valid">
