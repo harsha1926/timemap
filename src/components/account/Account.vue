@@ -1,9 +1,10 @@
 <template>
   <v-row wrap justify="center" class="pa-2">
+    <input v-show="false" accept="image/*" ref="imageUpdate" type="file">
     <v-card max-width="400">
-      <v-img v-if="photoURL" :src="photoURL" height="300px" content class="align-end">
+      <v-img @click="openImageSelector" v-if="photoURL" :src="photoURL" height="300px" content class="align-end">
         <v-row justify="end" align="center" class="ma-2">
-          <v-btn color="primary" fab icon>
+          <v-btn color="primary" fab icon @click="openImageSelector">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-row>
@@ -68,6 +69,10 @@ export default {
   },
   methods: {
     ...mapActions('user', ['removeUser', 'addDisplayName']),
+    openImageSelector: function() {
+
+      this.$refs.imageUpdate.click()
+    },
     openEditDisplayNameDialog: function() {
       this.showEditDisplayNameDialog = true
     },
