@@ -16,8 +16,15 @@
                   src="https://media1.tenor.com/images/93a8248a7fad2e5d6d4294b3186dd969/tenor.gif?itemid=6101414"
                 >
                   <template v-slot:placeholder>
-                    <v-row class="fill-height ma-0" align="center" justify="center">
-                      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+                    <v-row
+                      class="fill-height ma-0"
+                      align="center"
+                      justify="center"
+                    >
+                      <v-progress-circular
+                        indeterminate
+                        color="primary"
+                      ></v-progress-circular>
                     </v-row>
                   </template>
                 </v-img>

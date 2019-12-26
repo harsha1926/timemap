@@ -4,7 +4,7 @@
       <v-expansion-panels>
         <v-expansion-panel>
           <v-expansion-panel-header>
-            <template v-slot:default="{ open }">
+            <template v-slot:default>
               <v-row>
                 <v-col cols="4">Add GIF</v-col>
               </v-row>
@@ -27,7 +27,10 @@
           </template>
           <template v-slot:item.actions="{ item }">
             <v-btn
-              @click="showEditGIFDialog = true; selectedGIF = item"
+              @click="
+                showEditGIFDialog = true
+                selectedGIF = item
+              "
               color="primary"
               fab
               icon
@@ -54,8 +57,8 @@
   </v-row>
 </template>
 <script>
-import { firebaseDB } from '@/services/firebaseInit.js'
 import AddGif from './AddGIF'
+import { firebaseDB } from '@/services/firebaseInit.js'
 export default {
   components: {
     AddGif
@@ -112,7 +115,7 @@ export default {
       this.snackIcon = 'far fa-smile'
     },
     deleteGIF(item) {
-      let vm = this
+      const vm = this
       const index = vm.gifs.findIndex((o) => o.uid === item.uid)
       if (index > -1) {
         firebaseDB

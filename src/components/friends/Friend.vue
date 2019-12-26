@@ -38,7 +38,9 @@
         <v-row>
           <v-col cols="3">
             <v-avatar @click="sendEmailMessage(friend.email)">
-              <v-icon class="customPointer" color="primary">far fa-envelope</v-icon>
+              <v-icon class="customPointer" color="primary"
+                >far fa-envelope</v-icon
+              >
             </v-avatar>
           </v-col>
           <v-col cols="3">
@@ -54,7 +56,9 @@
               @click="callPhone(friend.phoneNumber)"
               :disabled="!friend.phoneNumber"
             >
-              <v-icon class="customPointer" color="primary">fas fa-phone</v-icon>
+              <v-icon class="customPointer" color="primary"
+                >fas fa-phone</v-icon
+              >
             </v-avatar>
           </v-col>
           <v-col cols="3">
@@ -62,7 +66,9 @@
               @click="sendWhatsAppMessage(friend.phoneNumber)"
               :disabled="!friend.phoneNumber"
             >
-              <v-icon class="customPointer" color="primary">fab fa-whatsapp</v-icon>
+              <v-icon class="customPointer" color="primary"
+                >fab fa-whatsapp</v-icon
+              >
             </v-avatar>
           </v-col>
         </v-row>
@@ -85,16 +91,16 @@
       </v-btn>
     </v-card>
     <v-dialog v-model="showRemoveFriendWarning" max-width="400">
-        <v-card>
-          <v-card-title class="removeFriendWarning">Are you sure?</v-card-title>
-          <v-card-actions>
-            <v-btn @click="removeFriend">Yes</v-btn>
-            <v-btn @click="showRemoveFriendWarning = false" color="primary"
-              >No</v-btn
-            >
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+      <v-card>
+        <v-card-title class="removeFriendWarning">Are you sure?</v-card-title>
+        <v-card-actions>
+          <v-btn @click="removeFriend">Yes</v-btn>
+          <v-btn @click="showRemoveFriendWarning = false" color="primary"
+            >No</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>

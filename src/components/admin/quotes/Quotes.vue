@@ -4,7 +4,7 @@
       <v-expansion-panels>
         <v-expansion-panel>
           <v-expansion-panel-header>
-            <template v-slot:default="{ open }">
+            <template v-slot:default>
               <v-row>
                 <v-col cols="4">Add Quote</v-col>
               </v-row>
@@ -19,7 +19,10 @@
         <v-data-table :loading="loading" :headers="headers" :items="quotes">
           <template v-slot:item.actions="{ item }">
             <v-btn
-              @click="showEditQuoteDialog = true; selectedQuote = item"
+              @click="
+                showEditQuoteDialog = true
+                selectedQuote = item
+              "
               color="primary"
               fab
               icon
@@ -40,14 +43,17 @@
     </v-snackbar>
     <v-dialog v-model="showEditQuoteDialog" max-width="400" eager>
       <v-card>
-        <add-quote :quote="selectedQuote" @quote-updated="updateQuote"></add-quote>
+        <add-quote
+          :quote="selectedQuote"
+          @quote-updated="updateQuote"
+        ></add-quote>
       </v-card>
     </v-dialog>
   </v-row>
 </template>
 <script>
-import { firebaseDB } from '@/services/firebaseInit.js'
 import AddQuote from './AddQuote'
+import { firebaseDB } from '@/services/firebaseInit.js'
 export default {
   components: {
     AddQuote
@@ -104,7 +110,7 @@ export default {
       this.snackIcon = 'far fa-smile'
     },
     deleteQuote(item) {
-      let vm = this
+      const vm = this
       const index = vm.quotes.findIndex((o) => o.uid === item.uid)
       if (index > -1) {
         firebaseDB

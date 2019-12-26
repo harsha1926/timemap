@@ -48,7 +48,9 @@
                 </v-list-item>
                 <v-list-item :key="1" v-if="admin">
                   <v-list-item-title>
-                    <v-btn to="/admin" color="primary" text>Admin Actions</v-btn>
+                    <v-btn to="/admin" color="primary" text
+                      >Admin Actions</v-btn
+                    >
                   </v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -57,15 +59,20 @@
         </v-container>
       </v-card-actions>
     </v-card>
-    <v-dialog v-model="showEditDisplayNameDialog" max-width="400">
-      <v-text-field
-        @keydown.enter="showEditDisplayNameDialog = false"
-        :value="displayName"
-        @input="updateDisplayName"
-        hide-details
-        single-line
-        solo
-      ></v-text-field>
+    <v-dialog v-model="showEditDisplayNameDialog" max-width="400" eager>
+      <v-card>
+        <v-card-text>
+          <v-text-field
+            ref="editName"
+            @keydown.enter="showEditDisplayNameDialog = false"
+            :value="displayName"
+            @input="updateDisplayName"
+            class="nameTitle"
+            hide-details
+            single-line
+          ></v-text-field>
+        </v-card-text>
+      </v-card>
     </v-dialog>
   </v-row>
 </template>
@@ -80,8 +87,8 @@ export default {
   computed: {
     ...mapGetters('user', ['uid', 'displayName', 'photoURL', 'phoneNumber'])
   },
-  mounted: function() {
-    let vm = this
+  mounted() {
+    const vm = this
     firebaseDB.ref('admins/' + vm.uid).once('value', function(snapshot) {
       if (snapshot.val()) {
         vm.admin = true
@@ -95,6 +102,11 @@ export default {
     },
     openEditDisplayNameDialog() {
       this.showEditDisplayNameDialog = true
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.$refs.editName.focus()
+        }, 10)
+      })
     },
     logout() {
       const vm = this
