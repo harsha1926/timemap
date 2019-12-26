@@ -46,6 +46,11 @@
                     <v-btn color="primary" text>Logout</v-btn>
                   </v-list-item-title>
                 </v-list-item>
+                <v-list-item :key="1" v-if="admin">
+                  <v-list-item-title>
+                    <v-btn to="/admin" color="primary" text>Admin Actions</v-btn>
+                  </v-list-item-title>
+                </v-list-item>
               </v-list>
             </v-menu>
           </v-row>
@@ -69,10 +74,19 @@ import { mapGetters, mapActions } from 'vuex'
 import { auth, firebaseDB } from '@/services/firebaseInit.js'
 export default {
   data: () => ({
-    showEditDisplayNameDialog: false
+    showEditDisplayNameDialog: false,
+    admin: false
   }),
   computed: {
     ...mapGetters('user', ['uid', 'displayName', 'photoURL', 'phoneNumber'])
+  },
+  mounted: function() {
+    let vm = this
+    firebaseDB.ref('admins/' + vm.uid).once('value', function(snapshot) {
+      if (snapshot.val()) {
+        vm.admin = true
+      }
+    })
   },
   methods: {
     ...mapActions('user', ['removeUser', 'addDisplayName']),
