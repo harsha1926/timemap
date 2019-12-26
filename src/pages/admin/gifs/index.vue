@@ -1,11 +1,11 @@
 <template>
-  <add-gif />
+  <gifs />
 </template>
 <script>
-import AddGif from '~/components/admin/AddGIF'
+import Gifs from '~/components/admin/gifs/GIFs'
 export default {
   components: {
-    AddGif
+    Gifs
   }
 }
 </script>

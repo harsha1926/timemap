@@ -11,7 +11,7 @@
         class="align-end"
       >
         <v-row justify="end" align="center" class="ma-2">
-          <v-btn @click="openImageSelector" color="primary" fab icon>
+          <v-btn color="primary" fab icon>
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-row>
