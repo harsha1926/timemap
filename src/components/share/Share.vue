@@ -1,3 +1,3 @@
 <template>
-  <v-card class="mx-auto" max-width="400">Coming soon</v-card>
+  <v-container class="mx-auto" max-width="400">Coming soon</v-container>
 </template>

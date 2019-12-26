@@ -83,7 +83,8 @@
       >
         <v-icon>mdi-close</v-icon>
       </v-btn>
-      <v-dialog v-model="showRemoveFriendWarning" max-width="400">
+    </v-card>
+    <v-dialog v-model="showRemoveFriendWarning" max-width="400">
         <v-card>
           <v-card-title class="removeFriendWarning">Are you sure?</v-card-title>
           <v-card-actions>
@@ -94,7 +95,6 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-    </v-card>
   </v-container>
 </template>
 <script>
