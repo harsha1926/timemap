@@ -29,9 +29,7 @@
             ></v-autocomplete>
           </v-col>
           <v-col cols="3">
-            <v-btn @click="openAddCategoryDialog" text color="primary"
-              >Add</v-btn
-            >
+            <v-btn @click="openAddCategoryDialog" text color="primary">Add</v-btn>
           </v-col>
         </v-row>
       </v-form>
@@ -40,16 +38,11 @@
         align="center"
         justify="center"
         class="overline error--text ma-2 pa-2"
-        >{{ errorMsg }}</v-row
-      >
+      >{{ errorMsg }}</v-row>
       <v-dialog v-model="showAddCategoryDialog">
         <v-card>
           <v-card-text>
-            <v-text-field
-              v-model="newCategory"
-              single-line
-              label="New Category"
-            ></v-text-field>
+            <v-text-field v-model="newCategory" single-line label="New Category"></v-text-field>
             <v-row justify="end">
               <v-btn @click="addCategory" color="primary">Save</v-btn>
             </v-row>
@@ -60,6 +53,7 @@
     <v-card-actions>
       <v-row justify="end" class="ma-2 pa-2">
         <v-btn v-if="!quote" @click="addQuote" color="primary">Submit</v-btn>
+        <v-btn v-if="quote" @click="$emit('dialog-closed')">Close</v-btn>
         <v-btn v-if="quote" @click="addQuote" color="primary">Update</v-btn>
       </v-row>
     </v-card-actions>

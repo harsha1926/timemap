@@ -51,7 +51,11 @@
     </v-snackbar>
     <v-dialog v-model="showEditGIFDialog" max-width="400" eager>
       <v-card>
-        <add-gif :gif="selectedGIF" @gif-updated="updateGIF"></add-gif>
+        <add-gif
+          :gif="selectedGIF"
+          @gif-updated="updateGIF"
+          @dialog-closed="showEditGIFDialog = false"
+        ></add-gif>
       </v-card>
     </v-dialog>
   </v-row>

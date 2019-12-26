@@ -46,6 +46,7 @@
         <add-quote
           :quote="selectedQuote"
           @quote-updated="updateQuote"
+          @dialog-closed="showEditQuoteDialog = false"
         ></add-quote>
       </v-card>
     </v-dialog>
