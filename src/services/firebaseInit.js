@@ -1,6 +1,6 @@
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
-import 'firebase/firestore'
+import 'firebase/storage'
 import 'firebase/database'
 export const apiKey = 'AIzaSyAy3NsjnLLa6xRIRbWMXjvHq_0jMZO0YTY'
 const config = {
@@ -19,5 +19,5 @@ export const FacebookProvider = new firebase.auth.FacebookAuthProvider()
 export const PhoneProvider = new firebase.auth.PhoneAuthProvider()
 export const auth = firebase.auth()
 export const firebaseDB = firebase.database()
-export const firebaseStore = firebase.firestore()
+export const firebaseStorage = firebase.storage()
 export default firebase

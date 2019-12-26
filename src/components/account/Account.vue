@@ -1,19 +1,27 @@
 <template>
   <v-row wrap justify="center" class="pa-2">
-    <input ref="imageUpdate" v-show="false" accept="image/*" type="file" />
+    <input
+      ref="imageUpdate"
+      v-show="false"
+      @change="updateImage"
+      accept="image/*"
+      type="file"
+    />
     <v-card max-width="400">
       <v-img
-        @click="openImageSelector"
         v-if="photoURL"
+        @click="$refs.imageUpdate.click()"
         :src="photoURL"
         height="300px"
         content
-        class="align-end"
+        class="align-center"
       >
-        <v-row justify="end" align="center" class="ma-2">
-          <v-btn color="primary" fab icon>
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
+        <v-row justify="center">
+          <v-progress-circular
+            v-if="loadingImage"
+            color="white"
+            indeterminate
+          ></v-progress-circular>
         </v-row>
       </v-img>
       <v-card-subtitle>
@@ -78,11 +86,12 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { auth, firebaseDB } from '@/services/firebaseInit.js'
+import { auth, firebaseDB, firebaseStorage } from '@/services/firebaseInit.js'
 export default {
   data: () => ({
     showEditDisplayNameDialog: false,
-    admin: false
+    admin: false,
+    loadingImage: false
   }),
   computed: {
     ...mapGetters('user', ['uid', 'displayName', 'photoURL', 'phoneNumber'])
@@ -96,9 +105,26 @@ export default {
     })
   },
   methods: {
-    ...mapActions('user', ['removeUser', 'addDisplayName']),
-    openImageSelector() {
-      this.$refs.imageUpdate.click()
+    ...mapActions('user', ['removeUser', 'addDisplayName', 'addPhotoURL']),
+    updateImage(e) {
+      const vm = this
+      const storageRef = firebaseStorage.ref('users/' + vm.uid)
+      const files = e.target.files
+      if (files.length > 0) {
+        vm.loadingImage = true
+        storageRef.put(files[0]).then(() => {
+          storageRef.getDownloadURL().then((url) => {
+            firebaseDB
+              .ref('users')
+              .child(vm.uid)
+              .update({
+                photoURL: url
+              })
+            vm.addPhotoURL(url)
+            vm.loadingImage = false
+          })
+        })
+      }
     },
     openEditDisplayNameDialog() {
       this.showEditDisplayNameDialog = true
