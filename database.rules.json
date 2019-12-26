@@ -7,10 +7,10 @@
       ".indexOn": ["email"]
     },
 	"gifs": {
-      ".indexOn": ["activity"]
+      ".indexOn": ["activity","category"]
     },
 	"quotes": {
-      ".indexOn": ["activity"]
+      ".indexOn": ["activity","category"]
     }
   }
 }

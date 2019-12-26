@@ -11,12 +11,12 @@
         height="200px"
         gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
       >
-        <v-row class="ma-2 userTime" justify="start">{{
-          localTimeFormattedString
-        }}</v-row>
-        <v-row class="ma-2 activityHeading" justify="start">{{
-          activityHeading
-        }}</v-row>
+        <v-row class="ma-2 userTime" justify="start">
+          {{ localTimeFormattedString }}
+        </v-row>
+        <v-row class="ma-2 activityHeading" justify="start">
+          {{ activityHeading }}
+        </v-row>
         <v-row class="ma-3 quote" justify="start">{{ activityQuote }}</v-row>
       </v-img>
 
@@ -28,9 +28,9 @@
             </v-avatar>
           </v-col>
           <v-col cols="9">
-            <span class="displayName font-weight-bold">{{
-              displayNameCaptilize
-            }}</span>
+            <span class="displayName font-weight-bold">
+              {{ displayNameCaptilize }}
+            </span>
           </v-col>
         </v-row>
       </v-card-text>
@@ -116,6 +116,12 @@ export default {
       default() {
         return null
       }
+    },
+    category: {
+      type: String,
+      default() {
+        return 'funny'
+      }
     }
   },
   data() {
@@ -199,27 +205,39 @@ export default {
     activity: {
       handler(newVal) {
         if (newVal) {
+          let backupURL = null
+          let backupQuote = null
           const vm = this
           firebaseDB
             .ref('gifs')
             .orderByChild('activity')
-            .limitToLast(1)
             .equalTo(newVal)
             .once('value', function(snapshot) {
               snapshot.forEach((data) => {
-                if (data.val()) vm.activityPhoto = data.val().url
+                backupURL = data.val().url
+                if (data.val() && data.val().category === vm.category) {
+                  vm.activityPhoto = data.val().url
+                }
               })
+              if (!vm.activityPhoto) {
+                vm.activityPhoto = backupURL
+              }
             })
 
           firebaseDB
             .ref('quotes')
             .orderByChild('activity')
-            .limitToLast(1)
             .equalTo(newVal)
             .once('value', function(snapshot) {
               snapshot.forEach((data) => {
-                if (data.val()) vm.activityQuote = data.val().quote
+                backupQuote = data.val().quote
+                if (data.val() && data.val().category === vm.category) {
+                  vm.activityQuote = data.val().quote
+                }
               })
+              if (!vm.activityPhoto) {
+                vm.activityQuote = backupQuote
+              }
             })
         }
       }
@@ -239,7 +257,7 @@ export default {
         .ref('users/' + vm.friendId)
         .once('value', function(data) {
           vm.friend = data.val()
-          if (vm.friend.currentLocation) {
+          if (vm.friend && vm.friend.currentLocation) {
             vm.lastUpdated = vm.friend.currentLocation.lastUpdated
             fetchTimezone(
               vm.friend.currentLocation.latitude,

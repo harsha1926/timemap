@@ -1,7 +1,11 @@
 <template>
   <v-row wrap>
     <v-flex v-for="friendId in friendIds" :key="friendId" xs12 sm6 md4 la3 xl2>
-      <friend :friendId="friendId" @friendRemoved="friendRemoved" />
+      <friend
+        :friendId="friendId"
+        @friendRemoved="friendRemoved"
+        :category="category"
+      />
     </v-flex>
     <v-snackbar
       v-model="showFriendRemovedSnackbar"
@@ -25,15 +29,20 @@ export default {
     return {
       showFriendRemovedSnackbar: false,
       removedFriendName: '',
-      friendIds: []
+      friendIds: [],
+      categories: []
     }
   },
   computed: {
-    ...mapGetters('user', ['uid'])
+    ...mapGetters('user', ['uid']),
+    category() {
+      return this.categories[Math.floor(Math.random() * this.categories.length)]
+    }
   },
   mounted() {
     const vm = this
     vm.fetchFriendsList()
+    vm.fetchRandomCategory()
   },
   methods: {
     friendRemoved(removedFriend) {
@@ -50,6 +59,14 @@ export default {
         vm.friendIds = []
         friends.forEach((friend) => {
           vm.friendIds.push(friend.key)
+        })
+      })
+    },
+    fetchRandomCategory() {
+      const vm = this
+      firebaseDB.ref('categories').once('value', function(categories) {
+        categories.forEach((category) => {
+          if (category.key) vm.categories.push(category.key)
         })
       })
     }
