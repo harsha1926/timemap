@@ -38,7 +38,7 @@
         <v-row>
           <v-col cols="3">
             <v-avatar @click="sendEmailMessage(friend.email)">
-              <v-icon color="primary">far fa-envelope</v-icon>
+              <v-icon class="customPointer" color="primary">far fa-envelope</v-icon>
             </v-avatar>
           </v-col>
           <v-col cols="3">
@@ -46,7 +46,7 @@
               @click="sendTextMessage(friend.phoneNumber)"
               :disabled="!friend.phoneNumber"
             >
-              <v-icon color="primary">mdi-message</v-icon>
+              <v-icon class="customPointer" color="primary">mdi-message</v-icon>
             </v-avatar>
           </v-col>
           <v-col cols="3">
@@ -54,7 +54,7 @@
               @click="callPhone(friend.phoneNumber)"
               :disabled="!friend.phoneNumber"
             >
-              <v-icon color="primary">fas fa-phone</v-icon>
+              <v-icon class="customPointer" color="primary">fas fa-phone</v-icon>
             </v-avatar>
           </v-col>
           <v-col cols="3">
@@ -62,7 +62,7 @@
               @click="sendWhatsAppMessage(friend.phoneNumber)"
               :disabled="!friend.phoneNumber"
             >
-              <v-icon color="primary">fab fa-whatsapp</v-icon>
+              <v-icon class="customPointer" color="primary">fab fa-whatsapp</v-icon>
             </v-avatar>
           </v-col>
         </v-row>
@@ -378,5 +378,8 @@ export default {
 .removeFriendWarning {
   font-family: 'Lexend Mega', sans-serif;
   font-size: 20px;
+}
+.customPointer {
+  cursor: pointer;
 }
 </style>
