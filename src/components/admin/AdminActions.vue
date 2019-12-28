@@ -2,7 +2,9 @@
   <v-container fluid fill-height style="height: 85vh; max-height: 85%;">
     <v-row wrap align="center" justify="center">
       <v-card>
-        <v-card-title class="nameTitle primary--text">Admin Actions</v-card-title>
+        <v-card-title class="nameTitle primary--text"
+          >Admin Actions</v-card-title
+        >
         <v-card-text>
           <v-row>
             <v-flex>

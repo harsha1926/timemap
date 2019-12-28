@@ -22,9 +22,9 @@
               <template v-slot:item.actions="{ item }">
                 <v-btn
                   @click="
-                showEditQuoteDialog = true
-                selectedQuote = item
-              "
+                    showEditQuoteDialog = true
+                    selectedQuote = item
+                  "
                   color="primary"
                   fab
                   icon
@@ -32,7 +32,13 @@
                 >
                   <v-icon>mdi-pencil</v-icon>
                 </v-btn>
-                <v-btn @click="deleteQuote(item)" color="primary" fab icon x-small>
+                <v-btn
+                  @click="deleteQuote(item)"
+                  color="primary"
+                  fab
+                  icon
+                  x-small
+                >
                   <v-icon>mdi-delete</v-icon>
                 </v-btn>
               </template>

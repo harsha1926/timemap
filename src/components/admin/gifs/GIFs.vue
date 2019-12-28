@@ -30,9 +30,9 @@
               <template v-slot:item.actions="{ item }">
                 <v-btn
                   @click="
-                showEditGIFDialog = true
-                selectedGIF = item
-              "
+                    showEditGIFDialog = true
+                    selectedGIF = item
+                  "
                   color="primary"
                   fab
                   icon
@@ -40,7 +40,13 @@
                 >
                   <v-icon>mdi-pencil</v-icon>
                 </v-btn>
-                <v-btn @click="deleteGIF(item)" color="primary" fab icon x-small>
+                <v-btn
+                  @click="deleteGIF(item)"
+                  color="primary"
+                  fab
+                  icon
+                  x-small
+                >
                   <v-icon>mdi-delete</v-icon>
                 </v-btn>
               </template>

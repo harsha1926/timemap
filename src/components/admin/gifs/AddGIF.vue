@@ -7,9 +7,9 @@
             <v-row class="ma-1 pa-1">
               <v-col cols="12">
                 <v-text-field
-                  hide-details
                   v-model="url"
                   :rules="[rules.required]"
+                  hide-details
                   label="URL"
                   outlined
                   clearable
@@ -28,10 +28,10 @@
             <v-row class="ma-1 pa-1">
               <v-col cols="12">
                 <v-autocomplete
-                  hide-details
                   :items="activities"
                   v-model="activity"
                   :rules="[rules.required]"
+                  hide-details
                   label="Activity"
                   outlined
                   clearable
@@ -43,24 +43,28 @@
             <v-row class="ma-1 pa-1">
               <v-col cols="8">
                 <v-autocomplete
-                  hide-details
                   :items="categories"
                   v-model="category"
                   :rules="[rules.required]"
+                  hide-details
                   label="Category"
                   outlined
                   clearable
                 ></v-autocomplete>
               </v-col>
               <v-col cols="4">
-                <v-btn @click="openAddCategoryDialog" text color="primary">Add</v-btn>
+                <v-btn @click="openAddCategoryDialog" text color="primary"
+                  >Add</v-btn
+                >
               </v-col>
             </v-row>
           </v-flex>
           <v-flex>
             <v-row class="ma-1 pa-1">
               <v-col cols="12">
-                <v-btn v-if="!gif" @click="addGIF" color="primary">Submit</v-btn>
+                <v-btn v-if="!gif" @click="addGIF" color="primary"
+                  >Submit</v-btn
+                >
                 <v-btn v-if="gif" @click="$emit('dialog-closed')">Close</v-btn>
                 <v-btn v-if="gif" @click="addGIF" color="primary">Update</v-btn>
               </v-col>
@@ -73,11 +77,16 @@
         align="center"
         justify="center"
         class="overline error--text ma-2 pa-2"
-      >{{ errorMsg }}</v-row>
+        >{{ errorMsg }}</v-row
+      >
       <v-dialog v-model="showAddCategoryDialog" max-width="400">
         <v-card>
           <v-card-text>
-            <v-text-field v-model="newCategory" single-line label="New Category"></v-text-field>
+            <v-text-field
+              v-model="newCategory"
+              single-line
+              label="New Category"
+            ></v-text-field>
             <v-row justify="end">
               <v-btn @click="addCategory" color="primary">Save</v-btn>
             </v-row>

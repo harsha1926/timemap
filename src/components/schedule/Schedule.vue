@@ -19,7 +19,11 @@
       <v-tabs-items v-model="tab">
         <v-tab-item :key="0">
           <v-timeline v-if="schedule && schedule.weekday" align-top dense>
-            <v-timeline-item color="primary" v-for="activity in weekdayRoutine" :key="activity.id">
+            <v-timeline-item
+              v-for="activity in weekdayRoutine"
+              :key="activity.id"
+              color="primary"
+            >
               <template v-slot:icon>
                 <v-avatar color="grey darken-3">
                   <v-img :src="activity.gif" class="elevation-6"></v-img>
