@@ -1,12 +1,6 @@
 <template>
   <v-row wrap justify="center" class="pa-2">
-    <input
-      ref="imageUpdate"
-      v-show="false"
-      @change="updateImage"
-      accept="image/*"
-      type="file"
-    />
+    <input ref="imageUpdate" v-show="false" @change="updateImage" accept="image/*" type="file" />
     <v-card max-width="400">
       <v-img
         v-if="photoURL"
@@ -17,11 +11,7 @@
         class="align-center"
       >
         <v-row justify="center">
-          <v-progress-circular
-            v-if="loadingImage"
-            color="white"
-            indeterminate
-          ></v-progress-circular>
+          <v-progress-circular v-if="loadingImage" color="white" indeterminate></v-progress-circular>
         </v-row>
       </v-img>
       <v-card-subtitle>
@@ -41,7 +31,7 @@
       <v-card-actions>
         <v-container>
           <v-row justify="space-between" align="center">
-            <v-btn to="/schedule" color="primary">Update your schedule</v-btn>
+            <v-btn to="/schedule" color="primary">My Routine</v-btn>
             <v-menu offset-y left>
               <template v-slot:activator="{ on }">
                 <v-btn v-on="on" color="primary" fab icon>
@@ -56,9 +46,7 @@
                 </v-list-item>
                 <v-list-item :key="1" v-if="admin">
                   <v-list-item-title>
-                    <v-btn to="/admin" color="primary" text
-                      >Admin Actions</v-btn
-                    >
+                    <v-btn to="/admin" color="primary" text>Admin Actions</v-btn>
                   </v-list-item-title>
                 </v-list-item>
               </v-list>

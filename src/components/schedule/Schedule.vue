@@ -1,59 +1,49 @@
 <template>
-  <v-container fluid>
-    <v-tabs v-model="tab" grow>
-      <v-tab :key="0">Weekday</v-tab>
-      <v-tab :key="1">Weekend</v-tab>
-    </v-tabs>
-
-    <v-tabs-items v-model="tab">
-      <v-tab-item :key="0">
-        <v-timeline align-top dense v-if="schedule && schedule.weekday">
-          <v-timeline-item color="primary" small>
-            <v-row class="pt-1" justify="space-between">
-              <v-col cols="4">
-                <strong>{{ formatTime(weekdayStartTime) }}</strong>
-              </v-col>
-              <v-col>
-                <strong>Good Morning!</strong>
-              </v-col>
-            </v-row>
-          </v-timeline-item>
-
-          <v-timeline-item
-            color="primary"
-            small
-            v-for="activity in weekdayRoutine"
-            :key="activity.id"
-          >
-            <v-row class="pt-1" justify="space-between">
-              <v-col cols="4">
-                <strong>{{ formatTime(activity.startTime) }}</strong>
-              </v-col>
-              <v-col>
-                <strong>{{ activity.id }}</strong>
-              </v-col>
-            </v-row>
-          </v-timeline-item>
-
-          <v-timeline-item color="primary" small>
-            <v-row class="pt-1" justify="space-between">
-              <v-col cols="4">
-                <strong>{{ formatTime(weekdayEndTime) }}</strong>
-              </v-col>
-              <v-col>
-                <strong>Good Night!</strong>
-              </v-col>
-            </v-row>
-          </v-timeline-item>
-        </v-timeline>
-      </v-tab-item>
-    </v-tabs-items>
-  </v-container>
+  <v-card class="mx-auto" max-width="400">
+    <v-card flat>
+      <v-img
+        height="200px"
+        src="https://media1.tenor.com/images/b30caa3463074c95d1dd35b06d3e21f5/tenor.gif?itemid=4529604"
+        gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
+      >
+        <v-row align="start" justify="start" class="pa-2 ma-2 white--text">
+          <div class="headline font-weight-light">My Routine</div>
+        </v-row>
+      </v-img>
+    </v-card>
+    <v-card-text class="py-0">
+      <v-tabs v-model="tab" grow>
+        <v-tab :key="0">Weekday</v-tab>
+        <v-tab :key="1">Weekend</v-tab>
+      </v-tabs>
+      <v-tabs-items v-model="tab">
+        <v-tab-item :key="0">
+          <v-timeline v-if="schedule && schedule.weekday" align-top dense>
+            <v-timeline-item color="primary" v-for="activity in weekdayRoutine" :key="activity.id">
+              <template v-slot:icon>
+                <v-avatar color="grey darken-3">
+                  <v-img :src="activity.gif" class="elevation-6"></v-img>
+                </v-avatar>
+              </template>
+              <v-row justify="space-between">
+                <v-col cols="4">
+                  <strong>{{ formatTime(activity.startTime) }}</strong>
+                </v-col>
+                <v-col>
+                  <strong>{{ activity.title }}</strong>
+                </v-col>
+              </v-row>
+            </v-timeline-item>
+          </v-timeline>
+        </v-tab-item>
+      </v-tabs-items>
+    </v-card-text>
+  </v-card>
 </template>
 <script>
-import { firebaseDB } from '@/services/firebaseInit.js'
 import { mapGetters } from 'vuex'
 import moment from 'moment'
+import { firebaseDB } from '@/services/firebaseInit.js'
 export default {
   data() {
     return {
@@ -63,30 +53,21 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['uid']),
-    weekdayStartTime: function() {
-      if (this.schedule && this.schedule.weekday)
-        return this.schedule.weekday.dayStartTime
-      else return null
-    },
-    weekdayEndTime: function() {
-      if (this.schedule && this.schedule.weekday)
-        return this.schedule.weekday.dayEndTime
-      else return null
-    },
-    weekdayRoutine: function() {
+    weekdayRoutine() {
       if (this.schedule && this.schedule.weekday) {
         let activities = []
-        for (let activity in this.schedule.weekday.routine) {
+        for (const activity in this.schedule.weekday) {
           activities.push({
             id: activity,
-            title: this.schedule.weekday.routine[activity].title,
-            startTime: this.schedule.weekday.routine[activity].startTime,
-            duration: this.schedule.weekday.routine[activity].duration
+            title: this.schedule.weekday[activity].title,
+            startTime: this.schedule.weekday[activity].startTime,
+            duration: this.schedule.weekday[activity].duration,
+            gif: this.schedule.weekday[activity].startGIF
           })
         }
         activities = activities.sort((a, b) => {
-          let aStartTime = moment(a.startTime, 'HH:mm:ss')
-          let bStartTime = moment(b.startTime, 'HH:mm:ss')
+          const aStartTime = moment(a.startTime, 'HH:mm:ss')
+          const bStartTime = moment(b.startTime, 'HH:mm:ss')
           if (aStartTime.isAfter(bStartTime)) {
             return 1
           } else if (aStartTime.isBefore(bStartTime)) {
@@ -99,12 +80,12 @@ export default {
       } else return []
     }
   },
-  mounted: function() {
-    let vm = this
-    firebaseDB.ref('schedule/' + vm.uid).once('value', function(data) {
+  mounted() {
+    const vm = this
+    firebaseDB.ref('schedule1/' + vm.uid).once('value', function(data) {
       if (data.val()) vm.schedule = data.val()
       else
-        firebaseDB.ref('schedule/default').once('value', function(data) {
+        firebaseDB.ref('schedule1/default').once('value', function(data) {
           vm.schedule = data.val()
         })
     })

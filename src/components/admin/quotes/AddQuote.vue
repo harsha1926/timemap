@@ -2,37 +2,63 @@
   <v-card :disabled="loading">
     <v-card-text>
       <v-form ref="form" v-model="valid">
-        <v-text-field
-          v-model="quoteText"
-          :rules="[rules.required]"
-          label="Quote"
-          outlined
-          clearable
-        ></v-text-field>
-        <v-autocomplete
-          :items="activities"
-          v-model="activity"
-          :rules="[rules.required]"
-          label="Activity"
-          outlined
-          clearable
-        ></v-autocomplete>
-        <v-row align="center" justify="center">
-          <v-col cols="9">
-            <v-autocomplete
-              :items="categories"
-              v-model="category"
-              :rules="[rules.required]"
-              label="Category"
-              outlined
-              clearable
-            ></v-autocomplete>
-          </v-col>
-          <v-col cols="3">
-            <v-btn @click="openAddCategoryDialog" text color="primary"
-              >Add</v-btn
-            >
-          </v-col>
+        <v-row justify="center" wrap>
+          <v-flex>
+            <v-row class="ma-1 pa-1">
+              <v-col cols="12">
+                <v-text-field
+                  hide-details
+                  v-model="quoteText"
+                  :rules="[rules.required]"
+                  label="Quote"
+                  outlined
+                  clearable
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-flex>
+          <v-flex>
+            <v-row class="ma-1 pa-1">
+              <v-col cols="12">
+                <v-autocomplete
+                  hide-details
+                  :items="activities"
+                  v-model="activity"
+                  :rules="[rules.required]"
+                  label="Activity"
+                  outlined
+                  clearable
+                ></v-autocomplete>
+              </v-col>
+            </v-row>
+          </v-flex>
+          <v-flex>
+            <v-row class="ma-1 pa-1">
+              <v-col cols="9">
+                <v-autocomplete
+                  hide-details
+                  :items="categories"
+                  v-model="category"
+                  :rules="[rules.required]"
+                  label="Category"
+                  outlined
+                  clearable
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="3">
+                <v-btn @click="openAddCategoryDialog" text color="primary">Add</v-btn>
+              </v-col>
+            </v-row>
+          </v-flex>
+          <v-flex>
+            <v-row class="ma-1 pa-1">
+              <v-col cols="12">
+                <v-btn v-if="!quote" @click="addQuote" color="primary">Submit</v-btn>
+                <v-btn v-if="quote" @click="$emit('dialog-closed')">Close</v-btn>
+                <v-btn v-if="quote" @click="addQuote" color="primary">Update</v-btn>
+              </v-col>
+            </v-row>
+          </v-flex>
         </v-row>
       </v-form>
       <v-row
@@ -40,16 +66,11 @@
         align="center"
         justify="center"
         class="overline error--text ma-2 pa-2"
-        >{{ errorMsg }}</v-row
-      >
+      >{{ errorMsg }}</v-row>
       <v-dialog v-model="showAddCategoryDialog">
         <v-card>
           <v-card-text>
-            <v-text-field
-              v-model="newCategory"
-              single-line
-              label="New Category"
-            ></v-text-field>
+            <v-text-field v-model="newCategory" single-line label="New Category"></v-text-field>
             <v-row justify="end">
               <v-btn @click="addCategory" color="primary">Save</v-btn>
             </v-row>
@@ -57,13 +78,6 @@
         </v-card>
       </v-dialog>
     </v-card-text>
-    <v-card-actions>
-      <v-row justify="end" class="ma-2 pa-2">
-        <v-btn v-if="!quote" @click="addQuote" color="primary">Submit</v-btn>
-        <v-btn v-if="quote" @click="$emit('dialog-closed')">Close</v-btn>
-        <v-btn v-if="quote" @click="addQuote" color="primary">Update</v-btn>
-      </v-row>
-    </v-card-actions>
   </v-card>
 </template>
 <script>

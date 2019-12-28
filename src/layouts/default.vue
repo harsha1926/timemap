@@ -6,9 +6,7 @@
       </v-avatar>
       <span class="appTitle primary--text">TIMEMAP</span>
       <v-row justify="end" align="center">
-        <span v-if="displayName" class="appGreeting mr-5 d-none d-sm-block"
-          >Hello {{ displayName }}</span
-        >
+        <span v-if="displayName" class="appGreeting mr-5 d-none d-sm-block">Hello {{ displayName }}</span>
         <v-btn fab icon to="/account">
           <v-avatar v-if="photoURL" class size="40">
             <v-img :src="photoURL"></v-img>

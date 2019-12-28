@@ -1,55 +1,59 @@
 <template>
   <v-row align="center" justify="center">
-    <v-card max-width="400">
-      <v-expansion-panels>
-        <v-expansion-panel>
-          <v-expansion-panel-header>
-            <template v-slot:default>
-              <v-row>
-                <v-col cols="4">Add Quote</v-col>
-              </v-row>
-            </template>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content>
-            <add-quote @quote-added="addQuote"></add-quote>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
+    <v-flex>
       <v-card>
-        <v-data-table :loading="loading" :headers="headers" :items="quotes">
-          <template v-slot:item.actions="{ item }">
-            <v-btn
-              @click="
+        <v-card-text>
+          <v-expansion-panels>
+            <v-expansion-panel>
+              <v-expansion-panel-header>
+                <template v-slot:default>
+                  <v-row>
+                    <v-col cols="4">Add Quote</v-col>
+                  </v-row>
+                </template>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <add-quote @quote-added="addQuote"></add-quote>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+          <v-card>
+            <v-data-table :loading="loading" :headers="headers" :items="quotes">
+              <template v-slot:item.actions="{ item }">
+                <v-btn
+                  @click="
                 showEditQuoteDialog = true
                 selectedQuote = item
               "
-              color="primary"
-              fab
-              icon
-              x-small
-            >
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-            <v-btn @click="deleteQuote(item)" color="primary" fab icon x-small>
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </template>
-        </v-data-table>
+                  color="primary"
+                  fab
+                  icon
+                  x-small
+                >
+                  <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+                <v-btn @click="deleteQuote(item)" color="primary" fab icon x-small>
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+              </template>
+            </v-data-table>
+          </v-card>
+        </v-card-text>
       </v-card>
-    </v-card>
-    <v-snackbar v-model="showSnackbar" :timeout="1000" :color="snackColor">
-      {{ snackText }}
-      <v-icon>{{ snackIcon }}</v-icon>
-    </v-snackbar>
-    <v-dialog v-model="showEditQuoteDialog" max-width="400" eager>
-      <v-card>
-        <add-quote
-          :quote="selectedQuote"
-          @quote-updated="updateQuote"
-          @dialog-closed="showEditQuoteDialog = false"
-        ></add-quote>
-      </v-card>
-    </v-dialog>
+      <v-snackbar v-model="showSnackbar" :timeout="1000" :color="snackColor">
+        {{ snackText }}
+        <v-icon>{{ snackIcon }}</v-icon>
+      </v-snackbar>
+      <v-dialog v-model="showEditQuoteDialog" max-width="400" eager>
+        <v-card>
+          <add-quote
+            :quote="selectedQuote"
+            @quote-updated="updateQuote"
+            @dialog-closed="showEditQuoteDialog = false"
+          ></add-quote>
+        </v-card>
+      </v-dialog>
+    </v-flex>
   </v-row>
 </template>
 <script>
