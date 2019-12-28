@@ -1,13 +1,20 @@
 <template>
   <v-app id="timeMap">
     <v-app-bar app color="#ffffff">
-      <v-row justify="start" align="center" class="ml-1 customPointer">
-      <v-avatar tile size="30" @click="$router.push('/')">
-      <v-img src="/icon.png"></v-img>
-      </v-avatar>
-      <v-text class="ml-1 appTitle primary--text" @click="$router.push('/')">TIMEMAP</v-text>
+
+    <v-row justify="start" align="center">
+    <v-col md="auto" @click="$router.push('/')">
+    <div class="customPointer">
+      <v-row justify="start" align="center" class="ml-1">
+        <v-avatar tile size="35">
+        <v-img src="/icon.png"></v-img>
+        </v-avatar>
+        <v-text class="appTitle primary--text ml-1">TIMEMAP</v-text>  
       </v-row>
-      <v-row justify="end" align="center">
+    </div>
+    </v-col>
+    <v-col>
+        <v-row justify="end" align="center">
         <span v-if="displayName" class="appGreeting mr-5 d-none d-sm-block"
           >Hello {{ displayName }}</span
         >
@@ -17,6 +24,8 @@
           </v-avatar>
         </v-btn>
       </v-row>
+    </v-col>   
+    </v-row>
     </v-app-bar>
 
     <v-content>
