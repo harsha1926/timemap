@@ -403,7 +403,4 @@ export default {
   font-family: 'Lexend Mega', sans-serif;
   font-size: 20px;
 }
-.customPointer {
-  cursor: pointer;
-}
 </style>
