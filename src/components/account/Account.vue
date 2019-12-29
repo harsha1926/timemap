@@ -1,9 +1,5 @@
 <template>
-  <v-container
-    fluid
-    fill-height
-    style="max-width: 600px; height: 85vh; max-height: 85%;"
-  >
+  <v-container fluid fill-height style="max-width: 600px; height: 85vh; max-height: 85%;">
     <v-row justify="center" align="center">
       <v-col cols="12">
         <v-row>
@@ -24,11 +20,7 @@
             class="align-center"
           >
             <v-row justify="center">
-              <v-progress-circular
-                v-if="loadingImage"
-                color="white"
-                indeterminate
-              ></v-progress-circular>
+              <v-progress-circular v-if="loadingImage" color="white" indeterminate></v-progress-circular>
             </v-row>
           </v-img>
         </v-row>
@@ -44,19 +36,11 @@
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-row>
-        <v-row justify="space-between" align="center" class="pa-2 nameTitle">
-          <v-list>
-            <v-list-item :key="0" @click="logout">
-              <v-list-item-title>
-                <v-btn color="primary">Logout</v-btn>
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item :key="1" v-if="admin">
-              <v-list-item-title>
-                <v-btn to="/admin" color="primary">Admin Actions</v-btn>
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
+        <v-row align="center" class="pa-2 nameTitle">
+          <v-btn @click="logout" color="primary">Logout</v-btn>
+        </v-row>
+        <v-row align="center" class="pa-2 nameTitle">
+          <v-btn to="/admin" color="primary">Admin Actions</v-btn>
         </v-row>
         <v-dialog v-model="showEditDisplayNameDialog" max-width="400" eager>
           <v-card>
