@@ -2,7 +2,7 @@
   <v-container
     fluid
     fill-height
-    style="max-width: 600px; height: 85vh; max-height: 85%;"
+    style="height: 85vh; max-height: 85%;"
   >
     <v-row align="start" justify="center">
       <v-progress-circular
