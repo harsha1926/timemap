@@ -18,6 +18,10 @@ export default {
         hid: 'description',
         name: 'description',
         content: process.env.npm_package_description || ''
+      },
+      {
+        name: 'theme-color',
+        content: '#e67e22'
       }
     ],
     link: [
@@ -40,9 +44,7 @@ export default {
   /*
    ** Global CSS
    */
-  css: [
-    '~/assets/css/main.css'
-  ],
+  css: ['~/assets/css/main.css'],
   /*
    ** Plugins to load before mounting the App
    */
@@ -121,6 +123,6 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {}
+    extend(config, ctx) { }
   }
 }

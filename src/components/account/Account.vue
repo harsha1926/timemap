@@ -1,30 +1,37 @@
 <template>
-  <v-row wrap justify="center" class="pa-2">
-    <input
-      ref="imageUpdate"
-      v-show="false"
-      @change="updateImage"
-      accept="image/*"
-      type="file"
-    />
-    <v-card max-width="400">
-      <v-img
-        v-if="photoURL"
-        @click="$refs.imageUpdate.click()"
-        :src="photoURL"
-        height="300px"
-        content
-        class="align-center"
-      >
-        <v-row justify="center">
-          <v-progress-circular
-            v-if="loadingImage"
-            color="white"
-            indeterminate
-          ></v-progress-circular>
+  <v-container
+    fluid
+    fill-height
+    style="max-width: 600px; height: 85vh; max-height: 85%;"
+  >
+    <v-row justify="center" align="center">
+      <v-col cols="12">
+        <v-row>
+          <input
+            ref="imageUpdate"
+            v-show="false"
+            @change="updateImage"
+            accept="image/*"
+            type="file"
+          />
+          <v-img
+            v-if="photoURL"
+            @click="$refs.imageUpdate.click()"
+            :src="photoURL"
+            :aspect-ratio="16 / 9"
+            max-height="400"
+            content
+            class="align-center"
+          >
+            <v-row justify="center">
+              <v-progress-circular
+                v-if="loadingImage"
+                color="white"
+                indeterminate
+              ></v-progress-circular>
+            </v-row>
+          </v-img>
         </v-row>
-      </v-img>
-      <v-card-subtitle>
         <v-row justify="space-between" align="center" class="pa-2 nameTitle">
           <span v-if="displayName">{{ displayName }}</span>
           <v-btn @click="openEditDisplayNameDialog" color="primary" fab icon>
@@ -37,52 +44,38 @@
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-row>
-      </v-card-subtitle>
-      <v-card-actions>
-        <v-container>
-          <v-row justify="space-between" align="center">
-            <v-btn to="/schedule" color="primary">My Routine</v-btn>
-            <v-menu offset-y left>
-              <template v-slot:activator="{ on }">
-                <v-btn v-on="on" color="primary" fab icon>
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item :key="0" @click="logout">
-                  <v-list-item-title>
-                    <v-btn color="primary" text>Logout</v-btn>
-                  </v-list-item-title>
-                </v-list-item>
-                <v-list-item :key="1" v-if="admin">
-                  <v-list-item-title>
-                    <v-btn to="/admin" color="primary" text
-                      >Admin Actions</v-btn
-                    >
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </v-row>
-        </v-container>
-      </v-card-actions>
-    </v-card>
-    <v-dialog v-model="showEditDisplayNameDialog" max-width="400" eager>
-      <v-card>
-        <v-card-text>
-          <v-text-field
-            ref="editName"
-            @keydown.enter="showEditDisplayNameDialog = false"
-            :value="displayName"
-            @input="updateDisplayName"
-            class="nameTitle"
-            hide-details
-            single-line
-          ></v-text-field>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-  </v-row>
+        <v-row justify="space-between" align="center" class="pa-2 nameTitle">
+          <v-list>
+            <v-list-item :key="0" @click="logout">
+              <v-list-item-title>
+                <v-btn color="primary">Logout</v-btn>
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item :key="1" v-if="admin">
+              <v-list-item-title>
+                <v-btn to="/admin" color="primary">Admin Actions</v-btn>
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-row>
+        <v-dialog v-model="showEditDisplayNameDialog" max-width="400" eager>
+          <v-card>
+            <v-card-text>
+              <v-text-field
+                ref="editName"
+                @keydown.enter="showEditDisplayNameDialog = false"
+                :value="displayName"
+                @input="updateDisplayName"
+                class="nameTitle"
+                hide-details
+                single-line
+              ></v-text-field>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'

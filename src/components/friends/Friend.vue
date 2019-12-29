@@ -1,96 +1,102 @@
 <template>
-  <v-container fluid>
-    <v-skeleton-loader
-      v-if="loading"
-      class="mx-auto"
-      type="card-avatar"
-    ></v-skeleton-loader>
+  <v-container fluid class="ma-1 pa-1">
+    <v-skeleton-loader v-if="loading" type="card-avatar"></v-skeleton-loader>
     <v-card v-else-if="friend">
       <v-img
         :src="activityPhoto"
         height="200px"
-        gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
+        content
+        gradient="to top left, rgba(100,115,201,.33), rgba(25,32,72,.7)"
       >
-        <v-row class="ma-2 userTime" justify="start">
-          {{ localTimeFormattedString }}
-        </v-row>
-        <v-row class="ma-2 activityHeading" justify="start">
-          {{ activityHeading }}
-        </v-row>
-        <v-row class="ma-3 quote" justify="start">{{ activityQuote }}</v-row>
+        <v-container fill-height class="ma-0 pa-0">
+          <v-row class="ma-2 userTime">{{ localTimeFormattedString }}</v-row>
+          <v-row class="ma-2 activityHeading">{{ activityHeading }}</v-row>
+          <v-row class="ma-2 quote">{{ activityQuote }}</v-row>
+          <v-row class="ma-2 lastUpdated"
+            >Last updated at {{ lastUpdatedString }}</v-row
+          >
+        </v-container>
       </v-img>
 
-      <v-card-text class="mt-0 mb-0 pt-0 pb-0">
+      <v-card-text class="ma-1 pa-1">
         <v-row align="center">
-          <v-col cols="3">
+          <v-col cols="2">
             <v-avatar color="grey darken-3">
               <v-img :src="friend.photoURL" class="elevation-6"></v-img>
             </v-avatar>
           </v-col>
-          <v-col cols="9">
-            <span class="displayName font-weight-bold">
-              {{ displayNameCaptilize }}
-            </span>
+          <v-col cols="4">
+            <span class="displayName font-weight-bold">{{
+              displayNameCaptilize
+            }}</span>
+          </v-col>
+          <v-col cols="2">
+            <v-icon
+              @click="sendWhatsAppMessage(friend.phoneNumber)"
+              :disabled="!friend.phoneNumber"
+              class="customPointer"
+              color="primary"
+              >fab fa-whatsapp</v-icon
+            >
+          </v-col>
+          <v-col cols="2">
+            <v-icon
+              @click="callPhone(friend.phoneNumber)"
+              :disabled="!friend.phoneNumber"
+              class="customPointer"
+              color="primary"
+              >mdi-phone</v-icon
+            >
+          </v-col>
+          <v-col cols="2">
+            <v-menu offset-y>
+              <template v-slot:activator="{ on }">
+                <v-icon v-on="on" class="customPointer" color="primary"
+                  >mdi-dots-vertical</v-icon
+                >
+              </template>
+              <v-list>
+                <v-list-item>
+                  <v-list-item-title>
+                    <v-icon
+                      @click="sendTextMessage(friend.phoneNumber)"
+                      :disabled="!friend.phoneNumber"
+                      class="customPointer"
+                      color="primary"
+                      >far fa-comment-alt</v-icon
+                    >
+                  </v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-title>
+                    <v-icon
+                      @click="sendEmailMessage(friend.email)"
+                      class="customPointer"
+                      color="primary"
+                      >far fa-envelope</v-icon
+                    >
+                  </v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-title>
+                    <v-icon
+                      @click="removeFriendWarning"
+                      class="customPointer"
+                      color="error"
+                      >mdi-delete</v-icon
+                    >
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-col>
         </v-row>
       </v-card-text>
-      <v-card-actions class="mt-0 mb-0 pt-0 pb-0">
-        <v-row>
-          <v-col cols="3">
-            <v-avatar @click="sendEmailMessage(friend.email)">
-              <v-icon class="customPointer" color="primary"
-                >far fa-envelope</v-icon
-              >
-            </v-avatar>
-          </v-col>
-          <v-col cols="3">
-            <v-avatar
-              @click="sendTextMessage(friend.phoneNumber)"
-              :disabled="!friend.phoneNumber"
-            >
-              <v-icon class="customPointer" color="primary">mdi-message</v-icon>
-            </v-avatar>
-          </v-col>
-          <v-col cols="3">
-            <v-avatar
-              @click="callPhone(friend.phoneNumber)"
-              :disabled="!friend.phoneNumber"
-            >
-              <v-icon class="customPointer" color="primary"
-                >fas fa-phone</v-icon
-              >
-            </v-avatar>
-          </v-col>
-          <v-col cols="3">
-            <v-avatar
-              @click="sendWhatsAppMessage(friend.phoneNumber)"
-              :disabled="!friend.phoneNumber"
-            >
-              <v-icon class="customPointer" color="primary"
-                >fab fa-whatsapp</v-icon
-              >
-            </v-avatar>
-          </v-col>
-        </v-row>
-      </v-card-actions>
-      <v-row>
-        <span class="lastUpdated mb-3 ml-5"
-          >Last updated at {{ lastUpdatedString }}</span
-        >
-      </v-row>
-      <v-btn
-        @click="removeFriendWarning"
-        color="primary"
-        x-small
-        absolute
-        top
-        right
-        fab
-      >
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
+      <!-- <v-row>
+        <span class="lastUpdated mb-3 ml-5">Last updated at {{ lastUpdatedString }}</span>
+      </v-row>-->
     </v-card>
-    <v-dialog v-model="showRemoveFriendWarning" max-width="400">
+    <v-dialog v-model="showRemoveFriendWarning" max-width="600">
       <v-card>
         <v-card-title class="removeFriendWarning">Are you sure?</v-card-title>
         <v-card-actions>
@@ -396,8 +402,8 @@ export default {
 }
 .lastUpdated {
   font-family: 'Lexend Mega', sans-serif;
+  color: #ffffff;
   font-size: 9px;
-  color: #c0bcbc;
 }
 .removeFriendWarning {
   font-family: 'Lexend Mega', sans-serif;

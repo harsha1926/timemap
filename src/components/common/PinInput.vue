@@ -1,5 +1,5 @@
 <template>
-  <v-row align="center" justify="center" class="mb-5">
+  <v-row align="center" justify="center">
     <input
       ref="pinInput"
       v-mask="'######'"

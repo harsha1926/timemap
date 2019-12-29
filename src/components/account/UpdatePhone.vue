@@ -15,8 +15,7 @@
               :preferredCountries="['CA', 'IN', 'US']"
               placeholder="Enter your new phone number"
               name="telInput"
-            >
-            </vue-tel-input>
+            ></vue-tel-input>
           </v-card-text>
           <v-card-actions>
             <v-row justify="end" class="mr-5 mb-2">

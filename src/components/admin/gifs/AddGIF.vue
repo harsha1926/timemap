@@ -2,74 +2,62 @@
   <v-card :disabled="loading">
     <v-card-text>
       <v-form ref="form" v-model="valid">
-        <v-row justify="center" wrap>
-          <v-flex>
-            <v-row class="ma-1 pa-1">
-              <v-col cols="12">
-                <v-text-field
-                  v-model="url"
-                  :rules="[rules.required]"
-                  hide-details
-                  label="URL"
-                  outlined
-                  clearable
-                ></v-text-field>
-                <v-card v-if="url">
-                  <v-img
-                    :src="url"
-                    height="200px"
-                    gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
-                  ></v-img>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-flex>
-          <v-flex>
-            <v-row class="ma-1 pa-1">
-              <v-col cols="12">
-                <v-autocomplete
-                  :items="activities"
-                  v-model="activity"
-                  :rules="[rules.required]"
-                  hide-details
-                  label="Activity"
-                  outlined
-                  clearable
-                ></v-autocomplete>
-              </v-col>
-            </v-row>
-          </v-flex>
-          <v-flex>
-            <v-row class="ma-1 pa-1">
-              <v-col cols="8">
-                <v-autocomplete
-                  :items="categories"
-                  v-model="category"
-                  :rules="[rules.required]"
-                  hide-details
-                  label="Category"
-                  outlined
-                  clearable
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="4">
-                <v-btn @click="openAddCategoryDialog" text color="primary"
-                  >Add</v-btn
-                >
-              </v-col>
-            </v-row>
-          </v-flex>
-          <v-flex>
-            <v-row class="ma-1 pa-1">
-              <v-col cols="12">
-                <v-btn v-if="!gif" @click="addGIF" color="primary"
-                  >Submit</v-btn
-                >
-                <v-btn v-if="gif" @click="$emit('dialog-closed')">Close</v-btn>
-                <v-btn v-if="gif" @click="addGIF" color="primary">Update</v-btn>
-              </v-col>
-            </v-row>
-          </v-flex>
+        <v-row>
+          <v-col cols="12">
+            <v-text-field
+              v-model="url"
+              :rules="[rules.required]"
+              hide-details
+              label="URL"
+              outlined
+              clearable
+            ></v-text-field>
+            <v-card v-if="url">
+              <v-img
+                :src="url"
+                height="200px"
+                gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
+              ></v-img>
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12">
+            <v-autocomplete
+              :items="activities"
+              v-model="activity"
+              :rules="[rules.required]"
+              hide-details
+              label="Activity"
+              outlined
+              clearable
+            ></v-autocomplete>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="8">
+            <v-autocomplete
+              :items="categories"
+              v-model="category"
+              :rules="[rules.required]"
+              hide-details
+              label="Category"
+              outlined
+              clearable
+            ></v-autocomplete>
+          </v-col>
+          <v-col cols="4">
+            <v-btn @click="openAddCategoryDialog" text color="primary"
+              >Add</v-btn
+            >
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col class="text-right" cols="12">
+            <v-btn @click="$emit('dialog-closed')">Close</v-btn>
+            <v-btn v-if="!gif" @click="addGIF" color="primary">Submit</v-btn>
+            <v-btn v-if="gif" @click="addGIF" color="primary">Update</v-btn>
+          </v-col>
         </v-row>
       </v-form>
       <v-row
@@ -79,7 +67,7 @@
         class="overline error--text ma-2 pa-2"
         >{{ errorMsg }}</v-row
       >
-      <v-dialog v-model="showAddCategoryDialog" max-width="400">
+      <v-dialog v-model="showAddCategoryDialog" max-width="600">
         <v-card>
           <v-card-text>
             <v-text-field

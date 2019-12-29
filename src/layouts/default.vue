@@ -1,31 +1,31 @@
 <template>
   <v-app id="timeMap">
-    <v-app-bar app color="#ffffff">
-
-    <v-row justify="start" align="center">
-    <v-col md="auto" @click="$router.push('/')">
-    <div class="customPointer">
-      <v-row justify="start" align="center" class="ml-1">
-        <v-avatar tile size="35">
-        <v-img src="/icon.png"></v-img>
-        </v-avatar>
-        <v-text class="appTitle primary--text ml-1">TIMEMAP</v-text>  
+    <v-app-bar app color="#ffffff" hide-on-scroll dense>
+      <v-row justify="start" align="center">
+        <v-col @click="$router.push('/')">
+          <v-row justify="start" align="center" class="customPointer ml-1">
+            <v-avatar tile size="35">
+              <v-img src="/icon.png"></v-img>
+            </v-avatar>
+            <span class="appTitle primary--text ml-1">TIMEMAP</span>
+          </v-row>
+        </v-col>
+        <v-col>
+          <v-row justify="end" align="center">
+            <v-btn to="/findFriends" icon fab small class="ma-2">
+              <v-icon>fas fa-search-plus</v-icon>
+            </v-btn>
+            <span v-if="displayName" class="appGreeting mr-5 d-none d-sm-block"
+              >Hello {{ displayName }}</span
+            >
+            <v-btn fab icon to="/account">
+              <v-avatar v-if="photoURL" size="40">
+                <v-img :src="photoURL"></v-img>
+              </v-avatar>
+            </v-btn>
+          </v-row>
+        </v-col>
       </v-row>
-    </div>
-    </v-col>
-    <v-col>
-        <v-row justify="end" align="center">
-        <span v-if="displayName" class="appGreeting mr-5 d-none d-sm-block"
-          >Hello {{ displayName }}</span
-        >
-        <v-btn fab icon to="/account">
-          <v-avatar v-if="photoURL" class size="40">
-            <v-img :src="photoURL"></v-img>
-          </v-avatar>
-        </v-btn>
-      </v-row>
-    </v-col>   
-    </v-row>
     </v-app-bar>
 
     <v-content>
@@ -36,18 +36,26 @@
       </v-container>
     </v-content>
 
-    <v-bottom-navigation v-if="uid" :value="activeTab" grow color="primary" app>
-      <v-btn to="/">
-        <span>Friends</span>
+    <v-bottom-navigation
+      v-if="uid"
+      :value="activeTab"
+      grow
+      shift
+      color="primary"
+      height="48"
+      app
+    >
+      <v-btn small to="/">
+        <span class="bottomNav caption">Friends</span>
         <v-icon small>mdi-heart</v-icon>
       </v-btn>
-      <v-btn to="/findFriends">
-        <span>Add Friends</span>
-        <v-icon small>fas fa-search</v-icon>
+      <v-btn small to="/schedule">
+        <span class="bottomNav caption">My Routine</span>
+        <v-icon small>far fa-calendar-check</v-icon>
       </v-btn>
-      <v-btn to="/share">
-        <span>Share</span>
-        <v-icon small>fas fa-share</v-icon>
+      <v-btn small to="/share">
+        <span class="bottomNav caption">Family Tree</span>
+        <v-icon small>fas fa-sitemap</v-icon>
       </v-btn>
     </v-bottom-navigation>
   </v-app>
@@ -63,7 +71,8 @@ export default {
   },
   data: () => ({
     on: false,
-    activeTab: 0
+    activeTab: 0,
+    showSearchBar: false
   }),
   computed: {
     ...mapGetters('user', ['uid', 'displayName', 'photoURL', 'phoneNumber'])
@@ -97,5 +106,8 @@ export default {
 }
 .v-bottom-navigation .v-btn {
   height: inherit !important;
+}
+.bottomNav {
+  font-family: 'Lexend Mega', sans-serif;
 }
 </style>

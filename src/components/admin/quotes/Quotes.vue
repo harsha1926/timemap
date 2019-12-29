@@ -1,50 +1,36 @@
 <template>
-  <v-row align="center" justify="center">
-    <v-flex>
+  <v-container fluid fill-height style="height: 85vh; max-height: 85%;">
+    <v-row align="center" justify="center">
       <v-card>
-        <v-card-text>
-          <v-expansion-panels>
-            <v-expansion-panel>
-              <v-expansion-panel-header>
-                <template v-slot:default>
-                  <v-row>
-                    <v-col cols="4">Add Quote</v-col>
-                  </v-row>
-                </template>
-              </v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <add-quote @quote-added="addQuote"></add-quote>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </v-expansion-panels>
-          <v-card>
-            <v-data-table :loading="loading" :headers="headers" :items="quotes">
-              <template v-slot:item.actions="{ item }">
-                <v-btn
-                  @click="
-                    showEditQuoteDialog = true
-                    selectedQuote = item
-                  "
-                  color="primary"
-                  fab
-                  icon
-                  x-small
-                >
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
-                <v-btn
-                  @click="deleteQuote(item)"
-                  color="primary"
-                  fab
-                  icon
-                  x-small
-                >
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-              </template>
-            </v-data-table>
-          </v-card>
-        </v-card-text>
+        <v-card-title>
+          Manage Quotes
+          <v-spacer></v-spacer>
+          <v-btn
+            @click="showAddQuoteDialog = true"
+            @dialog-closed="showAddQuoteDialog = false"
+            color="primary"
+            >Add new Quote</v-btn
+          >
+        </v-card-title>
+        <v-data-table :loading="loading" :headers="headers" :items="quotes">
+          <template v-slot:item.actions="{ item }">
+            <v-btn
+              @click="
+                showEditQuoteDialog = true
+                selectedQuote = item
+              "
+              color="primary"
+              fab
+              icon
+              x-small
+            >
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+            <v-btn @click="deleteQuote(item)" color="primary" fab icon x-small>
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </template>
+        </v-data-table>
       </v-card>
       <v-snackbar v-model="showSnackbar" :timeout="1000" :color="snackColor">
         {{ snackText }}
@@ -59,8 +45,16 @@
           ></add-quote>
         </v-card>
       </v-dialog>
-    </v-flex>
-  </v-row>
+      <v-dialog v-model="showAddQuoteDialog" max-width="400" eager>
+        <v-card>
+          <add-quote
+            @quote-added="addQuote"
+            @dialog-closed="showAddQuoteDialog = false"
+          ></add-quote>
+        </v-card>
+      </v-dialog>
+    </v-row>
+  </v-container>
 </template>
 <script>
 import AddQuote from './AddQuote'
@@ -71,6 +65,7 @@ export default {
   },
   data() {
     return {
+      showAddQuoteDialog: false,
       showEditQuoteDialog: false,
       selectedQuote: null,
       loading: false,
@@ -105,6 +100,7 @@ export default {
   methods: {
     addQuote(item) {
       this.quotes.unshift(item)
+      this.showAddQuoteDialog = false
       this.showSnackbar = true
       this.snackText = 'Quote added successfully'
       this.snackIcon = 'far fa-smile'

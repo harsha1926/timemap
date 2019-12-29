@@ -2,71 +2,57 @@
   <v-card :disabled="loading">
     <v-card-text>
       <v-form ref="form" v-model="valid">
-        <v-row justify="center" wrap>
-          <v-flex>
-            <v-row class="ma-1 pa-1">
-              <v-col cols="12">
-                <v-text-field
-                  v-model="quoteText"
-                  :rules="[rules.required]"
-                  hide-details
-                  label="Quote"
-                  outlined
-                  clearable
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-flex>
-          <v-flex>
-            <v-row class="ma-1 pa-1">
-              <v-col cols="12">
-                <v-autocomplete
-                  :items="activities"
-                  v-model="activity"
-                  :rules="[rules.required]"
-                  hide-details
-                  label="Activity"
-                  outlined
-                  clearable
-                ></v-autocomplete>
-              </v-col>
-            </v-row>
-          </v-flex>
-          <v-flex>
-            <v-row class="ma-1 pa-1">
-              <v-col cols="9">
-                <v-autocomplete
-                  :items="categories"
-                  v-model="category"
-                  :rules="[rules.required]"
-                  hide-details
-                  label="Category"
-                  outlined
-                  clearable
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="3">
-                <v-btn @click="openAddCategoryDialog" text color="primary"
-                  >Add</v-btn
-                >
-              </v-col>
-            </v-row>
-          </v-flex>
-          <v-flex>
-            <v-row class="ma-1 pa-1">
-              <v-col cols="12">
-                <v-btn v-if="!quote" @click="addQuote" color="primary"
-                  >Submit</v-btn
-                >
-                <v-btn v-if="quote" @click="$emit('dialog-closed')"
-                  >Close</v-btn
-                >
-                <v-btn v-if="quote" @click="addQuote" color="primary"
-                  >Update</v-btn
-                >
-              </v-col>
-            </v-row>
-          </v-flex>
+        <v-row>
+          <v-col cols="12">
+            <v-text-field
+              v-model="quoteText"
+              :rules="[rules.required]"
+              hide-details
+              label="Quote"
+              outlined
+              clearable
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12">
+            <v-autocomplete
+              :items="activities"
+              v-model="activity"
+              :rules="[rules.required]"
+              hide-details
+              label="Activity"
+              outlined
+              clearable
+            ></v-autocomplete>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="9">
+            <v-autocomplete
+              :items="categories"
+              v-model="category"
+              :rules="[rules.required]"
+              hide-details
+              label="Category"
+              outlined
+              clearable
+            ></v-autocomplete>
+          </v-col>
+          <v-col cols="3">
+            <v-btn @click="openAddCategoryDialog" text color="primary"
+              >Add</v-btn
+            >
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col class="text-right" cols="12">
+            <v-btn @click="$emit('dialog-closed')">Close</v-btn>
+            <v-btn v-if="!quote" @click="addQuote" color="primary"
+              >Submit</v-btn
+            >
+            <v-btn v-if="quote" @click="addQuote" color="primary">Update</v-btn>
+          </v-col>
         </v-row>
       </v-form>
       <v-row

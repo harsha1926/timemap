@@ -1,21 +1,31 @@
 <template>
-  <v-row wrap>
-    <v-flex v-for="friendId in friendIds" :key="friendId" xs12 sm6 md4 la3 xl2>
-      <friend
-        :friendId="friendId"
-        @friendRemoved="friendRemoved"
-        :category="category"
-      />
-    </v-flex>
-    <v-snackbar
-      v-model="showFriendRemovedSnackbar"
-      :timeout="1000"
-      color="primary"
-    >
-      {{ removedFriendName }} is not your friend anymore
-      <v-icon>far fa-frown</v-icon>
-    </v-snackbar>
-  </v-row>
+  <v-container fluid class="ma-0 pa-0">
+    <v-row wrap class="ma-0 pa-0">
+      <v-col
+        v-for="friendId in friendIds"
+        :key="friendId"
+        class="ma-0 pa-0"
+        cols="12"
+        sm="6"
+        md="4"
+        la="2"
+      >
+        <friend
+          :friendId="friendId"
+          @friendRemoved="friendRemoved"
+          :category="category"
+        />
+      </v-col>
+      <v-snackbar
+        v-model="showFriendRemovedSnackbar"
+        :timeout="1000"
+        color="primary"
+      >
+        {{ removedFriendName }} is not your friend anymore
+        <v-icon>far fa-frown</v-icon>
+      </v-snackbar>
+    </v-row>
+  </v-container>
 </template>
 <script>
 import { mapGetters } from 'vuex'

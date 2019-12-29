@@ -1,5 +1,9 @@
 <template>
-  <v-container fluid fill-height style="height: 70vh; max-height: 85%;">
+  <v-container
+    fluid
+    fill-height
+    style="max-width: 600px; height: 85vh; max-height: 85%;"
+  >
     <v-row justify="center" align="center">
       <v-col cols="12" sm="8" md="4">
         <v-card v-if="!confirmationResult">
@@ -15,8 +19,7 @@
               :preferredCountries="['CA', 'IN', 'US']"
               placeholder="Enter your phone number"
               name="telInput"
-            >
-            </vue-tel-input>
+            ></vue-tel-input>
           </v-card-text>
           <v-card-actions>
             <v-row justify="end" class="mr-5 mb-2">
