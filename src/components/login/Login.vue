@@ -1,9 +1,5 @@
 <template>
-  <v-container
-    fluid
-    fill-height
-    style="height: 85vh; max-height: 85%;"
-  >
+  <v-container fluid fill-height style="height: 85vh; max-height: 85%;">
     <v-row align="start" justify="center">
       <v-progress-circular
         v-if="loading"

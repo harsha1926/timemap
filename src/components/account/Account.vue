@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid fill-height style="max-width: 600px; height: 85vh; max-height: 85%;">
+  <v-container fluid style="max-width: 600px; height: 85vh; max-height: 85%;">
     <v-row justify="center" align="center">
       <v-col cols="12">
         <v-row>
@@ -20,7 +20,11 @@
             class="align-center"
           >
             <v-row justify="center">
-              <v-progress-circular v-if="loadingImage" color="white" indeterminate></v-progress-circular>
+              <v-progress-circular
+                v-if="loadingImage"
+                color="white"
+                indeterminate
+              ></v-progress-circular>
             </v-row>
           </v-img>
         </v-row>

@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="ma-1 pa-1">
+  <v-container fluid class="ma-0 pa-0">
     <v-skeleton-loader v-if="loading" type="card-avatar"></v-skeleton-loader>
     <v-card v-else-if="friend">
       <v-img
@@ -18,17 +18,17 @@
         </v-container>
       </v-img>
 
-      <v-card-text class="ma-1 pa-1">
+      <v-card-text class="ma-0 pa-0">
         <v-row align="center">
           <v-col cols="2">
-            <v-avatar color="grey darken-3">
+            <v-avatar class="ml-2" color="grey darken-3">
               <v-img :src="friend.photoURL" class="elevation-6"></v-img>
             </v-avatar>
           </v-col>
           <v-col cols="4">
-            <span class="displayName font-weight-bold">{{
-              displayNameCaptilize
-            }}</span>
+            <span class="displayName font-weight-bold">
+              {{ displayNameCaptilize }}
+            </span>
           </v-col>
           <v-col cols="2">
             <v-icon
@@ -92,9 +92,6 @@
           </v-col>
         </v-row>
       </v-card-text>
-      <!-- <v-row>
-        <span class="lastUpdated mb-3 ml-5">Last updated at {{ lastUpdatedString }}</span>
-      </v-row>-->
     </v-card>
     <v-dialog v-model="showRemoveFriendWarning" max-width="600">
       <v-card>

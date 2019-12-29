@@ -1,22 +1,18 @@
 <template>
-  <div>
-    <v-row align="center" justify="center" class="pa-2">
-      <v-col cols="12" sm="6" xl="4">
-        <v-row align="center" justify="center">
-          <v-text-field
-            v-model="search"
-            outlined
-            label="Find by email address.."
-          ></v-text-field>
-        </v-row>
-      </v-col>
+  <v-container fluid style="max-width: 600px; height: 85vh; max-height: 85%;">
+    <v-row justify="center" class="ma-1 pa-1">
+      <v-text-field
+        v-model="search"
+        outlined
+        label="Find by email address.."
+      ></v-text-field>
     </v-row>
     <add-friend
       v-for="friend in tobeFriends"
       :key="friend.uid"
       :friend="friend"
     />
-  </div>
+  </v-container>
 </template>
 <script>
 import { mapGetters } from 'vuex'
