@@ -12,12 +12,13 @@
         </v-col>
         <v-col>
           <v-row justify="end" align="center">
-            <v-btn to="/findFriends" icon fab small class="ma-2">
+            <v-btn v-if="uid" to="/findFriends" icon fab small class="ma-2">
               <v-icon>fas fa-search-plus</v-icon>
             </v-btn>
-            <span v-if="displayName" class="appGreeting mr-5 d-none d-sm-block"
-              >Hello {{ displayName }}</span
-            >
+            <span
+              v-if="displayName"
+              class="appGreeting mr-5 d-none d-sm-block"
+            >Hello {{ displayName }}</span>
             <v-btn fab icon to="/account">
               <v-avatar v-if="photoURL" size="40">
                 <v-img :src="photoURL"></v-img>
@@ -36,15 +37,7 @@
       </v-container>
     </v-content>
 
-    <v-bottom-navigation
-      v-if="uid"
-      :value="activeTab"
-      grow
-      shift
-      color="primary"
-      height="48"
-      app
-    >
+    <v-bottom-navigation v-if="uid" :value="activeTab" grow shift color="primary" height="48" app>
       <v-btn small to="/">
         <span class="bottomNav caption">Friends</span>
         <v-icon small>mdi-heart</v-icon>
