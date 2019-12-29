@@ -12,7 +12,7 @@
           />
           <v-img
             v-if="photoURL"
-            @click="$refs.imageUpdate.click()"
+            @click="$router.push('/account/editPhoto')"
             :src="photoURL"
             :aspect-ratio="16 / 9"
             max-height="400"
