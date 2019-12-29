@@ -1,10 +1,10 @@
 <template>
-  <v-container fluid class="ma-0 pa-0">
-    <v-row wrap class="ma-0 pa-0">
+  <v-container fluid class="mt-0 mb-0 pt-0 pb-0">
+    <v-row wrap>
       <v-col
         v-for="friendId in friendIds"
         :key="friendId"
-        class="ma-0 pa-0"
+        class="mt-0 mb-0 pt-0 pb-0"
         cols="12"
         sm="6"
         md="4"
@@ -15,6 +15,9 @@
           @friendRemoved="friendRemoved"
           :category="category"
         />
+        <v-row>
+          <v-divider></v-divider>
+        </v-row>
       </v-col>
       <v-snackbar
         v-model="showFriendRemovedSnackbar"

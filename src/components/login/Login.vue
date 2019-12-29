@@ -9,8 +9,8 @@
       <v-col v-else cols="12" sm="8" md="4">
         <v-card class="elevation-12">
           <v-card-subtitle class="mt-5">
-            <v-row class="appLoginHeading" justify="center">Hi, there.</v-row>
-            <v-row class="appLoginInfo ma-5" justify="center">
+            <v-row justify="center">Hi, there.</v-row>
+            <v-row class="ma-5" justify="center">
               Thanks for showing your interest in Timemap. We hope our fun
               filled app can help you know more about your loved ones. Please
               login,
@@ -89,21 +89,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-.appTitle {
-  font-size: 40px;
-  font-family: 'Turret Road', cursive;
-  font-weight: 900;
-}
-.appLoginHeading {
-  font-size: 20px;
-  font-family: 'Lexend Mega', sans-serif;
-}
-.appLoginInfo {
-  font-family: 'Lexend Mega', sans-serif;
-}
-.sameEmailError {
-  font-size: 16px;
-  font-family: 'Lexend Mega', sans-serif;
-}
-</style>

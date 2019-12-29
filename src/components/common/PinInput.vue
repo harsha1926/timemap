@@ -43,6 +43,5 @@ input {
   border: 1px solid rgb(90, 89, 89);
   letter-spacing: 25px;
   font-size: 20px;
-  font-family: 'Lexend Mega', sans-serif;
 }
 </style>

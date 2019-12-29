@@ -3,9 +3,7 @@
     <v-row justify="center" align="center">
       <v-col cols="12" sm="8" md="4">
         <v-card v-if="!verificationId">
-          <v-card-title class="appLoginInfo"
-            >Change your phone number</v-card-title
-          >
+          <v-card-title>Change your phone number</v-card-title>
           <v-card-text>
             <vue-tel-input
               ref="telInput"
@@ -33,9 +31,7 @@
         </v-card>
 
         <v-card v-else>
-          <v-card-title class="appLoginInfo"
-            >Enter verfication code</v-card-title
-          >
+          <v-card-title>Enter verfication code</v-card-title>
           <v-card-text>
             <pin-input @validate="isValidCode"></pin-input>
           </v-card-text>
@@ -150,13 +146,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-.appLoginHeading {
-  font-size: 20px;
-  font-family: 'Lexend Mega', sans-serif;
-}
-.appLoginInfo {
-  font-size: 16px;
-  font-family: 'Lexend Mega', sans-serif;
-}
-</style>

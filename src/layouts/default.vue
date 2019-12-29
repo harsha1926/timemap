@@ -1,60 +1,68 @@
 <template>
   <v-app id="timeMap">
-    <v-app-bar app color="#ffffff" hide-on-scroll dense>
-      <v-row justify="start" align="center">
-        <v-col @click="$router.push('/')">
-          <v-row justify="start" align="center" class="customPointer ml-1">
-            <v-avatar tile size="35">
-              <v-img src="/icon.png"></v-img>
-            </v-avatar>
-            <span class="appTitle primary--text ml-1">TIMEMAP</span>
-          </v-row>
-        </v-col>
-        <v-col>
+    <v-app-bar app hide-on-scroll dense tile flat>
+      <v-row>
+        <v-flex class="text-left">
+          <v-avatar
+            @click="$router.push('/')"
+            class="ml-2 customPointer"
+            tile
+            size="35"
+          >
+            <v-img src="/icon.png"></v-img>
+          </v-avatar>
+        </v-flex>
+        <v-flex class="text-right">
           <v-row justify="end" align="center">
-            <v-btn v-if="uid" to="/findFriends" icon fab small class="ma-2">
-              <v-icon>fas fa-search-plus</v-icon>
-            </v-btn>
-            <span v-if="displayName" class="appGreeting mr-5 d-none d-sm-block"
+            <v-icon
+              @click="$router.push('/findFriends')"
+              v-if="uid"
+              class="mr-5"
+              small
+              >fas fa-search</v-icon
+            >
+            <span v-if="displayName" class="mr-5 d-none d-sm-block"
               >Hello {{ displayName }}</span
             >
-            <v-btn fab icon to="/account">
-              <v-avatar v-if="photoURL" size="40">
-                <v-img :src="photoURL"></v-img>
-              </v-avatar>
-            </v-btn>
+            <v-avatar
+              @click="$router.push('/account')"
+              v-if="photoURL"
+              class="mr-5 customPointer"
+              size="35"
+            >
+              <v-img :src="photoURL"></v-img>
+            </v-avatar>
           </v-row>
-        </v-col>
+        </v-flex>
       </v-row>
     </v-app-bar>
-
     <v-content>
-      <v-container fluid class="ma-0 pa-0">
+      <v-divider></v-divider>
+      <v-container fluid>
         <login v-if="!uid"></login>
         <verify-phone v-else-if="uid && !phoneNumber"></verify-phone>
         <nuxt v-else-if="uid && phoneNumber"></nuxt>
       </v-container>
     </v-content>
-
     <v-bottom-navigation
       v-if="uid"
-      :value="activeTab"
+      v-model="activeTab"
+      color="primary"
       grow
       shift
-      color="primary"
       height="48"
       app
     >
       <v-btn small to="/">
-        <span class="bottomNav caption">Friends</span>
+        <span class="caption">Friends</span>
         <v-icon small>mdi-heart</v-icon>
       </v-btn>
       <v-btn small to="/schedule">
-        <span class="bottomNav caption">My Routine</span>
+        <span class="caption">My Routine</span>
         <v-icon small>far fa-calendar-check</v-icon>
       </v-btn>
       <v-btn small to="/share">
-        <span class="bottomNav caption">Family Tree</span>
+        <span class="caption">Family Tree</span>
         <v-icon small>fas fa-sitemap</v-icon>
       </v-btn>
     </v-bottom-navigation>
@@ -78,36 +86,15 @@ export default {
     ...mapGetters('user', ['uid', 'displayName', 'photoURL', 'phoneNumber'])
   },
   methods: {
-    ...mapActions('user/currentLocation', ['addCurrentLocation']),
-    getActiveTab() {
-      if (this.$route.path.includes('findFriends')) {
-        return 1
-      }
-      if (this.$route.path.includes('familyTree')) {
-        return 2
-      }
-      return 0
-    }
+    ...mapActions('user/currentLocation', ['addCurrentLocation'])
   }
 }
 </script>
 <style scoped>
-.appTitle {
-  font-size: 24px;
-  font-family: 'Turret Road', cursive;
-  font-weight: 900;
-}
-.appGreeting {
-  font-size: 12px;
-  font-family: 'Lexend Mega', sans-serif;
-}
 .v-bottom-navigation {
   padding: 1px !important;
 }
 .v-bottom-navigation .v-btn {
   height: inherit !important;
-}
-.bottomNav {
-  font-family: 'Lexend Mega', sans-serif;
 }
 </style>

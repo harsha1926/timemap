@@ -1,113 +1,105 @@
 <template>
-  <v-container v-if="friend" class="mt-0 mb-0 pt-0 pb-0">
-    <v-row>
-      <v-col cols="2">
-        <v-avatar size="35">
-          <v-img :src="friend.photoURL"></v-img>
-        </v-avatar>
-      </v-col>
+  <v-container fluid>
+    <v-skeleton-loader v-if="loading" type="card-avatar"></v-skeleton-loader>
+    <v-row v-else-if="friend">
+      <v-row>
+        <v-card flat>
+          <v-card-title>
+            <v-avatar size="35">
+              <v-img :src="friend.photoURL"></v-img>
+            </v-avatar>
+            {{ displayNameCaptilize }} {{ activityHeading }}
+          </v-card-title>
+          <v-card-subtitle>
+            {{ localTimeFormattedString }}
+            <!-- <p class="ma-0 pa-0">Updated at {{ lastUpdatedString }}</p> -->
+          </v-card-subtitle>
+        </v-card>
+      </v-row>
 
-      <v-col cols="9">
-        <v-row align="center">
-          <v-flex class="subtitle-1 font-weight-medium">
-            {{ displayNameCaptilize }}
-            <span class="subtitle-2 font-weight-regular">{{
-              activityHeading
-            }}</span>
-          </v-flex>
-        </v-row>
-        <v-row>
-          <v-flex class="caption">{{ localTimeFormattedString }}</v-flex>
-        </v-row>
-      </v-col>
-
-      <v-col cols="1">
-        <v-icon class="customPointer" color="primary">mdi-heart-outline</v-icon>
-      </v-col>
+      <v-row>
+        <v-card flat>
+          <v-img
+            :src="activityPhoto"
+            height="200px"
+            width="350px"
+            gradient="to top left, rgba(100,115,201,.33), rgba(25,32,72,.7)"
+          >
+            <template v-slot:placeholder>
+              <v-row class="fill-height ma-0" align="center" justify="center">
+                <v-progress-circular
+                  indeterminate
+                  color="primary"
+                ></v-progress-circular>
+              </v-row>
+            </template>
+            <v-card-title></v-card-title>
+            <v-card-subtitle>{{ activityQuote }}</v-card-subtitle>
+          </v-img>
+        </v-card>
+      </v-row>
+      <v-row>
+        <v-card flat>
+          <v-icon
+            @click="sendWhatsAppMessage(friend.phoneNumber)"
+            :disabled="!friend.phoneNumber"
+            class="customPointer"
+            color="primary"
+            >mdi-whatsapp</v-icon
+          >
+          <v-icon
+            @click="callPhone(friend.phoneNumber)"
+            :disabled="!friend.phoneNumber"
+            class="customPointer"
+            color="primary"
+            >mdi-phone</v-icon
+          >
+          <v-icon
+            @click="sendTextMessage(friend.phoneNumber)"
+            :disabled="!friend.phoneNumber"
+            class="customPointer"
+            color="primary"
+            >mdi-message-outline</v-icon
+          >
+          <v-icon
+            @click="sendEmailMessage(friend.email)"
+            class="customPointer"
+            color="primary"
+            >mdi-email-outline</v-icon
+          >
+          <v-menu offset-y>
+            <template v-slot:activator="{ on }">
+              <v-icon v-on="on" class="customPointer" color="primary"
+                >mdi-dots-vertical</v-icon
+              >
+            </template>
+            <v-list>
+              <v-list-item>
+                <v-list-item-title>
+                  <v-icon
+                    @click="removeFriendWarning"
+                    class="customPointer"
+                    color="error"
+                    >mdi-delete</v-icon
+                  >
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-card>
+      </v-row>
     </v-row>
-
-    <v-row>
-      <v-img
-        :src="activityPhoto"
-        height="200px"
-        gradient="to top left, rgba(100,115,201,.33), rgba(25,32,72,.7)"
-        content
-      >
-        <template v-slot:placeholder>
-          <v-row class="fill-height ma-0" align="center" justify="center">
-            <v-progress-circular
-              indeterminate
-              color="primary"
-            ></v-progress-circular>
-          </v-row>
-        </template>
-        <v-row
-          v-if="activityQuote"
-          align="end"
-          class="subtitle-1 font-weight-medium ma-2 pa-2 fill-height white--text"
-          >{{ activityQuote }}..</v-row
-        >
-      </v-img>
-    </v-row>
-
-    <v-row>
-      <v-col cols="2">
-        <v-icon
-          @click="sendWhatsAppMessage(friend.phoneNumber)"
-          :disabled="!friend.phoneNumber"
-          class="customPointer"
-          color="primary"
-          >mdi-whatsapp</v-icon
-        >
-      </v-col>
-      <v-col cols="2">
-        <v-icon
-          @click="callPhone(friend.phoneNumber)"
-          :disabled="!friend.phoneNumber"
-          class="customPointer"
-          color="primary"
-          >mdi-phone</v-icon
-        >
-      </v-col>
-      <v-col cols="2">
-        <v-icon
-          @click="sendTextMessage(friend.phoneNumber)"
-          :disabled="!friend.phoneNumber"
-          class="customPointer"
-          color="primary"
-          >mdi-message-outline</v-icon
-        >
-      </v-col>
-      <v-col cols="2">
-        <v-icon
-          @click="sendEmailMessage(friend.email)"
-          class="customPointer"
-          color="primary"
-          >mdi-email-outline</v-icon
-        >
-      </v-col>
-      <v-col cols="4" class="text-right">
-        <v-menu offset-y>
-          <template v-slot:activator="{ on }">
-            <v-icon v-on="on" class="customPointer" color="primary"
-              >mdi-dots-vertical</v-icon
-            >
-          </template>
-          <v-list>
-            <v-list-item>
-              <v-list-item-title>
-                <v-icon
-                  @click="removeFriendWarning"
-                  class="customPointer"
-                  color="error"
-                  >mdi-delete</v-icon
-                >
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </v-col>
-    </v-row>
+    <v-dialog v-model="showRemoveFriendWarning" max-width="600">
+      <v-card>
+        <v-card-title>Are you sure?</v-card-title>
+        <v-card-actions>
+          <v-btn @click="removeFriend">Yes</v-btn>
+          <v-btn @click="showRemoveFriendWarning = false" color="primary"
+            >No</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>

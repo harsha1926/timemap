@@ -28,22 +28,22 @@
             </v-row>
           </v-img>
         </v-row>
-        <v-row justify="space-between" align="center" class="pa-2 nameTitle">
+        <v-row justify="space-between" align="center" class="pa-2">
           <span v-if="displayName">{{ displayName }}</span>
           <v-btn @click="openEditDisplayNameDialog" color="primary" fab icon>
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-row>
-        <v-row justify="space-between" align="center" class="pa-2 nameTitle">
+        <v-row justify="space-between" align="center" class="pa-2">
           <span v-if="phoneNumber">{{ phoneNumber }}</span>
           <v-btn color="primary" fab icon to="/account/updatePhone">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-row>
-        <v-row align="center" class="pa-2 nameTitle">
+        <v-row align="center" class="pa-2">
           <v-btn @click="logout" color="primary">Logout</v-btn>
         </v-row>
-        <v-row align="center" class="pa-2 nameTitle">
+        <v-row align="center" class="pa-2">
           <v-btn to="/admin" color="primary">Admin Actions</v-btn>
         </v-row>
         <v-dialog v-model="showEditDisplayNameDialog" max-width="400" eager>
@@ -54,7 +54,6 @@
                 @keydown.enter="showEditDisplayNameDialog = false"
                 :value="displayName"
                 @input="updateDisplayName"
-                class="nameTitle"
                 hide-details
                 single-line
               ></v-text-field>
@@ -137,10 +136,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-.nameTitle {
-  font-size: 16px;
-  font-family: 'Lexend Mega', sans-serif;
-  font-weight: 900;
-}
-</style>
