@@ -1,16 +1,17 @@
 <template>
   <v-app id="timeMap">
-    <v-app-bar app hide-on-scroll dense tile flat>
+    <v-app-bar app dense tile flat>
       <v-row>
-        <v-flex class="text-left">
-          <v-avatar
-            @click="$router.push('/')"
-            class="ml-2 customPointer"
-            tile
-            size="35"
-          >
+        <v-flex @click="$router.push('/')" class="customPointer text-left">
+          <v-avatar class="ml-2" tile size="35">
             <v-img src="/icon.png"></v-img>
           </v-avatar>
+          <v-avatar
+            class="ml-1 title font-weight-regular primary--text"
+            tile
+            size="35"
+            >TM</v-avatar
+          >
         </v-flex>
         <v-flex class="text-right">
           <v-row justify="end" align="center">

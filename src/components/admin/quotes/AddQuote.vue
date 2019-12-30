@@ -28,26 +28,14 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="9">
-            <v-autocomplete
-              :items="categories"
-              v-model="category"
-              :rules="[rules.required]"
-              hide-details
-              label="Category"
-              outlined
-              clearable
-            ></v-autocomplete>
-          </v-col>
-          <v-col cols="3">
-            <v-btn @click="openAddCategoryDialog" text color="primary"
-              >Add</v-btn
-            >
-          </v-col>
-        </v-row>
-        <v-row>
           <v-col class="text-right" cols="12">
-            <v-btn @click="$emit('dialog-closed')">Close</v-btn>
+            <v-btn
+              @click="
+                $emit('dialog-closed')
+                $refs.form.reset()
+              "
+              >Close</v-btn
+            >
             <v-btn v-if="!quote" @click="addQuote" color="primary"
               >Submit</v-btn
             >
@@ -62,20 +50,6 @@
         class="overline error--text ma-2 pa-2"
         >{{ errorMsg }}</v-row
       >
-      <v-dialog v-model="showAddCategoryDialog">
-        <v-card>
-          <v-card-text>
-            <v-text-field
-              v-model="newCategory"
-              single-line
-              label="New Category"
-            ></v-text-field>
-            <v-row justify="end">
-              <v-btn @click="addCategory" color="primary">Save</v-btn>
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
     </v-card-text>
   </v-card>
 </template>
@@ -98,14 +72,10 @@ export default {
       valid: null,
       activity: null,
       activities: [],
-      category: null,
-      categories: [],
       quoteText: null,
       rules: {
         required: (value) => !!value || 'Required.'
-      },
-      showAddCategoryDialog: false,
-      newCategory: null
+      }
     }
   },
   watch: {
@@ -114,11 +84,9 @@ export default {
         if (newVal) {
           this.quoteText = newVal.quote
           this.activity = newVal.activity
-          this.category = newVal.category
         } else {
           this.quoteText = null
           this.activity = null
-          this.category = null
         }
       },
       deep: true
@@ -131,35 +99,14 @@ export default {
         vm.activities.push(data.key)
       })
     })
-    firebaseDB.ref('categories').once('value', function(snapshot) {
-      snapshot.forEach((data) => {
-        vm.categories.push(data.key)
-      })
-    })
   },
   methods: {
-    openAddCategoryDialog() {
-      this.showAddCategoryDialog = true
-    },
-    addCategory() {
-      const vm = this
-      if (vm.newCategory)
-        firebaseDB
-          .ref('categories/' + vm.newCategory)
-          .set(true)
-          .then(() => {
-            vm.categories.push(vm.newCategory)
-            vm.showAddCategoryDialog = false
-            vm.newCategory = null
-          })
-    },
     addQuote() {
       const vm = this
       vm.loading = true
       const payload = {
         quote: vm.quoteText,
-        activity: vm.activity,
-        category: vm.category
+        activity: vm.activity
       }
       if (vm.quote) {
         firebaseDB

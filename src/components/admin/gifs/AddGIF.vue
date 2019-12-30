@@ -154,6 +154,7 @@ export default {
           .set(true)
           .then(() => {
             vm.categories.push(vm.newCategory)
+            vm.category = vm.newCategory
             vm.showAddCategoryDialog = false
             vm.newCategory = null
           })

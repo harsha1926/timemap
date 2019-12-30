@@ -2,3 +2,6 @@
 //
 // The variables you want to modify
 // $font-size-root: 20px;
+// If you need to extend Vuetify SASS lists
+@import '~vuetify/src/styles/styles.sass';
+$material-light: map-merge($material-light, ( background: white ));

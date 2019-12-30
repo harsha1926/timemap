@@ -1,19 +1,20 @@
 <template>
-  <v-container v-if="friend" class="mt-0 mb-0 pt-0 pb-0">
-    <v-row>
+  <v-container :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''">
+    <v-skeleton-loader v-if="loading" type="card-avatar"></v-skeleton-loader>
+    <v-row v-else-if="friend">
       <v-col cols="2">
         <v-avatar size="35">
           <v-img :src="friend.photoURL"></v-img>
         </v-avatar>
       </v-col>
 
-      <v-col cols="9">
+      <v-col cols="8">
         <v-row align="center">
           <v-flex class="subtitle-1 font-weight-medium">
             {{ displayNameCaptilize }}
-            <span class="subtitle-2 font-weight-regular">{{
-              activityHeading
-            }}</span>
+            <span class="subtitle-2 font-weight-regular">
+              {{ activityHeading }}
+            </span>
           </v-flex>
         </v-row>
         <v-row>
@@ -21,7 +22,7 @@
         </v-row>
       </v-col>
 
-      <v-col cols="1">
+      <v-col cols="2" class="text-right">
         <v-icon class="customPointer" color="primary">mdi-heart-outline</v-icon>
       </v-col>
     </v-row>
@@ -44,7 +45,7 @@
         <v-row
           v-if="activityQuote"
           align="end"
-          class="subtitle-1 font-weight-medium ma-2 pa-2 fill-height white--text"
+          class="subtitle-1 font-weight-regular ma-2 pa-2 fill-height white--text"
           >{{ activityQuote }}..</v-row
         >
       </v-img>
@@ -54,7 +55,6 @@
       <v-col cols="2">
         <v-icon
           @click="sendWhatsAppMessage(friend.phoneNumber)"
-          :disabled="!friend.phoneNumber"
           class="customPointer"
           color="primary"
           >mdi-whatsapp</v-icon
@@ -63,7 +63,6 @@
       <v-col cols="2">
         <v-icon
           @click="callPhone(friend.phoneNumber)"
-          :disabled="!friend.phoneNumber"
           class="customPointer"
           color="primary"
           >mdi-phone</v-icon
@@ -72,7 +71,6 @@
       <v-col cols="2">
         <v-icon
           @click="sendTextMessage(friend.phoneNumber)"
-          :disabled="!friend.phoneNumber"
           class="customPointer"
           color="primary"
           >mdi-message-outline</v-icon
@@ -94,19 +92,17 @@
             >
           </template>
           <v-list>
-            <v-list-item>
+            <v-list-item @click="removeFriendWarning">
               <v-list-item-title>
-                <v-icon
-                  @click="removeFriendWarning"
-                  class="customPointer"
-                  color="error"
-                  >mdi-delete</v-icon
-                >
+                <v-icon class="customPointer" color="error">mdi-delete</v-icon>
               </v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
       </v-col>
+    </v-row>
+    <v-row>
+      <div style="background-color:#D8D8D8; height: 5px; width:100%;"></div>
     </v-row>
   </v-container>
 </template>
@@ -212,19 +208,22 @@ export default {
       handler(newVal) {
         if (newVal) {
           let backupURL = null
-          let backupQuote = null
           const vm = this
           firebaseDB
             .ref('gifs')
             .orderByChild('activity')
             .equalTo(newVal)
             .once('value', function(snapshot) {
+              const gifs = []
               snapshot.forEach((data) => {
                 backupURL = data.val().url
                 if (data.val() && data.val().category === vm.category) {
-                  vm.activityPhoto = data.val().url
+                  gifs.push(data.val().url)
                 }
               })
+              if (gifs.length > 0) {
+                vm.activityPhoto = gifs[Math.floor(Math.random() * gifs.length)]
+              }
               if (!vm.activityPhoto) {
                 vm.activityPhoto = backupURL
               }
@@ -235,14 +234,15 @@ export default {
             .orderByChild('activity')
             .equalTo(newVal)
             .once('value', function(snapshot) {
+              const quotes = []
               snapshot.forEach((data) => {
-                backupQuote = data.val().quote
-                if (data.val() && data.val().category === vm.category) {
-                  vm.activityQuote = data.val().quote
+                if (data.val()) {
+                  quotes.push(data.val().quote)
                 }
               })
-              if (!vm.activityPhoto) {
-                vm.activityQuote = backupQuote
+              if (quotes.length > 0) {
+                vm.activityQuote =
+                  quotes[Math.floor(Math.random() * quotes.length)]
               }
             })
         }

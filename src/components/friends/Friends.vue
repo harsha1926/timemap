@@ -1,10 +1,10 @@
 <template>
-  <v-container fluid class="mt-0 mb-0 pt-0 pb-0">
+  <v-container :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''" fluid>
     <v-row wrap>
       <v-col
         v-for="friendId in friendIds"
         :key="friendId"
-        class="mt-0 mb-0 pt-0 pb-0"
+        :class="$vuetify.breakpoint.xsOnly ? 'mt-0 pt-0' : ''"
         cols="12"
         sm="6"
         md="4"
@@ -15,9 +15,6 @@
           @friendRemoved="friendRemoved"
           :category="category"
         />
-        <v-row>
-          <v-divider></v-divider>
-        </v-row>
       </v-col>
       <v-snackbar
         v-model="showFriendRemovedSnackbar"
@@ -55,7 +52,7 @@ export default {
   mounted() {
     const vm = this
     vm.fetchFriendsList()
-    vm.fetchRandomCategory()
+    vm.fetchCategories()
   },
   methods: {
     friendRemoved(removedFriend) {
@@ -75,7 +72,7 @@ export default {
         })
       })
     },
-    fetchRandomCategory() {
+    fetchCategories() {
       const vm = this
       firebaseDB.ref('categories').once('value', function(categories) {
         categories.forEach((category) => {

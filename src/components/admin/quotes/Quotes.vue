@@ -71,7 +71,6 @@ export default {
       loading: false,
       headers: [
         { text: 'Activity', value: 'activity' },
-        { text: 'Category', value: 'category' },
         { text: 'Quote', value: 'quote' },
         { text: 'Actions', value: 'actions', sortable: false }
       ],
@@ -90,7 +89,6 @@ export default {
         vm.quotes.push({
           quote: data.val().quote,
           activity: data.val().activity,
-          category: data.val().category,
           uid: data.key
         })
       })
