@@ -12,9 +12,9 @@
         <v-row align="center">
           <v-flex class="subtitle-1 font-weight-medium">
             {{ displayNameCaptilize }}
-            <span class="subtitle-2 font-weight-regular">
-              {{ activityHeading }}
-            </span>
+            <span class="subtitle-2 font-weight-regular">{{
+              activityHeading
+            }}</span>
           </v-flex>
         </v-row>
         <v-row>
@@ -43,10 +43,10 @@
           </v-row>
         </template>
         <v-row
-          v-if="activityQuote"
+          justify="end"
           align="end"
-          class="subtitle-1 font-weight-regular ma-2 pa-2 fill-height white--text"
-          >{{ activityQuote }}..</v-row
+          class="caption font-weight-light ma-1 pa-1 fill-height white--text"
+          >Powered By Tenor</v-row
         >
       </v-img>
     </v-row>
@@ -112,18 +112,14 @@ import moment from 'moment'
 import momentTimezone from 'moment-timezone'
 import { fetchTimezone } from '@/api/timezone'
 import { firebaseDB } from '@/services/firebaseInit.js'
+import { fetchRandomGIF } from '@/api/tenorGIFs'
+
 export default {
   props: {
     friendId: {
       type: String,
       default() {
         return null
-      }
-    },
-    category: {
-      type: String,
-      default() {
-        return 'funny'
       }
     }
   },
@@ -135,7 +131,6 @@ export default {
       schedule: null,
       now: new Date(),
       activityPhoto: '',
-      activityQuote: '',
       lastUpdated: null,
       showRemoveFriendWarning: false
     }
@@ -207,44 +202,7 @@ export default {
     activity: {
       handler(newVal) {
         if (newVal) {
-          let backupURL = null
-          const vm = this
-          firebaseDB
-            .ref('gifs')
-            .orderByChild('activity')
-            .equalTo(newVal)
-            .once('value', function(snapshot) {
-              const gifs = []
-              snapshot.forEach((data) => {
-                backupURL = data.val().url
-                if (data.val() && data.val().category === vm.category) {
-                  gifs.push(data.val().url)
-                }
-              })
-              if (gifs.length > 0) {
-                vm.activityPhoto = gifs[Math.floor(Math.random() * gifs.length)]
-              }
-              if (!vm.activityPhoto) {
-                vm.activityPhoto = backupURL
-              }
-            })
-
-          firebaseDB
-            .ref('quotes')
-            .orderByChild('activity')
-            .equalTo(newVal)
-            .once('value', function(snapshot) {
-              const quotes = []
-              snapshot.forEach((data) => {
-                if (data.val()) {
-                  quotes.push(data.val().quote)
-                }
-              })
-              if (quotes.length > 0) {
-                vm.activityQuote =
-                  quotes[Math.floor(Math.random() * quotes.length)]
-              }
-            })
+          this.getRandomGIF()
         }
       }
     }
@@ -272,17 +230,6 @@ export default {
             ).then((res) => {
               vm.timezone = res.data.timeZoneId
             })
-          } else {
-            firebaseDB
-              .ref('gifs')
-              .orderByChild('category')
-              .limitToLast(1)
-              .equalTo('sad')
-              .once('value', function(snapshot) {
-                snapshot.forEach((data) => {
-                  if (data.val()) vm.activityPhoto = data.val().url
-                })
-              })
           }
         })
         .finally(() => {
@@ -299,6 +246,26 @@ export default {
     }
   },
   methods: {
+    getRandomGIF() {
+      if (this.activity) {
+        let search = 'funny'
+        if (this.activity === 'sleep') {
+          search = 'sleeping'
+        } else if (this.activity === 'breakfast' || this.activity === 'lunch') {
+          search = 'eating'
+        } else if (this.activity === 'dinner') {
+          search = 'dinner'
+        } else if (this.activity === 'work') {
+          search = 'working'
+        } else if (this.activity === 'free') {
+          search = 'im free'
+        }
+
+        fetchRandomGIF(search).then((res) => {
+          this.activityPhoto = res.data.results[0].media[0].gif.url
+        })
+      }
+    },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1)
     },

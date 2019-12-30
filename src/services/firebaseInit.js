@@ -2,9 +2,9 @@ import * as firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/storage'
 import 'firebase/database'
-export const apiKey = 'AIzaSyAy3NsjnLLa6xRIRbWMXjvHq_0jMZO0YTY'
+import { firebaseAPIKey } from '~/plugins/apiKeys'
 const config = {
-  apiKey,
+  apiKey: firebaseAPIKey,
   authDomain: 'timemap-cf037.firebaseapp.com',
   databaseURL: 'https://timemap-cf037.firebaseio.com',
   projectId: 'timemap-cf037',

@@ -11,7 +11,7 @@
           <v-row>
             <v-flex>
               <v-card color="grey lighten-2" class="ma-2 pa-2">
-                <v-card-titl>Manage GIFs</v-card-titl>
+                <v-card-title>Manage GIFs</v-card-title>
                 <v-card-actions>
                   <v-btn to="/admin/gifs" color="primary" text>Select</v-btn>
                 </v-card-actions>
