@@ -12,9 +12,9 @@
         <v-row align="center">
           <v-flex class="subtitle-1 font-weight-medium">
             {{ displayNameCaptilize }}
-            <span class="subtitle-2 font-weight-regular">{{
-              activityHeading
-            }}</span>
+            <span class="subtitle-2 font-weight-regular">
+              {{ activityHeading }}
+            </span>
           </v-flex>
         </v-row>
         <v-row>
@@ -28,12 +28,7 @@
     </v-row>
 
     <v-row>
-      <v-img
-        :src="activityPhoto"
-        height="200px"
-        gradient="to top left, rgba(100,115,201,.33), rgba(25,32,72,.7)"
-        content
-      >
+      <v-img :src="activityPhoto" content>
         <template v-slot:placeholder>
           <v-row class="fill-height ma-0" align="center" justify="center">
             <v-progress-circular
@@ -262,7 +257,11 @@ export default {
         }
 
         fetchRandomGIF(search).then((res) => {
-          this.activityPhoto = res.data.results[0].media[0].gif.url
+          if (this.$vuetify.breakpoint.xsOnly) {
+            this.activityPhoto = res.data.results[0].media[0].tinygif.url
+          } else {
+            this.activityPhoto = res.data.results[0].media[0].gif.url
+          }
         })
       }
     },
