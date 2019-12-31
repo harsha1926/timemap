@@ -43,9 +43,6 @@
         <v-row align="center" class="pa-2">
           <v-btn @click="logout" color="primary">Logout</v-btn>
         </v-row>
-        <v-row align="center" class="pa-2">
-          <v-btn to="/admin" color="primary">Admin Actions</v-btn>
-        </v-row>
         <v-dialog v-model="showEditDisplayNameDialog" max-width="400" eager>
           <v-card>
             <v-card-text>
