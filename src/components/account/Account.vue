@@ -19,7 +19,11 @@
               class="align-center"
             >
               <v-row justify="center">
-                <v-progress-circular v-if="loadingImage" color="white" indeterminate></v-progress-circular>
+                <v-progress-circular
+                  v-if="loadingImage"
+                  color="white"
+                  indeterminate
+                ></v-progress-circular>
               </v-row>
             </v-img>
           </v-avatar>

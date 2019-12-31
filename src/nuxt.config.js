@@ -52,7 +52,8 @@ export default {
     '~/plugins/firebaseAuth.js',
     '~/plugins/vuetify.js',
     '~/plugins/mask.js',
-    '~/plugins/telephoneInput.js'
+    '~/plugins/telephoneInput.js',
+    '~/plugins/croppa.js'
   ],
   /*
    ** Nuxt.js dev-modules
