@@ -12,9 +12,9 @@
         <v-row align="center">
           <v-flex class="subtitle-1 font-weight-medium">
             {{ displayNameCaptilize }}
-            <span class="subtitle-2 font-weight-regular">
-              {{ activityHeading }}
-            </span>
+            <span
+              class="subtitle-2 font-weight-regular"
+            >{{ activityHeading }}</span>
           </v-flex>
         </v-row>
         <v-row>
@@ -22,60 +22,13 @@
         </v-row>
       </v-col>
 
-      <v-col cols="2" class="text-right">
+      <v-col cols="1" class="text-right">
         <v-icon class="customPointer" color="primary">mdi-heart-outline</v-icon>
       </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col class="mt-0 pt-0" cols="10">
-        <v-img :src="activityPhoto" height="160px">
-          <template v-slot:placeholder>
-            <v-row class="fill-height ma-0" align="center" justify="center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
-            </v-row>
-          </template>
-          <v-row
-            justify="end"
-            align="end"
-            class="caption font-weight-light ma-1 pa-1 fill-height white--text"
-            >Powered By Tenor</v-row
-          >
-        </v-img>
-      </v-col>
-      <v-col cols="1" wrap class="text-right">
-        <v-icon
-          @click="sendWhatsAppMessage(friend.phoneNumber)"
-          class="customPointer mb-1"
-          color="primary"
-          >mdi-whatsapp</v-icon
-        >
-        <v-icon
-          @click="callPhone(friend.phoneNumber)"
-          class="customPointer mb-1"
-          color="primary"
-          >mdi-phone</v-icon
-        >
-        <v-icon
-          @click="sendTextMessage(friend.phoneNumber)"
-          class="customPointer mb-1"
-          color="primary"
-          >mdi-message-outline</v-icon
-        >
-        <v-icon
-          @click="sendEmailMessage(friend.email)"
-          class="customPointer mb-1"
-          color="primary"
-          >mdi-email-outline</v-icon
-        >
+      <v-col cols="1" class="text-right">
         <v-menu offset-y>
           <template v-slot:activator="{ on }">
-            <v-icon v-on="on" class="customPointer" color="primary"
-              >mdi-dots-vertical</v-icon
-            >
+            <v-icon v-on="on" class="customPointer" color="primary">mdi-dots-vertical</v-icon>
           </template>
           <v-list>
             <v-list-item @click="removeFriendWarning">
@@ -87,6 +40,45 @@
         </v-menu>
       </v-col>
     </v-row>
+
+    <v-row>
+      <v-col class="mt-0 pt-0" cols="10">
+        <v-img :src="activityPhoto" height="160px">
+          <template v-slot:placeholder>
+            <v-row class="fill-height ma-0" align="center" justify="center">
+              <v-progress-circular indeterminate color="primary"></v-progress-circular>
+            </v-row>
+          </template>
+          <v-row
+            justify="end"
+            align="end"
+            class="caption font-weight-light ma-1 pa-1 fill-height white--text"
+          >Powered By Tenor</v-row>
+        </v-img>
+      </v-col>
+      <v-col cols="2" wrap class="text-center">
+        <v-icon
+          @click="sendWhatsAppMessage(friend.phoneNumber)"
+          class="customPointer mb-2"
+          color="primary"
+        >mdi-whatsapp</v-icon>
+        <v-icon
+          @click="callPhone(friend.phoneNumber)"
+          class="customPointer mb-2"
+          color="primary"
+        >mdi-phone</v-icon>
+        <v-icon
+          @click="sendTextMessage(friend.phoneNumber)"
+          class="customPointer mb-2"
+          color="primary"
+        >mdi-message-outline</v-icon>
+        <v-icon
+          @click="sendEmailMessage(friend.email)"
+          class="customPointer"
+          color="primary"
+        >mdi-email-outline</v-icon>
+      </v-col>
+    </v-row>
     <v-row>
       <div style="background-color:#D8D8D8; height: 10px; width:100%;"></div>
     </v-row>
@@ -95,9 +87,7 @@
         <v-card-title>Are you sure?</v-card-title>
         <v-card-actions>
           <v-btn @click="removeFriend">Yes</v-btn>
-          <v-btn @click="showRemoveFriendWarning = false" color="primary"
-            >No</v-btn
-          >
+          <v-btn @click="showRemoveFriendWarning = false" color="primary">No</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

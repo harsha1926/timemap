@@ -1,32 +1,28 @@
 <template>
-  <v-container fluid style="max-width: 600px; height: 85vh; max-height: 85%;">
-    <v-row justify="center" align="center">
+  <v-container fluid style="max-width: 600px;">
+    <v-row justify="center">
       <v-col cols="12">
-        <v-row>
-          <input
+        <v-row justify="center">
+          <!-- <input
             ref="imageUpdate"
             v-show="false"
             @change="updateImage"
             accept="image/*"
             type="file"
-          />
-          <v-img
-            v-if="photoURL"
-            @click="$router.push('/account/editPhoto')"
-            :src="photoURL"
-            :aspect-ratio="16 / 9"
-            max-height="400"
-            content
-            class="align-center"
-          >
-            <v-row justify="center">
-              <v-progress-circular
-                v-if="loadingImage"
-                color="white"
-                indeterminate
-              ></v-progress-circular>
-            </v-row>
-          </v-img>
+          />-->
+          <v-avatar size="200">
+            <v-img
+              v-if="photoURL"
+              @click="$router.push('/account/editPhoto')"
+              :src="photoURL"
+              content
+              class="align-center"
+            >
+              <v-row justify="center">
+                <v-progress-circular v-if="loadingImage" color="white" indeterminate></v-progress-circular>
+              </v-row>
+            </v-img>
+          </v-avatar>
         </v-row>
         <v-row justify="space-between" align="center" class="pa-2">
           <span v-if="displayName">{{ displayName }}</span>
