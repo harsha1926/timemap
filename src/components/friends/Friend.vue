@@ -12,9 +12,9 @@
         <v-row align="center">
           <v-flex class="subtitle-1 font-weight-medium">
             {{ displayNameCaptilize }}
-            <span class="subtitle-2 font-weight-regular">{{
-              activityHeading
-            }}</span>
+            <span class="subtitle-2 font-weight-regular">
+              {{ activityHeading }}
+            </span>
           </v-flex>
         </v-row>
         <v-row>
@@ -63,30 +63,38 @@
         </v-img>
       </v-col>
       <v-col cols="2" wrap class="text-center">
-        <v-icon
-          @click="sendWhatsAppMessage(friend.phoneNumber)"
-          class="customPointer mb-2"
-          color="primary"
-          >mdi-whatsapp</v-icon
-        >
-        <v-icon
-          @click="callPhone(friend.phoneNumber)"
-          class="customPointer mb-2"
-          color="primary"
-          >mdi-phone</v-icon
-        >
-        <v-icon
-          @click="sendTextMessage(friend.phoneNumber)"
-          class="customPointer mb-2"
-          color="primary"
-          >mdi-message-outline</v-icon
-        >
-        <v-icon
-          @click="sendEmailMessage(friend.email)"
-          class="customPointer"
-          color="primary"
-          >mdi-email-outline</v-icon
-        >
+        <v-flex class="mb-3">
+          <v-icon
+            @click="sendWhatsAppMessage(friend.phoneNumber)"
+            class="customPointer"
+            color="primary"
+            >mdi-whatsapp</v-icon
+          >
+        </v-flex>
+        <v-flex class="mb-3">
+          <v-icon
+            @click="callPhone(friend.phoneNumber)"
+            class="customPointer"
+            color="primary"
+            >mdi-phone</v-icon
+          >
+        </v-flex>
+        <v-flex class="mb-3">
+          <v-icon
+            @click="sendTextMessage(friend.phoneNumber)"
+            class="customPointer"
+            color="primary"
+            >mdi-message-outline</v-icon
+          >
+        </v-flex>
+        <v-flex>
+          <v-icon
+            @click="sendEmailMessage(friend.email)"
+            class="customPointer"
+            color="primary"
+            >mdi-email-outline</v-icon
+          >
+        </v-flex>
       </v-col>
     </v-row>
     <v-row>

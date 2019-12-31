@@ -3,28 +3,12 @@
     <v-row justify="center">
       <v-col cols="12">
         <v-row justify="center">
-          <!-- <input
-            ref="imageUpdate"
-            v-show="false"
-            @change="updateImage"
-            accept="image/*"
-            type="file"
-          />-->
-          <v-avatar size="200">
+          <v-avatar v-if="photoURL" size="200" class="customPointer">
             <v-img
-              v-if="photoURL"
               @click="$router.push('/account/editPhoto')"
               :src="photoURL"
               content
-              class="align-center"
             >
-              <v-row justify="center">
-                <v-progress-circular
-                  v-if="loadingImage"
-                  color="white"
-                  indeterminate
-                ></v-progress-circular>
-              </v-row>
             </v-img>
           </v-avatar>
         </v-row>
@@ -63,12 +47,10 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { auth, firebaseDB, firebaseStorage } from '@/services/firebaseInit.js'
+import { auth, firebaseDB } from '@/services/firebaseInit.js'
 export default {
   data: () => ({
-    showEditDisplayNameDialog: false,
-    admin: false,
-    loadingImage: false
+    showEditDisplayNameDialog: false
   }),
   computed: {
     ...mapGetters('user', ['uid', 'displayName', 'photoURL', 'phoneNumber'])
@@ -82,27 +64,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions('user', ['removeUser', 'addDisplayName', 'addPhotoURL']),
-    updateImage(e) {
-      const vm = this
-      const storageRef = firebaseStorage.ref('users/' + vm.uid)
-      const files = e.target.files
-      if (files.length > 0) {
-        vm.loadingImage = true
-        storageRef.put(files[0]).then(() => {
-          storageRef.getDownloadURL().then((url) => {
-            firebaseDB
-              .ref('users')
-              .child(vm.uid)
-              .update({
-                photoURL: url
-              })
-            vm.addPhotoURL(url)
-            vm.loadingImage = false
-          })
-        })
-      }
-    },
+    ...mapActions('user', ['removeUser', 'addDisplayName']),
     openEditDisplayNameDialog() {
       this.showEditDisplayNameDialog = true
       this.$nextTick(() => {

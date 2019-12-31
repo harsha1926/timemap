@@ -1,6 +1,11 @@
 <template>
   <div>
     <v-row justify="center">
+      <v-progress-linear
+        v-if="loading"
+        indeterminate
+        color="primary"
+      ></v-progress-linear>
       <croppa
         ref="croppedImage"
         :prevent-white-space="true"
@@ -43,7 +48,8 @@ import { mapGetters, mapActions } from 'vuex'
 import { firebaseStorage, firebaseDB } from '@/services/firebaseInit.js'
 export default {
   data: () => ({
-    changesMade: false
+    changesMade: false,
+    loading: false
   }),
   computed: {
     ...mapGetters('user', ['uid', 'photoURL']),
@@ -58,9 +64,11 @@ export default {
       this.$refs.croppedImage.chooseFile()
     },
     removePhoto() {
-      this.$refs.croppedImage.remove()
       const vm = this
+      vm.$refs.croppedImage.remove()
+      vm.changesMade = false
       const storageRef = firebaseStorage.ref('users/nothing.png')
+      vm.loading = true
       storageRef.getDownloadURL().then((url) => {
         firebaseDB
           .ref('users')
@@ -69,12 +77,14 @@ export default {
             photoURL: url
           })
         vm.addPhotoURL(url)
+        vm.loading = false
       })
     },
     uploadPhoto() {
       const vm = this
       if (vm.$refs.croppedImage && vm.$refs.croppedImage.img) {
         if (vm.$refs.croppedImage.img.src !== vm.photoURL) {
+          vm.loading = true
           vm.$refs.croppedImage.generateBlob((blob) => {
             const storageRef = firebaseStorage.ref('users/' + vm.uid)
             storageRef.put(blob).then(() => {
@@ -87,6 +97,7 @@ export default {
                   })
                 vm.addPhotoURL(url)
                 vm.changesMade = false
+                vm.loading = false
               })
             })
           })
