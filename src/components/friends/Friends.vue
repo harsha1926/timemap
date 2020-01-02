@@ -1,6 +1,18 @@
 <template>
   <v-container :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''" fluid>
     <v-row wrap>
+      Favourites
+      <v-col
+        v-for="favouriteId in favouriteIds"
+        :key="favouriteId"
+        :class="$vuetify.breakpoint.xsOnly ? 'mt-0 pt-0' : ''"
+        cols="12"
+        sm="6"
+        md="4"
+        la="2"
+      >
+        <friend :friendId="favouriteId" @friendRemoved="friendRemoved" />
+      </v-col>Friends
       <v-col
         v-for="friendId in friendIds"
         :key="friendId"
@@ -10,17 +22,9 @@
         md="4"
         la="2"
       >
-        <friend
-          :friendId="friendId"
-          @friendRemoved="friendRemoved"
-          :category="category"
-        />
+        <friend :friendId="friendId" @friendRemoved="friendRemoved" />
       </v-col>
-      <v-snackbar
-        v-model="showFriendRemovedSnackbar"
-        :timeout="1000"
-        color="primary"
-      >
+      <v-snackbar v-model="showFriendRemovedSnackbar" :timeout="1000" color="primary">
         {{ removedFriendName }} is not your friend anymore
         <v-icon>far fa-frown</v-icon>
       </v-snackbar>
@@ -40,7 +44,8 @@ export default {
       showFriendRemovedSnackbar: false,
       removedFriendName: '',
       friendIds: [],
-      categories: []
+      categories: [],
+      favouriteIds: []
     }
   },
   computed: {
@@ -53,6 +58,7 @@ export default {
     const vm = this
     vm.fetchFriendsList()
     vm.fetchCategories()
+    vm.fetchFavourites()
   },
   methods: {
     friendRemoved(removedFriend) {
@@ -62,6 +68,17 @@ export default {
         this.removedFriendName = removedFriend.displayName
         this.showFriendRemovedSnackbar = true
       }
+    },
+    fetchFavourites() {
+      const vm = this
+      firebaseDB
+        .ref('favourites/' + vm.uid)
+        .once('value', function(favourites) {
+          vm.favouriteIds = []
+          favourites.forEach((favourite) => {
+            vm.favouriteIds.push(favourite.key)
+          })
+        })
     },
     fetchFriendsList() {
       const vm = this

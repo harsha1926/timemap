@@ -12,9 +12,9 @@
         <v-row align="center">
           <v-flex class="subtitle-1 font-weight-medium">
             {{ displayNameCaptilize }}
-            <span class="subtitle-2 font-weight-regular">
-              {{ activityHeading }}
-            </span>
+            <span
+              class="subtitle-2 font-weight-regular"
+            >{{ activityHeading }}</span>
           </v-flex>
         </v-row>
         <v-row>
@@ -22,15 +22,15 @@
         </v-row>
       </v-col>
 
-      <v-col cols="1" class="text-right">
-        <v-icon class="customPointer" color="primary">mdi-heart-outline</v-icon>
+      <v-col cols="1" @click="toggleFavourite" class="text-right">
+        <v-icon class="customPointer" color="primary" v-if="!isFavourite">mdi-heart-outline</v-icon>
+        <v-icon class="customPointer" color="primary" v-else>mdi-heart</v-icon>
       </v-col>
+
       <v-col cols="1" class="text-right">
         <v-menu offset-y>
           <template v-slot:activator="{ on }">
-            <v-icon v-on="on" class="customPointer" color="primary"
-              >mdi-dots-vertical</v-icon
-            >
+            <v-icon v-on="on" class="customPointer" color="primary">mdi-dots-vertical</v-icon>
           </template>
           <v-list>
             <v-list-item @click="removeFriendWarning">
@@ -48,18 +48,14 @@
         <v-img :src="activityPhoto" height="160px">
           <template v-slot:placeholder>
             <v-row class="fill-height ma-0" align="center" justify="center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
+              <v-progress-circular indeterminate color="primary"></v-progress-circular>
             </v-row>
           </template>
           <v-row
             justify="end"
             align="end"
             class="caption font-weight-light ma-1 pa-1 fill-height white--text"
-            >Powered By Tenor</v-row
-          >
+          >Powered By Tenor</v-row>
         </v-img>
       </v-col>
       <v-col cols="2" wrap class="text-center">
@@ -68,32 +64,28 @@
             @click="sendWhatsAppMessage(friend.phoneNumber)"
             class="customPointer"
             color="primary"
-            >mdi-whatsapp</v-icon
-          >
+          >mdi-whatsapp</v-icon>
         </v-flex>
         <v-flex class="mb-3">
           <v-icon
             @click="callPhone(friend.phoneNumber)"
             class="customPointer"
             color="primary"
-            >mdi-phone</v-icon
-          >
+          >mdi-phone</v-icon>
         </v-flex>
         <v-flex class="mb-3">
           <v-icon
             @click="sendTextMessage(friend.phoneNumber)"
             class="customPointer"
             color="primary"
-            >mdi-message-outline</v-icon
-          >
+          >mdi-message-outline</v-icon>
         </v-flex>
         <v-flex>
           <v-icon
             @click="sendEmailMessage(friend.email)"
             class="customPointer"
             color="primary"
-            >mdi-email-outline</v-icon
-          >
+          >mdi-email-outline</v-icon>
         </v-flex>
       </v-col>
     </v-row>
@@ -105,9 +97,7 @@
         <v-card-title>Are you sure?</v-card-title>
         <v-card-actions>
           <v-btn @click="removeFriend">Yes</v-btn>
-          <v-btn @click="showRemoveFriendWarning = false" color="primary"
-            >No</v-btn
-          >
+          <v-btn @click="showRemoveFriendWarning = false" color="primary">No</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -139,7 +129,8 @@ export default {
       now: new Date(),
       activityPhoto: '',
       lastUpdated: null,
-      showRemoveFriendWarning: false
+      showRemoveFriendWarning: false,
+      isFavourite: false
     }
   },
   computed: {
@@ -179,7 +170,7 @@ export default {
       else {
         let activity = null
         if (this.localTime) {
-          if (this.isDayActive()) {
+          if (false) {
             activity = this.getActiveActivity()
             if (!activity) {
               activity = 'free'
@@ -224,6 +215,16 @@ export default {
     if (this.friendId) {
       const vm = this
       vm.loading = true
+
+      firebaseDB
+        .ref('favourites/' + vm.uid + '/' + vm.friendId)
+        .once('value', function(data) {
+          if (data.val()) {
+            vm.isFavourite = true
+          } else {
+            vm.isFavourite = false
+          }
+        })
       firebaseDB
         .ref('users/' + vm.friendId)
         .once('value', function(data) {
@@ -282,6 +283,18 @@ export default {
     },
     removeFriendWarning() {
       this.showRemoveFriendWarning = true
+    },
+    toggleFavourite() {
+      const vm = this
+      if (this.isFavourite) {
+        this.isFavourite = false
+        firebaseDB.ref('favourites/' + vm.uid + '/' + vm.friend.uid).set(null)
+        firebaseDB.ref('friends/' + vm.uid + '/' + vm.friend.uid).set(true)
+      } else {
+        this.isFavourite = true
+        firebaseDB.ref('favourites/' + vm.uid + '/' + vm.friend.uid).set(true)
+        firebaseDB.ref('friends/' + vm.uid + '/' + vm.friend.uid).set(null)
+      }
     },
     getSchedule() {
       let schedule = this.schedule.weekday
