@@ -6,12 +6,7 @@
           <v-avatar class="ml-2" tile size="35">
             <v-img src="/icon.png"></v-img>
           </v-avatar>
-          <v-avatar
-            class="ml-1 title font-weight-regular primary--text"
-            tile
-            size="35"
-            >TM</v-avatar
-          >
+          <v-avatar class="ml-1 title font-weight-regular primary--text" tile size="35">TM</v-avatar>
         </v-flex>
         <v-flex class="text-right">
           <v-row justify="end" align="center">
@@ -20,11 +15,8 @@
               v-if="uid"
               class="mr-5"
               small
-              >fas fa-search</v-icon
-            >
-            <span v-if="displayName" class="mr-5 d-none d-sm-block"
-              >Hello {{ displayName }}</span
-            >
+            >fas fa-search</v-icon>
+            <span v-if="displayName" class="mr-5 d-none d-sm-block">Hello {{ displayName }}</span>
             <v-avatar
               @click="$router.push('/account')"
               v-if="photoURL"
@@ -45,18 +37,10 @@
         <nuxt v-else-if="uid && phoneNumber"></nuxt>
       </v-container>
     </v-content>
-    <v-bottom-navigation
-      v-if="uid"
-      v-model="activeTab"
-      color="primary"
-      grow
-      shift
-      height="48"
-      app
-    >
+    <v-bottom-navigation v-if="uid" v-model="activeTab" color="primary" grow shift height="48" app>
       <v-btn small to="/">
         <span class="caption">Friends</span>
-        <v-icon small>mdi-heart</v-icon>
+        <v-icon small>fas fa-users</v-icon>
       </v-btn>
       <v-btn small to="/schedule">
         <span class="caption">My Routine</span>
