@@ -3,8 +3,9 @@
     <v-row justify="center">
       <v-col cols="12">
         <v-row justify="center">
-          <v-avatar v-if="photoURL" size="200" class="customPointer">
+          <v-avatar v-show="photoURL" size="200" class="customPointer">
             <v-img
+              v-if="photoURL"
               @click="$router.push('/account/editPhoto')"
               :src="photoURL"
               content

@@ -170,13 +170,13 @@ export default {
       else {
         let activity = null
         if (this.localTime) {
-          if (false) {
-            activity = this.getActiveActivity()
-            if (!activity) {
-              activity = 'free'
-            }
-          } else {
+          activity = this.getActiveActivity()
+          if (!activity && this.isAtWork()) {
+            activity = 'work'
+          } else if (!activity && !this.isAwake()) {
             activity = 'sleep'
+          } else if (!activity) {
+            activity = 'free'
           }
         }
         return activity
@@ -307,41 +307,85 @@ export default {
       return schedule
     },
     getActiveActivity() {
-      const routine = this.getSchedule().routine
+      const routine = this.getSchedule()
       for (const activity in routine) {
-        const activityStartTime = this.getMomentDateWithTime(
-          routine[activity].startTime
-        )
-        const activityEndTime = this.getMomentDateWithTime(
-          moment(routine[activity].startTime, 'HH:mm:ss')
-            .add(routine[activity].duration, 'h')
-            .format('HH:mm:ss')
-        )
+        if (routine[activity].endTime) {
+          const activityStartTime = this.getMomentDateWithTime(
+            routine[activity].startTime
+          )
+          const currentTime = this.getMomentDateWithTime(
+            moment.tz(this.timezone).format('HH:mm:ss')
+          )
+          const activityEndTime = this.getMomentDateWithTime(
+            routine[activity].endTime
+          )
+          if (
+            currentTime.isAfter(activityStartTime) &&
+            currentTime.isBefore(activityEndTime)
+          ) {
+            return activity
+          }
+        }
+      }
+    },
+    isAwake() {
+      const routine = this.getSchedule()
+      let dayStartTime = null
+      let dayEndTime = null
+
+      for (const activity in routine) {
+        if (routine[activity].id === 'awake') {
+          dayStartTime = routine[activity].startTime
+        }
+        if (routine[activity].id === 'sleep') {
+          dayEndTime = routine[activity].startTime
+        }
+      }
+
+      if (dayStartTime && dayEndTime) {
+        dayStartTime = this.getMomentDateWithTime(dayStartTime)
+        dayEndTime = this.getMomentDateWithTime(dayEndTime)
         const currentTime = this.getMomentDateWithTime(
           moment.tz(this.timezone).format('HH:mm:ss')
         )
         if (
-          currentTime.isAfter(activityStartTime) &&
-          currentTime.isBefore(activityEndTime)
+          currentTime.isAfter(dayStartTime) &&
+          currentTime.isBefore(dayEndTime)
         ) {
-          return activity
+          return true
+        } else {
+          return false
         }
       }
     },
-    isDayActive() {
-      const schedule = this.getSchedule()
-      const dayStartTime = this.getMomentDateWithTime(schedule.dayStartTime)
-      const dayEndTime = this.getMomentDateWithTime(schedule.dayEndTime)
-      const currentTime = this.getMomentDateWithTime(
-        moment.tz(this.timezone).format('HH:mm:ss')
-      )
-      if (
-        currentTime.isAfter(dayStartTime) &&
-        currentTime.isBefore(dayEndTime)
-      ) {
-        return true
-      } else {
-        return false
+    isAtWork() {
+      const routine = this.getSchedule()
+      let workStartTime = null
+      let workEndTime = null
+
+      for (const activity in routine) {
+        if (routine[activity].id === 'work') {
+          workStartTime = routine[activity].startTime
+        }
+        if (routine[activity].id === 'offWork') {
+          workEndTime = routine[activity].startTime
+        }
+      }
+
+      if (workStartTime && workEndTime) {
+        workStartTime = this.getMomentDateWithTime(workStartTime)
+        workEndTime = this.getMomentDateWithTime(workEndTime)
+        const currentTime = this.getMomentDateWithTime(
+          moment.tz(this.timezone).format('HH:mm:ss')
+        )
+        if (
+          currentTime.isAfter(workStartTime) &&
+          currentTime.isBefore(workEndTime)
+        ) {
+          return true
+        } else {
+          return false
+        }
       }
     },
     getMomentDateWithTime(timeStr) {
