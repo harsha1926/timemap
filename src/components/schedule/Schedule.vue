@@ -19,7 +19,11 @@
       <v-tabs-items v-model="tab">
         <v-tab-item :key="0">
           <v-timeline v-if="weekdayRoutine" align-top dense>
-            <v-timeline-item v-for="activity in weekdayRoutine" :key="activity.id" color="primary">
+            <v-timeline-item
+              v-for="activity in weekdayRoutine"
+              :key="activity.id"
+              color="primary"
+            >
               <template v-slot:icon>
                 <v-avatar>
                   <v-img :src="activity.gif"></v-img>
@@ -44,7 +48,11 @@
         </v-tab-item>
         <v-tab-item :key="1">
           <v-timeline v-if="weekendRoutine" align-top dense>
-            <v-timeline-item v-for="activity in weekendRoutine" :key="activity.id" color="primary">
+            <v-timeline-item
+              v-for="activity in weekendRoutine"
+              :key="activity.id"
+              color="primary"
+            >
               <template v-slot:icon>
                 <v-avatar>
                   <v-img :src="activity.gif"></v-img>
@@ -75,7 +83,6 @@
 import { mapGetters } from 'vuex'
 import moment from 'moment'
 import { firebaseDB } from '@/services/firebaseInit.js'
-import { fetchRandomGIF } from '@/api/tenorGIFs'
 export default {
   data() {
     return {
