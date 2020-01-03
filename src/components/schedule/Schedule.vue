@@ -6,7 +6,10 @@
         src="https://media1.tenor.com/images/b30caa3463074c95d1dd35b06d3e21f5/tenor.gif?itemid=4529604"
         gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
       >
-        <v-row align="start" justify="start" class="pa-2 ma-2 white--text">
+        <v-row align="start" justify="end" class="ma-1 pa-1">
+          <div class="tenorFont white--text">Powered By Tenor</div>
+        </v-row>
+        <v-row align="center" justify="start" class="pa-2 ma-2 white--text">
           <div class="headline font-weight-light">My Routine</div>
         </v-row>
       </v-img>
@@ -18,7 +21,7 @@
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item :key="0">
-          <v-timeline v-if="weekdayRoutine" align-top dense>
+          <v-timeline v-if="weekdayRoutine" dense>
             <v-timeline-item
               v-for="activity in weekdayRoutine"
               :key="activity.id"
@@ -29,7 +32,10 @@
                   <v-img :src="activity.gif"></v-img>
                 </v-avatar>
               </template>
-              <v-row align="center">
+              <v-row
+                @click="openUpdateScheduleDialog(activity, false)"
+                align="center"
+              >
                 <v-col cols="1" class="text-center">
                   <v-icon small class="customPointer">mdi-pencil</v-icon>
                 </v-col>
@@ -47,7 +53,7 @@
           </v-timeline>
         </v-tab-item>
         <v-tab-item :key="1">
-          <v-timeline v-if="weekendRoutine" align-top dense>
+          <v-timeline v-if="weekendRoutine" dense>
             <v-timeline-item
               v-for="activity in weekendRoutine"
               :key="activity.id"
@@ -58,7 +64,10 @@
                   <v-img :src="activity.gif"></v-img>
                 </v-avatar>
               </template>
-              <v-row align="center">
+              <v-row
+                @click="openUpdateScheduleDialog(activity, true)"
+                align="center"
+              >
                 <v-col cols="1" class="text-center">
                   <v-icon small class="customPointer">mdi-pencil</v-icon>
                 </v-col>
@@ -77,17 +86,33 @@
         </v-tab-item>
       </v-tabs-items>
     </v-row>
+    <v-dialog v-model="showEditScheduleDialog" max-width="600" eager>
+      <update-schedule
+        :activity="selectedActivity"
+        :isWeekend="isWeekend"
+        @dialog-closed="closeUpdateScheduleDialog"
+        @updated-schedule="updatedSchedule"
+      ></update-schedule>
+    </v-dialog>
   </v-container>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import moment from 'moment'
+import UpdateSchedule from './UpdateSchedule'
 import { firebaseDB } from '@/services/firebaseInit.js'
+
 export default {
+  components: {
+    UpdateSchedule
+  },
   data() {
     return {
       schedule: null,
-      tab: null
+      tab: null,
+      showEditScheduleDialog: false,
+      selectedActivity: null,
+      isWeekend: false
     }
   },
   computed: {
@@ -98,6 +123,7 @@ export default {
 
         for (const activity in this.schedule.weekday) {
           activities.push({
+            uid: activity,
             id: this.schedule.weekday[activity].id,
             title: this.schedule.weekday[activity].title,
             startTime: this.schedule.weekday[activity].startTime,
@@ -152,11 +178,14 @@ export default {
   mounted() {
     const vm = this
     firebaseDB.ref('schedule/' + vm.uid).once('value', function(data) {
-      if (data.val()) vm.schedule = data.val()
-      else
+      if (data.val()) {
+        vm.schedule = data.val()
+      } else {
         firebaseDB.ref('schedule/default').once('value', function(data) {
           vm.schedule = data.val()
+          firebaseDB.ref('schedule/' + vm.uid).set(data.val())
         })
+      }
     })
   },
   methods: {
@@ -166,6 +195,43 @@ export default {
       } else {
         return ''
       }
+    },
+    openUpdateScheduleDialog(activity, isWeekend) {
+      this.selectedActivity = activity
+      this.isWeekend = isWeekend
+      this.showEditScheduleDialog = true
+    },
+    closeUpdateScheduleDialog() {
+      this.selectedActivity = null
+      this.showEditScheduleDialog = false
+    },
+    updatedSchedule(activity) {
+      if (activity.isWeekend) {
+        this.$set(this.schedule.weekend[activity.uid], 'title', activity.title)
+        this.$set(
+          this.schedule.weekend[activity.uid],
+          'startTime',
+          activity.startTime
+        )
+        this.$set(
+          this.schedule.weekend[activity.uid],
+          'endTime',
+          activity.endTime
+        )
+      } else {
+        this.$set(this.schedule.weekday[activity.uid], 'title', activity.title)
+        this.$set(
+          this.schedule.weekday[activity.uid],
+          'startTime',
+          activity.startTime
+        )
+        this.$set(
+          this.schedule.weekday[activity.uid],
+          'endTime',
+          activity.endTime
+        )
+      }
+      this.closeUpdateScheduleDialog()
     }
   }
 }

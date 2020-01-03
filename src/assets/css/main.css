@@ -1,3 +1,7 @@
 .customPointer {
     cursor: pointer;
 }
+.tenorFont {
+    font-weight: lighter;
+    font-size: x-small;
+}

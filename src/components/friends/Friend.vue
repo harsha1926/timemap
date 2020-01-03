@@ -12,9 +12,9 @@
         <v-row align="center">
           <v-flex class="subtitle-1 font-weight-medium">
             {{ displayNameCaptilize }}
-            <span class="subtitle-2 font-weight-regular">
-              {{ activityHeading }}
-            </span>
+            <span class="subtitle-2 font-weight-regular">{{
+              activityHeading
+            }}</span>
           </v-flex>
         </v-row>
         <v-row>
@@ -45,7 +45,7 @@
 
     <v-row>
       <v-col class="mt-0 pt-0" cols="10">
-        <v-img :src="activityPhoto" height="160px">
+        <v-img :src="activityPhoto" :height="height">
           <template v-slot:placeholder>
             <v-row class="fill-height ma-0" align="center" justify="center">
               <v-progress-circular
@@ -56,8 +56,8 @@
           </template>
           <v-row
             justify="end"
-            align="end"
-            class="caption font-weight-light ma-1 pa-1 fill-height white--text"
+            align="start"
+            class="tenorFont ma-1 pa-1 fill-height white--text"
             >Powered By Tenor</v-row
           >
         </v-img>
@@ -144,6 +144,9 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['uid']),
+    height() {
+      return this.$vuetify.breakpoint.xsOnly ? '180px' : '250px'
+    },
     localTimeFormattedString() {
       if (this.timezone) {
         return momentTimezone(this.now)
@@ -272,7 +275,7 @@ export default {
     },
     fetchGIF(search) {
       fetchRandomGIF(search).then((res) => {
-        if (res.data.results[0].media[0].tinygif.dims[1] < 160)
+        if (res.data.results[0].media[0].tinygif.dims[1] < 150)
           this.activityPhoto = res.data.results[0].media[0].tinygif.url
         else return this.fetchGIF(search)
       })
