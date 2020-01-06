@@ -16,14 +16,18 @@
     </v-row>
     <v-row v-if="schedule">
       <v-tabs v-model="tab" show-arrows>
-        <v-tab v-for="eachDay in routine" :key="eachDay.day">{{ eachDay.day.substring(0, 3) }}</v-tab>
+        <v-tab v-for="eachDay in routine" :key="eachDay.day">
+          {{
+          eachDay.day.substring(0, 3)
+          }}
+        </v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item v-for="eachDay in routine" :key="eachDay.day">
           <v-timeline v-if="eachDay.activities" dense>
             <v-timeline-item color="grey lighten-2" small>
-              <v-row justify="end" align="center">
-                <v-btn color="primary" x-small fab @click="openAddActivityDialog">
+              <v-row align="center">
+                <v-btn @click="openAddActivityDialog" color="primary" x-small fab>
                   <v-icon>mdi-plus</v-icon>
                 </v-btn>
               </v-row>
@@ -35,7 +39,7 @@
                   <v-img :src="activity.gif"></v-img>
                 </v-avatar>
               </template>
-              <v-row @click="openUpdateScheduleDialog(activity, false)" align="center">
+              <v-row @click="openUpdateActivityDialog(activity, false)" align="center">
                 <v-col cols="1" class="text-center">
                   <v-icon small class="customPointer">mdi-pencil</v-icon>
                 </v-col>
@@ -60,10 +64,12 @@
         :isWeekend="isWeekend"
         @dialog-closed="closeUpdateActivityDialog"
         @updated-activity="updatedActivity"
+        @deleted-activity="deletedActivity"
+        :activities="activities"
       ></update-activity>
     </v-dialog>
     <v-dialog v-model="showAddActivityDialog" max-width="600" eager>
-      <add-activity></add-activity>
+      <add-activity @dialog-closed="closeAddActivityDialog" :activities="activities"></add-activity>
     </v-dialog>
   </v-container>
 </template>
@@ -71,8 +77,8 @@
 import { mapGetters } from 'vuex'
 import moment from 'moment'
 import UpdateActivity from './UpdateActivity'
-import { firebaseDB } from '@/services/firebaseInit.js'
 import AddActivity from './AddActivity'
+import { firebaseDB } from '@/services/firebaseInit.js'
 
 export default {
   components: {
@@ -81,6 +87,7 @@ export default {
   },
   data() {
     return {
+      activities: [],
       schedule: null,
       tab: null,
       showEditActivityDialog: false,
@@ -93,7 +100,7 @@ export default {
     ...mapGetters('user', ['uid']),
     routine() {
       if (this.schedule) {
-        let routine = []
+        const routine = []
         for (const eachDay in this.schedule) {
           let activities = []
           for (const activity in this.schedule[eachDay]) {
@@ -118,7 +125,7 @@ export default {
               return 0
             }
           })
-          routine.push({ day: eachDay, activities: activities })
+          routine.push({ day: eachDay, activities })
         }
         return this.sortByDay(routine)
       }
@@ -126,17 +133,8 @@ export default {
     }
   },
   mounted() {
-    const vm = this
-    firebaseDB.ref('schedule/' + vm.uid).once('value', function(data) {
-      if (data.val()) {
-        vm.schedule = data.val()
-      } else {
-        firebaseDB.ref('schedule/default').once('value', function(data) {
-          vm.schedule = data.val()
-          firebaseDB.ref('schedule/' + vm.uid).set(data.val())
-        })
-      }
-    })
+    this.getSchedule()
+    this.getActivities()
   },
   methods: {
     formatTime(time) {
@@ -155,33 +153,14 @@ export default {
       this.selectedActivity = null
       this.showEditActivityDialog = false
     },
-    updatedActivity(activity) {
-      if (activity.isWeekend) {
-        this.$set(this.schedule.weekend[activity.uid], 'title', activity.title)
-        this.$set(
-          this.schedule.weekend[activity.uid],
-          'startTime',
-          activity.startTime
-        )
-        this.$set(
-          this.schedule.weekend[activity.uid],
-          'endTime',
-          activity.endTime
-        )
-      } else {
-        this.$set(this.schedule.weekday[activity.uid], 'title', activity.title)
-        this.$set(
-          this.schedule.weekday[activity.uid],
-          'startTime',
-          activity.startTime
-        )
-        this.$set(
-          this.schedule.weekday[activity.uid],
-          'endTime',
-          activity.endTime
-        )
-      }
+    updatedActivity() {
       this.closeUpdateActivityDialog()
+    },
+    deletedActivity() {
+      this.closeUpdateActivityDialog()
+    },
+    closeAddActivityDialog() {
+      this.showAddActivityDialog = false
     },
     sortByDay(arr) {
       const sorter = {
@@ -194,13 +173,34 @@ export default {
         sunday: 7
       }
       return arr.sort((a, b) => {
-        let day1 = a.day.toLowerCase()
-        let day2 = b.day.toLowerCase()
+        const day1 = a.day.toLowerCase()
+        const day2 = b.day.toLowerCase()
         return sorter[day1] - sorter[day2]
       })
     },
     openAddActivityDialog(activity) {
       this.showAddActivityDialog = true
+    },
+    getSchedule() {
+      const vm = this
+      firebaseDB.ref('schedule/' + vm.uid).once('value', function(data) {
+        if (data.val()) {
+          vm.schedule = data.val()
+        } else {
+          firebaseDB.ref('schedule/default').once('value', function(data) {
+            vm.schedule = data.val()
+            firebaseDB.ref('schedule/' + vm.uid).set(data.val())
+          })
+        }
+      })
+    },
+    getActivities() {
+      const vm = this
+      firebaseDB.ref('activities').once('value', (snapshot) => {
+        snapshot.forEach((activity) => {
+          vm.activities.push(activity.val())
+        })
+      })
     }
   }
 }

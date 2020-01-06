@@ -3,16 +3,15 @@
     <v-card :disabled="loading">
       <v-card-text>
         <v-form ref="form" v-model="valid">
-          <v-row>
-            <v-text-field
-              v-model="title"
-              :rules="[rules.required]"
-              hide-details
-              label="Title"
-              outlined
-            ></v-text-field>
-          </v-row>
-
+          <v-autocomplete
+            v-model="activityText"
+            :items="activities"
+            return-object
+            item-text="question"
+            item-value="id"
+            hide-details
+            disabled
+          ></v-autocomplete>
           <v-row v-if="activity && activity.endTime" align="center" justify="center">
             <v-tabs v-model="tab" grow>
               <v-tab :key="0">Start's at</v-tab>
@@ -32,12 +31,6 @@
           <v-row v-else align="center" justify="center" class="ma-2">
             <v-time-picker v-model="startTime" ampm-in-title full-width></v-time-picker>
           </v-row>
-
-          <v-row justify="end">
-            <v-btn @click="deletedActivity" text class="mr-3">Delete</v-btn>
-            <v-btn @click="$emit('dialog-closed')" text class="mr-3">Close</v-btn>
-            <v-btn @click="updatedActivity" text class="mr-3">Save</v-btn>
-          </v-row>
         </v-form>
         <v-row
           v-if="error"
@@ -46,13 +39,17 @@
           class="overline error--text ma-2 pa-2"
         >{{ errorMsg }}</v-row>
       </v-card-text>
+      <v-card-actions>
+        <v-btn @click="deletedActivity" text class="mr-3">Delete</v-btn>
+        <v-btn @click="$emit('dialog-closed')" text class="mr-3">Close</v-btn>
+        <v-btn @click="updatedActivity" text class="mr-3">Save</v-btn>
+      </v-card-actions>
     </v-card>
   </v-container>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import moment from 'moment'
-import { firebaseDB } from '@/services/firebaseInit.js'
 export default {
   props: {
     activity: {
@@ -61,10 +58,10 @@ export default {
         return null
       }
     },
-    isWeekend: {
-      type: Boolean,
+    activities: {
+      type: Array,
       default() {
-        return false
+        return []
       }
     }
   },
@@ -78,7 +75,7 @@ export default {
       rules: {
         required: (value) => !!value || 'Required.'
       },
-      title: null,
+      activityText: null,
       startTime: null,
       endTime: null
     }
@@ -93,8 +90,11 @@ export default {
   watch: {
     activity: {
       handler(newVal) {
-        if (newVal) {
-          this.title = newVal.title
+        if (newVal && this.activities) {
+          const selected = this.activities.find((o) => o.id === newVal.id)
+          if (selected) {
+            this.activityText = selected
+          }
           this.startTime = moment(newVal.startTime, 'HH:mm:ss').format('HH:mm')
           if (newVal.endTime) {
             this.endTime = moment(newVal.endTime, 'HH:mm:ss').format('HH:mm')
@@ -110,48 +110,10 @@ export default {
   },
   methods: {
     updatedActivity() {
-      const vm = this
-      const updatedActivity = {
-        uid: vm.activity.uid,
-        id: vm.activity.id,
-        title: vm.title,
-        startTime: vm.startTime + ':00',
-        endTime: vm.activity.endTime ? vm.endTime + ':00' : null,
-        gif: vm.activity.gif,
-        isWeekend: vm.isWeekend
-      }
-      if (vm.isWeekend) {
-        firebaseDB
-          .ref('schedule/' + vm.uid + '/weekend/' + vm.activity.uid)
-          .update(updatedActivity)
-      } else {
-        firebaseDB
-          .ref('schedule/' + vm.uid + '/weekday/' + vm.activity.uid)
-          .update(updatedActivity)
-      }
-      vm.$emit('updated-activity', updatedActivity)
+      this.$emit('updated-activity')
     },
     deletedActivity() {
-      const vm = this
-      const updatedActivity = {
-        uid: vm.activity.uid,
-        id: vm.activity.id,
-        title: vm.title,
-        startTime: vm.startTime + ':00',
-        endTime: vm.activity.endTime ? vm.endTime + ':00' : null,
-        gif: vm.activity.gif,
-        isWeekend: vm.isWeekend
-      }
-      if (vm.isWeekend) {
-        firebaseDB
-          .ref('schedule/' + vm.uid + '/weekend/' + vm.activity.uid)
-          .update(updatedActivity)
-      } else {
-        firebaseDB
-          .ref('schedule/' + vm.uid + '/weekday/' + vm.activity.uid)
-          .update(updatedActivity)
-      }
-      vm.$emit('updated-activity', updatedActivity)
+      this.$emit('deleted-activity')
     }
   }
 }
