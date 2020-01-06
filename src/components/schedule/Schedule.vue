@@ -14,60 +14,28 @@
         </v-row>
       </v-img>
     </v-row>
-    <v-row>
-      <v-tabs v-model="tab" grow>
-        <v-tab :key="0">Weekday</v-tab>
-        <v-tab :key="1">Weekend</v-tab>
+    <v-row v-if="schedule">
+      <v-tabs v-model="tab" show-arrows>
+        <v-tab v-for="eachDay in routine" :key="eachDay.day">{{ eachDay.day.substring(0, 3) }}</v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
-        <v-tab-item :key="0">
-          <v-timeline v-if="weekdayRoutine" dense>
-            <v-timeline-item
-              v-for="activity in weekdayRoutine"
-              :key="activity.id"
-              color="primary"
-            >
-              <template v-slot:icon>
-                <v-avatar>
-                  <v-img :src="activity.gif"></v-img>
-                </v-avatar>
-              </template>
-              <v-row
-                @click="openUpdateScheduleDialog(activity, false)"
-                align="center"
-              >
-                <v-col cols="1" class="text-center">
-                  <v-icon small class="customPointer">mdi-pencil</v-icon>
-                </v-col>
-                <v-col cols="4" class="caption text-center">
-                  <v-flex v-if="activity.endTime">
-                    <v-flex>{{ formatTime(activity.startTime) }}</v-flex>
-                    <v-flex>to</v-flex>
-                    <v-flex>{{ formatTime(activity.endTime) }}</v-flex>
-                  </v-flex>
-                  <v-flex v-else>{{ formatTime(activity.startTime) }}</v-flex>
-                </v-col>
-                <v-col cols="7" class="subtitle-2">{{ activity.title }}</v-col>
+        <v-tab-item v-for="eachDay in routine" :key="eachDay.day">
+          <v-timeline v-if="eachDay.activities" dense>
+            <v-timeline-item color="grey lighten-2" small>
+              <v-row justify="end" align="center">
+                <v-btn color="primary" x-small fab @click="openAddActivityDialog">
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
               </v-row>
             </v-timeline-item>
-          </v-timeline>
-        </v-tab-item>
-        <v-tab-item :key="1">
-          <v-timeline v-if="weekendRoutine" dense>
-            <v-timeline-item
-              v-for="activity in weekendRoutine"
-              :key="activity.id"
-              color="primary"
-            >
+
+            <v-timeline-item v-for="activity in eachDay.activities" :key="activity.id">
               <template v-slot:icon>
                 <v-avatar>
                   <v-img :src="activity.gif"></v-img>
                 </v-avatar>
               </template>
-              <v-row
-                @click="openUpdateScheduleDialog(activity, true)"
-                align="center"
-              >
+              <v-row @click="openUpdateScheduleDialog(activity, false)" align="center">
                 <v-col cols="1" class="text-center">
                   <v-icon small class="customPointer">mdi-pencil</v-icon>
                 </v-col>
@@ -79,100 +47,82 @@
                   </v-flex>
                   <v-flex v-else>{{ formatTime(activity.startTime) }}</v-flex>
                 </v-col>
-                <v-col cols="7" class="subtitle-2">{{ activity.title }}</v-col>
+                <v-col cols="7" class="subtitle-2">{{ activity.direct }}</v-col>
               </v-row>
             </v-timeline-item>
           </v-timeline>
         </v-tab-item>
       </v-tabs-items>
     </v-row>
-    <v-dialog v-model="showEditScheduleDialog" max-width="600" eager>
-      <update-schedule
+    <v-dialog v-model="showEditActivityDialog" max-width="600" eager>
+      <update-activity
         :activity="selectedActivity"
         :isWeekend="isWeekend"
-        @dialog-closed="closeUpdateScheduleDialog"
-        @updated-schedule="updatedSchedule"
-      ></update-schedule>
+        @dialog-closed="closeUpdateActivityDialog"
+        @updated-activity="updatedActivity"
+      ></update-activity>
+    </v-dialog>
+    <v-dialog v-model="showAddActivityDialog" max-width="600" eager>
+      <add-activity></add-activity>
     </v-dialog>
   </v-container>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import moment from 'moment'
-import UpdateSchedule from './UpdateSchedule'
+import UpdateActivity from './UpdateActivity'
 import { firebaseDB } from '@/services/firebaseInit.js'
+import AddActivity from './AddActivity'
 
 export default {
   components: {
-    UpdateSchedule
+    UpdateActivity,
+    AddActivity
   },
   data() {
     return {
       schedule: null,
       tab: null,
-      showEditScheduleDialog: false,
+      showEditActivityDialog: false,
       selectedActivity: null,
-      isWeekend: false
+      isWeekend: false,
+      showAddActivityDialog: false
     }
   },
   computed: {
     ...mapGetters('user', ['uid']),
-    weekdayRoutine() {
-      if (this.schedule && this.schedule.weekday) {
-        let activities = []
-
-        for (const activity in this.schedule.weekday) {
-          activities.push({
-            uid: activity,
-            id: this.schedule.weekday[activity].id,
-            title: this.schedule.weekday[activity].title,
-            startTime: this.schedule.weekday[activity].startTime,
-            endTime: this.schedule.weekday[activity].endTime,
-            gif: this.schedule.weekday[activity].gif
-          })
-        }
-
-        activities = activities.sort((a, b) => {
-          const aStartTime = moment(a.startTime, 'HH:mm:ss')
-          const bStartTime = moment(b.startTime, 'HH:mm:ss')
-          if (aStartTime.isAfter(bStartTime)) {
-            return 1
-          } else if (aStartTime.isBefore(bStartTime)) {
-            return -1
-          } else {
-            return 0
+    routine() {
+      if (this.schedule) {
+        let routine = []
+        for (const eachDay in this.schedule) {
+          let activities = []
+          for (const activity in this.schedule[eachDay]) {
+            activities.push({
+              uid: activity,
+              id: this.schedule[eachDay][activity].id,
+              direct: this.schedule[eachDay][activity].direct,
+              startTime: this.schedule[eachDay][activity].startTime,
+              endTime: this.schedule[eachDay][activity].endTime,
+              gif: this.schedule[eachDay][activity].gif
+            })
           }
-        })
-        return activities
-      } else return []
-    },
-    weekendRoutine() {
-      if (this.schedule && this.schedule.weekend) {
-        let activities = []
 
-        for (const activity in this.schedule.weekend) {
-          activities.push({
-            id: this.schedule.weekend[activity].id,
-            title: this.schedule.weekend[activity].title,
-            startTime: this.schedule.weekend[activity].startTime,
-            endTime: this.schedule.weekend[activity].endTime,
-            gif: this.schedule.weekend[activity].gif
+          activities = activities.sort((a, b) => {
+            const aStartTime = moment(a.startTime, 'HH:mm:ss')
+            const bStartTime = moment(b.startTime, 'HH:mm:ss')
+            if (aStartTime.isAfter(bStartTime)) {
+              return 1
+            } else if (aStartTime.isBefore(bStartTime)) {
+              return -1
+            } else {
+              return 0
+            }
           })
+          routine.push({ day: eachDay, activities: activities })
         }
-
-        activities = activities.sort((a, b) => {
-          const aStartTime = moment(a.startTime, 'HH:mm:ss')
-          const bStartTime = moment(b.startTime, 'HH:mm:ss')
-          if (aStartTime.isAfter(bStartTime)) {
-            return 1
-          } else if (aStartTime.isBefore(bStartTime)) {
-            return -1
-          } else {
-            return 0
-          }
-        })
-        return activities
-      } else return []
+        return this.sortByDay(routine)
+      }
+      return []
     }
   },
   mounted() {
@@ -196,16 +146,16 @@ export default {
         return ''
       }
     },
-    openUpdateScheduleDialog(activity, isWeekend) {
+    openUpdateActivityDialog(activity, isWeekend) {
       this.selectedActivity = activity
       this.isWeekend = isWeekend
-      this.showEditScheduleDialog = true
+      this.showEditActivityDialog = true
     },
-    closeUpdateScheduleDialog() {
+    closeUpdateActivityDialog() {
       this.selectedActivity = null
-      this.showEditScheduleDialog = false
+      this.showEditActivityDialog = false
     },
-    updatedSchedule(activity) {
+    updatedActivity(activity) {
       if (activity.isWeekend) {
         this.$set(this.schedule.weekend[activity.uid], 'title', activity.title)
         this.$set(
@@ -231,7 +181,26 @@ export default {
           activity.endTime
         )
       }
-      this.closeUpdateScheduleDialog()
+      this.closeUpdateActivityDialog()
+    },
+    sortByDay(arr) {
+      const sorter = {
+        monday: 1,
+        tuesday: 2,
+        wednesday: 3,
+        thursday: 4,
+        friday: 5,
+        saturday: 6,
+        sunday: 7
+      }
+      return arr.sort((a, b) => {
+        let day1 = a.day.toLowerCase()
+        let day2 = b.day.toLowerCase()
+        return sorter[day1] - sorter[day2]
+      })
+    },
+    openAddActivityDialog(activity) {
+      this.showAddActivityDialog = true
     }
   }
 }

@@ -13,41 +13,30 @@
             ></v-text-field>
           </v-row>
 
-          <v-row
-            v-if="activity && activity.endTime"
-            align="center"
-            justify="center"
-          >
+          <v-row v-if="activity && activity.endTime" align="center" justify="center">
             <v-tabs v-model="tab" grow>
               <v-tab :key="0">Start's at</v-tab>
               <v-tab :key="1">End's at</v-tab>
               <v-tab-item :key="0">
                 <v-row align="center" justify="center" class="ma-2">
-                  <v-time-picker
-                    v-model="startTime"
-                    ampm-in-title
-                  ></v-time-picker>
+                  <v-time-picker v-model="startTime" ampm-in-title></v-time-picker>
                 </v-row>
               </v-tab-item>
               <v-tab-item :key="1">
                 <v-row align="center" justify="center" class="ma-2">
-                  <v-time-picker
-                    v-model="endTime"
-                    ampm-in-title
-                  ></v-time-picker>
+                  <v-time-picker v-model="endTime" ampm-in-title></v-time-picker>
                 </v-row>
               </v-tab-item>
             </v-tabs>
           </v-row>
           <v-row v-else align="center" justify="center" class="ma-2">
-            <v-time-picker v-model="startTime" ampm-in-title></v-time-picker>
+            <v-time-picker v-model="startTime" ampm-in-title full-width></v-time-picker>
           </v-row>
 
           <v-row justify="end">
-            <v-btn @click="$emit('dialog-closed')" text class="mr-3"
-              >Close</v-btn
-            >
-            <v-btn @click="updatedSchedule" text class="mr-3">Save</v-btn>
+            <v-btn @click="deletedActivity" text class="mr-3">Delete</v-btn>
+            <v-btn @click="$emit('dialog-closed')" text class="mr-3">Close</v-btn>
+            <v-btn @click="updatedActivity" text class="mr-3">Save</v-btn>
           </v-row>
         </v-form>
         <v-row
@@ -55,8 +44,7 @@
           align="center"
           justify="center"
           class="overline error--text ma-2 pa-2"
-          >{{ errorMsg }}</v-row
-        >
+        >{{ errorMsg }}</v-row>
       </v-card-text>
     </v-card>
   </v-container>
@@ -121,9 +109,9 @@ export default {
     }
   },
   methods: {
-    updatedSchedule() {
+    updatedActivity() {
       const vm = this
-      const updatedSchedule = {
+      const updatedActivity = {
         uid: vm.activity.uid,
         id: vm.activity.id,
         title: vm.title,
@@ -135,13 +123,35 @@ export default {
       if (vm.isWeekend) {
         firebaseDB
           .ref('schedule/' + vm.uid + '/weekend/' + vm.activity.uid)
-          .update(updatedSchedule)
+          .update(updatedActivity)
       } else {
         firebaseDB
           .ref('schedule/' + vm.uid + '/weekday/' + vm.activity.uid)
-          .update(updatedSchedule)
+          .update(updatedActivity)
       }
-      vm.$emit('updated-schedule', updatedSchedule)
+      vm.$emit('updated-activity', updatedActivity)
+    },
+    deletedActivity() {
+      const vm = this
+      const updatedActivity = {
+        uid: vm.activity.uid,
+        id: vm.activity.id,
+        title: vm.title,
+        startTime: vm.startTime + ':00',
+        endTime: vm.activity.endTime ? vm.endTime + ':00' : null,
+        gif: vm.activity.gif,
+        isWeekend: vm.isWeekend
+      }
+      if (vm.isWeekend) {
+        firebaseDB
+          .ref('schedule/' + vm.uid + '/weekend/' + vm.activity.uid)
+          .update(updatedActivity)
+      } else {
+        firebaseDB
+          .ref('schedule/' + vm.uid + '/weekday/' + vm.activity.uid)
+          .update(updatedActivity)
+      }
+      vm.$emit('updated-activity', updatedActivity)
     }
   }
 }
