@@ -3,14 +3,13 @@
     <v-row justify="center">
       <v-col cols="12">
         <v-row justify="center">
-          <v-avatar v-show="photoURL" size="200" class="customPointer">
+          <v-avatar v-show="photoURL" size="200" class="customPointer" tile>
             <v-img
               v-if="photoURL"
               @click="$router.push('/account/editPhoto')"
               :src="photoURL"
               content
-            >
-            </v-img>
+            ></v-img>
           </v-avatar>
         </v-row>
         <v-row justify="space-between" align="center" class="pa-2">

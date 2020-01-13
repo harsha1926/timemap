@@ -1,7 +1,9 @@
 <template>
   <v-stepper v-model="e1">
     <v-stepper-header>
-      <v-stepper-step :complete="e1 > 1" step="1">Select activity</v-stepper-step>
+      <v-stepper-step :complete="e1 > 1" step="1"
+        >Select activity</v-stepper-step
+      >
 
       <v-divider></v-divider>
 
@@ -25,7 +27,7 @@
             ></v-autocomplete>
           </v-card-text>
           <v-card-actions>
-            <v-btn text @click="$emit('dialog-closed')">Cancel</v-btn>
+            <v-btn @click="$emit('dialog-closed')" text>Cancel</v-btn>
             <v-btn @click="e1 = 2" color="primary">Continue</v-btn>
           </v-card-actions>
         </v-card>
@@ -36,7 +38,7 @@
 
         <v-btn @click="e1 = 3" color="primary">Continue</v-btn>
 
-        <v-btn text @click="$emit('dialog-closed')">Cancel</v-btn>
+        <v-btn @click="$emit('dialog-closed')" text>Cancel</v-btn>
       </v-stepper-content>
 
       <v-stepper-content step="3">
@@ -44,7 +46,7 @@
 
         <v-btn @click="e1 = 1" color="primary">Continue</v-btn>
 
-        <v-btn text @click="$emit('dialog-closed')">Cancel</v-btn>
+        <v-btn @click="$emit('dialog-closed')" text>Cancel</v-btn>
       </v-stepper-content>
     </v-stepper-items>
   </v-stepper>

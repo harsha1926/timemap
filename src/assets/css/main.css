@@ -5,3 +5,7 @@
     font-weight: lighter;
     font-size: x-small;
 }
+.appTitleFont {
+    font-family: 'Permanent Marker', cursive;
+    font-size: x-large;
+}

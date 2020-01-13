@@ -10,18 +10,14 @@
         md="4"
         la="2"
       >
-        <friend
-          :friendId="friendId"
-          @friendRemoved="friendRemoved"
-          :category="category"
-        />
+        <friend :friendId="friendId" @friendRemoved="friendRemoved" />
       </v-col>
       <v-snackbar
         v-model="showFriendRemovedSnackbar"
         :timeout="1000"
         color="primary"
       >
-        {{ removedFriendName }} is not your friend anymore
+        You are not watching {{ removedFriendName }} anymore
         <v-icon>far fa-frown</v-icon>
       </v-snackbar>
     </v-row>
@@ -39,20 +35,15 @@ export default {
     return {
       showFriendRemovedSnackbar: false,
       removedFriendName: '',
-      friendIds: [],
-      categories: []
+      friendIds: []
     }
   },
   computed: {
-    ...mapGetters('user', ['uid']),
-    category() {
-      return this.categories[Math.floor(Math.random() * this.categories.length)]
-    }
+    ...mapGetters('user', ['uid'])
   },
   mounted() {
     const vm = this
     vm.fetchFriendsList()
-    vm.fetchCategories()
   },
   methods: {
     friendRemoved(removedFriend) {
@@ -65,18 +56,10 @@ export default {
     },
     fetchFriendsList() {
       const vm = this
-      firebaseDB.ref('friends/' + vm.uid).once('value', function(friends) {
+      firebaseDB.ref('watching/' + vm.uid).once('value', function(friends) {
         vm.friendIds = []
         friends.forEach((friend) => {
-          vm.friendIds.push(friend.key)
-        })
-      })
-    },
-    fetchCategories() {
-      const vm = this
-      firebaseDB.ref('categories').once('value', function(categories) {
-        categories.forEach((category) => {
-          if (category.key) vm.categories.push(category.key)
+          vm.friendIds.push(friend.val().uid)
         })
       })
     }

@@ -1,68 +1,111 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col cols="12" sm="6" xl="4">
-      <v-row justify="center" align="center">
-        <v-col cols="2">
-          <v-row align="center" justify="start" class="ma-2">
-            <v-avatar slot="icon">
-              <v-img :src="friend.photoURL"></v-img>
-            </v-avatar>
-          </v-row>
-        </v-col>
-
-        <v-col cols="7">
-          <v-row align="center" justify="center" class="ma-2">
-            <span>{{ friend.displayName }}</span>
-          </v-row>
-        </v-col>
-
-        <v-col cols="3">
-          <v-row align="center" justify="end" class="ma-2">
-            <v-btn
-              v-if="!friend.isFriendAlready"
-              @click="addFriend"
-              x-small
-              fab
-              icon
-              color="primary"
-            >
-              <v-icon>fas fa-user-plus</v-icon>
-            </v-btn>
-            <v-icon v-else color="primary">far fa-smile</v-icon>
-          </v-row>
-        </v-col>
-      </v-row>
-    </v-col>
-    <v-snackbar v-model="friendAdded" :timeout="1000" color="primary">
-      {{ friend.displayName }} is your friend now
-      <v-icon>far fa-smile</v-icon>
-    </v-snackbar>
-  </v-row>
+  <div>
+    <v-skeleton-loader
+      v-if="loading"
+      type="list-item-avatar"
+    ></v-skeleton-loader>
+    <v-row v-else-if="friend">
+      <v-col cols="2">
+        <v-avatar size="35">
+          <v-img :src="friend.photoURL"></v-img>
+        </v-avatar>
+      </v-col>
+      <v-col cols="8">
+        <v-flex class="subtitle-1 font-weight-medium">{{
+          displayNameCaptilize
+        }}</v-flex>
+        <v-flex v-if="isFriendAlready" class="caption"
+          >You are watching..</v-flex
+        >
+      </v-col>
+      <v-col cols="2" class="text-center">
+        <v-icon v-if="!isFriendAlready" @click="addFriend" color="primary"
+          >fas fa-eye</v-icon
+        >
+        <v-icon v-else @click="removeFriend" small color="tertiary"
+          >fas fa-eye-slash</v-icon
+        >
+      </v-col>
+      <v-snackbar v-model="friendAdded" :timeout="1000" color="primary">
+        You are watching {{ friend.displayName }} now
+        <v-icon>far fa-smile</v-icon>
+      </v-snackbar>
+      <v-snackbar v-model="friendRemoved" :timeout="1000" color="primary">
+        You are not watching {{ friend.displayName }} anymore
+        <v-icon>far fa-frown</v-icon>
+      </v-snackbar>
+    </v-row>
+  </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import { firebaseDB } from '@/services/firebaseInit.js'
+
 export default {
   props: {
-    friend: {
-      type: Object,
+    friendId: {
+      type: String,
       default() {
-        return {}
+        return null
       }
     }
   },
-  data: () => ({
-    friendAdded: false
-  }),
+  data() {
+    return {
+      isFriendAlready: false,
+      friendAdded: false,
+      friendRemoved: false,
+      loading: false,
+      friend: null
+    }
+  },
   computed: {
-    ...mapGetters('user', ['uid'])
+    ...mapGetters('user', ['uid']),
+    displayNameCaptilize() {
+      if (!this.friend || (this.friend && !this.friend.displayName)) return ''
+      return this.friend.displayName
+        .split(' ')
+        .map((o) => this.capitalizeFirstLetter(o))
+        .join(' ')
+    }
+  },
+  mounted() {
+    if (this.friendId) {
+      const vm = this
+      vm.loading = true
+      firebaseDB
+        .ref('users/' + vm.friendId)
+        .once('value', function(data) {
+          vm.friend = data.val()
+        })
+        .finally(() => {
+          vm.loading = false
+        })
+
+      firebaseDB
+        .ref('watching/' + vm.uid + '/' + vm.friendId)
+        .once('value', function(data) {
+          if (data.val()) vm.isFriendAlready = true
+        })
+    }
   },
   methods: {
+    capitalizeFirstLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1)
+    },
     addFriend() {
       const vm = this
-      firebaseDB.ref('friends/' + vm.uid + '/' + vm.friend.uid).set(true)
-      this.friend.isFriendAlready = true
+      firebaseDB
+        .ref('watching/' + vm.uid + '/' + vm.friend.uid)
+        .set({ uid: vm.friend.uid, isFavourite: false })
+      this.isFriendAlready = true
       this.friendAdded = true
+    },
+    removeFriend() {
+      const vm = this
+      firebaseDB.ref('watching/' + vm.uid + '/' + vm.friend.uid).set(null)
+      this.isFriendAlready = false
+      this.friendRemoved = true
     }
   }
 }

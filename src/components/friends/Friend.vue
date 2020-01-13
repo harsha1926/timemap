@@ -1,8 +1,11 @@
 <template>
-  <v-container :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''">
+  <v-container
+    :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''"
+    @click="showFriendPhoto = false"
+  >
     <v-skeleton-loader v-if="loading" type="card-avatar"></v-skeleton-loader>
     <v-row v-else-if="friend">
-      <v-col cols="2">
+      <v-col @click.stop="showFriendPhoto = true" cols="2">
         <v-avatar size="35">
           <v-img :src="friend.photoURL"></v-img>
         </v-avatar>
@@ -12,9 +15,9 @@
         <v-row align="center">
           <v-flex class="subtitle-1 font-weight-medium">
             {{ displayNameCaptilize }}
-            <span v-if="activity" class="subtitle-2 font-weight-regular">
-              {{ activity.indirect }}..
-            </span>
+            <span v-if="activity" class="subtitle-2 font-weight-regular"
+              >{{ activity.indirect }}..</span
+            >
           </v-flex>
         </v-row>
         <v-row>
@@ -22,24 +25,8 @@
         </v-row>
       </v-col>
 
-      <v-col cols="1" class="text-right">
+      <v-col cols="2" class="text-center">
         <v-icon class="customPointer" color="primary">mdi-heart-outline</v-icon>
-      </v-col>
-      <v-col cols="1" class="text-right">
-        <v-menu offset-y>
-          <template v-slot:activator="{ on }">
-            <v-icon v-on="on" class="customPointer" color="primary"
-              >mdi-dots-vertical</v-icon
-            >
-          </template>
-          <v-list>
-            <v-list-item @click="removeFriendWarning">
-              <v-list-item-title>
-                <v-icon class="customPointer" color="error">mdi-delete</v-icon>
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
       </v-col>
     </v-row>
 
@@ -62,39 +49,54 @@
           >
         </v-img>
       </v-col>
-      <v-col cols="2" wrap class="text-center">
-        <v-flex class="mb-3">
-          <v-icon
-            @click="sendWhatsAppMessage(friend.phoneNumber)"
-            class="customPointer"
-            color="primary"
-            >mdi-whatsapp</v-icon
-          >
-        </v-flex>
-        <v-flex class="mb-3">
-          <v-icon
-            @click="callPhone(friend.phoneNumber)"
-            class="customPointer"
-            color="primary"
-            >mdi-phone</v-icon
-          >
-        </v-flex>
-        <v-flex class="mb-3">
-          <v-icon
-            @click="sendTextMessage(friend.phoneNumber)"
-            class="customPointer"
-            color="primary"
-            >mdi-message-outline</v-icon
-          >
-        </v-flex>
-        <v-flex>
-          <v-icon
-            @click="sendEmailMessage(friend.email)"
-            class="customPointer"
-            color="primary"
-            >mdi-email-outline</v-icon
-          >
-        </v-flex>
+      <v-col cols="2" class="my-0 py-0">
+        <div class="text-center">
+          <div>
+            <v-icon
+              @click="removeFriendWarning"
+              small
+              class="customPointer"
+              color="tertiary"
+              >fas fa-eye-slash</v-icon
+            >
+          </div>
+
+          <div class="my-3">
+            <v-icon
+              @click="sendWhatsAppMessage(friend.phoneNumber)"
+              class="customPointer"
+              color="primary"
+              >mdi-whatsapp</v-icon
+            >
+          </div>
+
+          <div class="my-3">
+            <v-icon
+              @click="callPhone(friend.phoneNumber)"
+              class="customPointer"
+              color="primary"
+              >mdi-phone</v-icon
+            >
+          </div>
+
+          <div class="my-3">
+            <v-icon
+              @click="sendTextMessage(friend.phoneNumber)"
+              class="customPointer"
+              color="primary"
+              >mdi-message-outline</v-icon
+            >
+          </div>
+
+          <div class="my-3">
+            <v-icon
+              @click="sendEmailMessage(friend.email)"
+              class="customPointer"
+              color="primary"
+              >mdi-email-outline</v-icon
+            >
+          </div>
+        </div>
       </v-col>
     </v-row>
     <v-row>
@@ -111,6 +113,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-overlay v-if="friend && friend.photoURL" :value="showFriendPhoto">
+      <v-avatar size="300" tile>
+        <v-img :src="friend.photoURL" content></v-img>
+      </v-avatar>
+    </v-overlay>
   </v-container>
 </template>
 <script>
@@ -119,7 +127,7 @@ import moment from 'moment'
 import momentTimezone from 'moment-timezone'
 import { fetchTimezone } from '@/api/timezone'
 import { firebaseDB } from '@/services/firebaseInit.js'
-import { fetchRandomGIF } from '@/api/tenorGIFs'
+import { fetchRandomGIF } from '@/api/gifs'
 
 export default {
   props: {
@@ -132,6 +140,7 @@ export default {
   },
   data() {
     return {
+      showFriendPhoto: false,
       timezone: null,
       loading: false,
       friend: null,
@@ -392,7 +401,7 @@ export default {
     },
     removeFriend() {
       const vm = this
-      firebaseDB.ref('friends/' + vm.uid + '/' + vm.friendId).set(null)
+      firebaseDB.ref('watching/' + vm.uid + '/' + vm.friendId).set(null)
       vm.$emit('friendRemoved', vm.friend)
     }
   }

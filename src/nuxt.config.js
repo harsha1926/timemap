@@ -8,7 +8,7 @@ export default {
    */
   head: {
     titleTemplate: '%s',
-    title: 'TimeMap',
+    title: 'Watch',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -27,7 +27,7 @@ export default {
       {
         rel: 'stylesheet',
         href:
-          'https://fonts.googleapis.com/css?family=Turret+Road|Lexend+Mega&display=swap'
+          'https://fonts.googleapis.com/css?family=Lobster|Permanent+Marker&display=swap'
       }
     ]
   },
@@ -88,8 +88,8 @@ export default {
   },
   pwa: {
     manifest: {
-      name: 'TIMEMAP',
-      short_name: 'TIMEMAP',
+      name: 'Watch',
+      short_name: 'Watch',
       lang: 'en',
       display: 'standalone'
     }

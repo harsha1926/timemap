@@ -12,24 +12,38 @@
             hide-details
             disabled
           ></v-autocomplete>
-          <v-row v-if="activity && activity.endTime" align="center" justify="center">
+          <v-row
+            v-if="activity && activity.endTime"
+            align="center"
+            justify="center"
+          >
             <v-tabs v-model="tab" grow>
               <v-tab :key="0">Start's at</v-tab>
               <v-tab :key="1">End's at</v-tab>
               <v-tab-item :key="0">
                 <v-row align="center" justify="center" class="ma-2">
-                  <v-time-picker v-model="startTime" ampm-in-title></v-time-picker>
+                  <v-time-picker
+                    v-model="startTime"
+                    ampm-in-title
+                  ></v-time-picker>
                 </v-row>
               </v-tab-item>
               <v-tab-item :key="1">
                 <v-row align="center" justify="center" class="ma-2">
-                  <v-time-picker v-model="endTime" ampm-in-title></v-time-picker>
+                  <v-time-picker
+                    v-model="endTime"
+                    ampm-in-title
+                  ></v-time-picker>
                 </v-row>
               </v-tab-item>
             </v-tabs>
           </v-row>
           <v-row v-else align="center" justify="center" class="ma-2">
-            <v-time-picker v-model="startTime" ampm-in-title full-width></v-time-picker>
+            <v-time-picker
+              v-model="startTime"
+              ampm-in-title
+              full-width
+            ></v-time-picker>
           </v-row>
         </v-form>
         <v-row
@@ -37,7 +51,8 @@
           align="center"
           justify="center"
           class="overline error--text ma-2 pa-2"
-        >{{ errorMsg }}</v-row>
+          >{{ errorMsg }}</v-row
+        >
       </v-card-text>
       <v-card-actions>
         <v-btn @click="deletedActivity" text class="mr-3">Delete</v-btn>

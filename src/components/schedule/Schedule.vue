@@ -17,9 +17,7 @@
     <v-row v-if="schedule">
       <v-tabs v-model="tab" show-arrows>
         <v-tab v-for="eachDay in routine" :key="eachDay.day">
-          {{
-          eachDay.day.substring(0, 3)
-          }}
+          {{ eachDay.day.substring(0, 3) }}
         </v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
@@ -27,19 +25,30 @@
           <v-timeline v-if="eachDay.activities" dense>
             <v-timeline-item color="grey lighten-2" small>
               <v-row align="center">
-                <v-btn @click="openAddActivityDialog" color="primary" x-small fab>
+                <v-btn
+                  @click="openAddActivityDialog"
+                  color="primary"
+                  x-small
+                  fab
+                >
                   <v-icon>mdi-plus</v-icon>
                 </v-btn>
               </v-row>
             </v-timeline-item>
 
-            <v-timeline-item v-for="activity in eachDay.activities" :key="activity.id">
+            <v-timeline-item
+              v-for="activity in eachDay.activities"
+              :key="activity.id"
+            >
               <template v-slot:icon>
                 <v-avatar>
                   <v-img :src="activity.gif"></v-img>
                 </v-avatar>
               </template>
-              <v-row @click="openUpdateActivityDialog(activity, false)" align="center">
+              <v-row
+                @click="openUpdateActivityDialog(activity, false)"
+                align="center"
+              >
                 <v-col cols="1" class="text-center">
                   <v-icon small class="customPointer">mdi-pencil</v-icon>
                 </v-col>
@@ -69,7 +78,10 @@
       ></update-activity>
     </v-dialog>
     <v-dialog v-model="showAddActivityDialog" max-width="600" eager>
-      <add-activity @dialog-closed="closeAddActivityDialog" :activities="activities"></add-activity>
+      <add-activity
+        @dialog-closed="closeAddActivityDialog"
+        :activities="activities"
+      ></add-activity>
     </v-dialog>
   </v-container>
 </template>

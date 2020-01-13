@@ -1,27 +1,15 @@
 <template>
-  <v-app id="timeMap">
-    <v-app-bar app dense tile flat>
-      <v-row>
+  <v-app id="watch">
+    <v-app-bar :dense="$vuetify.breakpoint.xsOnly" app tile flat>
+      <v-row align="center">
         <v-flex @click="$router.push('/')" class="customPointer text-left">
-          <v-avatar class="ml-2" tile size="35">
-            <v-img src="/icon.png"></v-img>
+          <v-avatar size="35">
+            <v-img :src="iconURL"></v-img>
           </v-avatar>
-          <v-avatar
-            class="ml-1 title font-weight-regular primary--text"
-            tile
-            size="35"
-            >TM</v-avatar
-          >
+          <span class="ml-2 appTitleFont primary--text">Watch</span>
         </v-flex>
         <v-flex class="text-right">
           <v-row justify="end" align="center">
-            <v-icon
-              @click="$router.push('/findFriends')"
-              v-if="uid"
-              class="mr-5"
-              small
-              >fas fa-search</v-icon
-            >
             <span v-if="displayName" class="mr-5 d-none d-sm-block"
               >Hello {{ displayName }}</span
             >
@@ -48,23 +36,22 @@
     <v-bottom-navigation
       v-if="uid"
       v-model="activeTab"
+      :height="$vuetify.breakpoint.xsOnly ? 40 : 65"
       color="primary"
       grow
-      shift
-      height="48"
       app
     >
-      <v-btn small to="/">
-        <span class="caption">Friends</span>
-        <v-icon small>mdi-heart</v-icon>
+      <v-btn to="/" value="home">
+        <v-icon>fas fa-eye</v-icon>
       </v-btn>
-      <v-btn small to="/schedule">
-        <span class="caption">My Routine</span>
-        <v-icon small>far fa-calendar-check</v-icon>
+      <v-btn to="/findFriends" value="findFriends">
+        <v-icon>fas fa-search</v-icon>
       </v-btn>
-      <v-btn small to="/share">
-        <span class="caption">Family Tree</span>
-        <v-icon small>fas fa-sitemap</v-icon>
+      <v-btn to="/schedule" value="schedule">
+        <v-icon>far fa-calendar-check</v-icon>
+      </v-btn>
+      <v-btn to="/posts" value="posts">
+        <v-icon>fas fa-angle-double-up</v-icon>
       </v-btn>
     </v-bottom-navigation>
   </v-app>
@@ -73,18 +60,29 @@
 import { mapGetters, mapActions } from 'vuex'
 import Login from '~/components/login/Login'
 import VerifyPhone from '~/components/login/VerifyPhone'
+import { fetchRandomGIF } from '@/api/gifs'
 export default {
   components: {
     Login,
     VerifyPhone
   },
   data: () => ({
+    activeTab: null,
     on: false,
-    activeTab: 0,
-    showSearchBar: false
+    showSearchBar: false,
+    iconURL:
+      'https://media.tenor.com/images/7d0204ed76b90079d9bf2402369f8df9/tenor.gif'
   }),
   computed: {
     ...mapGetters('user', ['uid', 'displayName', 'photoURL', 'phoneNumber'])
+  },
+  created() {
+    const vm = this
+    setInterval(function() {
+      fetchRandomGIF('clock').then((res) => {
+        vm.iconURL = res.data.results[0].media[0].tinygif.url
+      })
+    }, 5000)
   },
   methods: {
     ...mapActions('user/currentLocation', ['addCurrentLocation'])
