@@ -24,7 +24,8 @@
                 :disabled="!validPhone || !phone"
                 name="submitPhoneBtn"
                 color="primary"
-              >GET VERIFICATION CODE</v-btn>
+                >GET VERIFICATION CODE</v-btn
+              >
             </v-row>
           </v-card-actions>
         </v-card>
@@ -42,17 +43,24 @@
                   errorMessage = null
                 "
                 name="canceBtn"
-              >Cancel</v-btn>
+                >Cancel</v-btn
+              >
               <v-btn
                 @click="submitVerficationCode()"
                 :disabled="!validVerificationCode || !authCode"
                 name="submitCodeBtn"
                 color="primary"
-              >Confirm and Login</v-btn>
+                >Confirm and Login</v-btn
+              >
             </v-row>
           </v-card-actions>
         </v-card>
-        <v-row v-if="errorMessage" class="overline ma-2 pa-2 error--text" wrap>{{ errorMessage }}</v-row>
+        <v-row
+          v-if="errorMessage"
+          class="overline ma-2 pa-2 error--text"
+          wrap
+          >{{ errorMessage }}</v-row
+        >
       </v-col>
     </v-row>
   </v-container>

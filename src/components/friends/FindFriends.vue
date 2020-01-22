@@ -1,11 +1,11 @@
 <template>
   <v-container
+    :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''"
     fluid
     style="max-width: 600px;"
-    :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''"
   >
     <v-row wrap>
-      <v-col cols="12" :class="$vuetify.breakpoint.xsOnly ? 'mt-0 pt-0' : ''">
+      <v-col :class="$vuetify.breakpoint.xsOnly ? 'mt-0 pt-0' : ''" cols="12">
         <v-tabs v-model="tab" grow>
           <v-tab :key="0">Contacts</v-tab>
           <v-tab :key="1">You are watched by</v-tab>
@@ -82,5 +82,4 @@ export default {
   }
 }
 </script>
-<style scoped>
-</style>
+<style scoped></style>

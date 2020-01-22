@@ -10,7 +10,9 @@
         </v-flex>
         <v-flex class="text-right">
           <v-row justify="end" align="center">
-            <span v-if="displayName" class="mr-5 d-none d-sm-block">Hello {{ displayName }}</span>
+            <span v-if="displayName" class="mr-5 d-none d-sm-block"
+              >Hello {{ displayName }}</span
+            >
             <v-avatar
               @click="$router.push('/account')"
               v-if="photoURL"
@@ -33,8 +35,8 @@
     </v-content>
     <v-bottom-navigation
       v-if="uid"
-      active.sync="activeTab"
       :height="$vuetify.breakpoint.xsOnly ? 40 : 65"
+      active.sync="activeTab"
       color="primary"
       grow
       app
