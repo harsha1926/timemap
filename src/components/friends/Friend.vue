@@ -3,7 +3,13 @@
     :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''"
     @click="showFriendPhoto = false"
   >
-    <v-skeleton-loader v-if="loading" type="card-avatar"></v-skeleton-loader>
+    <v-row v-if="loading">
+      <v-col cols="12">
+        <v-skeleton-loader type="list-item-avatar-two-line"></v-skeleton-loader>
+        <v-skeleton-loader type="card"></v-skeleton-loader>
+      </v-col>
+    </v-row>
+
     <v-row v-else-if="friend">
       <v-col @click.stop="showFriendPhoto = true" cols="2">
         <v-avatar size="35">
@@ -15,9 +21,10 @@
         <v-row align="center">
           <v-flex class="subtitle-1 font-weight-medium">
             {{ displayNameCaptilize }}
-            <span v-if="activity" class="subtitle-2 font-weight-regular"
-              >{{ activity.indirect }}..</span
-            >
+            <span
+              v-if="activity"
+              class="subtitle-2 font-weight-regular"
+            >{{ activity.indirect }}..</span>
           </v-flex>
         </v-row>
         <v-row>
@@ -35,18 +42,14 @@
         <v-img :src="activityPhoto" :height="height">
           <template v-slot:placeholder>
             <v-row class="fill-height ma-0" align="center" justify="center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
+              <v-progress-circular indeterminate color="primary"></v-progress-circular>
             </v-row>
           </template>
           <v-row
             justify="end"
             align="start"
             class="tenorFont ma-1 pa-1 fill-height white--text"
-            >Powered By Tenor</v-row
-          >
+          >Powered By Tenor</v-row>
         </v-img>
       </v-col>
       <v-col cols="2" class="my-0 py-0">
@@ -57,8 +60,7 @@
               small
               class="customPointer"
               color="tertiary"
-              >fas fa-eye-slash</v-icon
-            >
+            >fas fa-eye-slash</v-icon>
           </div>
 
           <div class="my-3">
@@ -66,8 +68,7 @@
               @click="sendWhatsAppMessage(friend.phoneNumber)"
               class="customPointer"
               color="primary"
-              >mdi-whatsapp</v-icon
-            >
+            >mdi-whatsapp</v-icon>
           </div>
 
           <div class="my-3">
@@ -75,8 +76,7 @@
               @click="callPhone(friend.phoneNumber)"
               class="customPointer"
               color="primary"
-              >mdi-phone</v-icon
-            >
+            >mdi-phone</v-icon>
           </div>
 
           <div class="my-3">
@@ -84,8 +84,7 @@
               @click="sendTextMessage(friend.phoneNumber)"
               class="customPointer"
               color="primary"
-              >mdi-message-outline</v-icon
-            >
+            >mdi-message-outline</v-icon>
           </div>
 
           <div class="my-3">
@@ -93,8 +92,7 @@
               @click="sendEmailMessage(friend.email)"
               class="customPointer"
               color="primary"
-              >mdi-email-outline</v-icon
-            >
+            >mdi-email-outline</v-icon>
           </div>
         </div>
       </v-col>
@@ -107,9 +105,7 @@
         <v-card-title>Are you sure?</v-card-title>
         <v-card-actions>
           <v-btn @click="removeFriend">Yes</v-btn>
-          <v-btn @click="showRemoveFriendWarning = false" color="primary"
-            >No</v-btn
-          >
+          <v-btn @click="showRemoveFriendWarning = false" color="primary">No</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

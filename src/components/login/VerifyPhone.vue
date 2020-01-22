@@ -1,9 +1,5 @@
 <template>
-  <v-container
-    fluid
-    fill-height
-    style="max-width: 600px; height: 85vh; max-height: 85%;"
-  >
+  <v-container :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''">
     <v-row justify="center" align="center">
       <v-col cols="12" sm="8" md="4">
         <v-card v-if="!confirmationResult">
@@ -28,8 +24,7 @@
                 :disabled="!validPhone || !phone"
                 name="submitPhoneBtn"
                 color="primary"
-                >GET VERIFICATION CODE</v-btn
-              >
+              >GET VERIFICATION CODE</v-btn>
             </v-row>
           </v-card-actions>
         </v-card>
@@ -47,24 +42,17 @@
                   errorMessage = null
                 "
                 name="canceBtn"
-                >Cancel</v-btn
-              >
+              >Cancel</v-btn>
               <v-btn
                 @click="submitVerficationCode()"
                 :disabled="!validVerificationCode || !authCode"
                 name="submitCodeBtn"
                 color="primary"
-                >Confirm and Login</v-btn
-              >
+              >Confirm and Login</v-btn>
             </v-row>
           </v-card-actions>
         </v-card>
-        <v-row
-          v-if="errorMessage"
-          class="overline ma-2 pa-2 error--text"
-          wrap
-          >{{ errorMessage }}</v-row
-        >
+        <v-row v-if="errorMessage" class="overline ma-2 pa-2 error--text" wrap>{{ errorMessage }}</v-row>
       </v-col>
     </v-row>
   </v-container>

@@ -1,11 +1,7 @@
 <template>
-  <v-container fluid fill-height style="height: 85vh; max-height: 85%;">
+  <v-container :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''">
     <v-row align="start" justify="center">
-      <v-progress-circular
-        v-if="loading"
-        indeterminate
-        color="primary"
-      ></v-progress-circular>
+      <v-progress-circular v-if="loading" indeterminate color="primary"></v-progress-circular>
       <v-col v-else cols="12" sm="8" md="4">
         <v-card class="elevation-12">
           <v-card-subtitle class="mt-5">
@@ -18,22 +14,10 @@
           </v-card-subtitle>
           <v-card-text>
             <v-row justify="center">
-              <v-btn
-                @click="googleSignIn"
-                name="googleLoginBtn"
-                fab
-                icon
-                color="primary"
-              >
+              <v-btn @click="googleSignIn" name="googleLoginBtn" fab icon color="primary">
                 <v-icon>fab fa-google</v-icon>
               </v-btn>
-              <v-btn
-                @click="facebookSignIn"
-                name="facebookLoginBtn"
-                fab
-                icon
-                color="primary"
-              >
+              <v-btn @click="facebookSignIn" name="facebookLoginBtn" fab icon color="primary">
                 <v-icon>fab fa-facebook-f</v-icon>
               </v-btn>
             </v-row>
@@ -41,8 +25,7 @@
               v-if="errorMessage"
               class="overline ma-2 pa-2 error--text"
               wrap
-              >{{ errorMessage }}</v-row
-            >
+            >{{ errorMessage }}</v-row>
           </v-card-text>
         </v-card>
       </v-col>

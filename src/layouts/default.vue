@@ -10,9 +10,7 @@
         </v-flex>
         <v-flex class="text-right">
           <v-row justify="end" align="center">
-            <span v-if="displayName" class="mr-5 d-none d-sm-block"
-              >Hello {{ displayName }}</span
-            >
+            <span v-if="displayName" class="mr-5 d-none d-sm-block">Hello {{ displayName }}</span>
             <v-avatar
               @click="$router.push('/account')"
               v-if="photoURL"
@@ -27,7 +25,7 @@
     </v-app-bar>
     <v-content>
       <v-divider></v-divider>
-      <v-container fluid>
+      <v-container fluid class="mt-0 pt-0">
         <login v-if="!uid"></login>
         <verify-phone v-else-if="uid && !phoneNumber"></verify-phone>
         <nuxt v-else-if="uid && phoneNumber"></nuxt>
@@ -35,7 +33,7 @@
     </v-content>
     <v-bottom-navigation
       v-if="uid"
-      v-model="activeTab"
+      active.sync="activeTab"
       :height="$vuetify.breakpoint.xsOnly ? 40 : 65"
       color="primary"
       grow
