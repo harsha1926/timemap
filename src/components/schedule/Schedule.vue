@@ -20,9 +20,9 @@
     </v-row>
     <v-row v-if="schedule">
       <v-tabs v-model="tab" show-arrows>
-        <v-tab v-for="eachDay in routine" :key="eachDay.day">{{
-          eachDay.day.substring(0, 3)
-        }}</v-tab>
+        <v-tab v-for="eachDay in routine" :key="eachDay.day">
+          {{ eachDay.day.substring(0, 3) }}
+        </v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item v-for="eachDay in routine" :key="eachDay.day">
@@ -81,12 +81,15 @@
         :activities="activities"
       ></update-activity>
     </v-dialog>
-    <v-dialog v-model="showAddActivityDialog" max-width="600" eager>
-      <add-activity
-        @dialog-closed="closeAddActivityDialog"
-        :activities="activities"
-      ></add-activity>
-    </v-dialog>
+    <v-bottom-sheet v-model="showAddActivityDialog" eager inset>
+      <v-sheet class="text-center">
+        <add-activity
+          ref="addActivity"
+          @dialog-closed="closeAddActivityDialog"
+          :activities="activities"
+        ></add-activity>
+      </v-sheet>
+    </v-bottom-sheet>
   </v-container>
 </template>
 <script>
@@ -196,6 +199,11 @@ export default {
     },
     openAddActivityDialog(activity) {
       this.showAddActivityDialog = true
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.$refs.addActivity.$refs.activitySelect.focus()
+        }, 10)
+      })
     },
     getSchedule() {
       const vm = this

@@ -35,8 +35,8 @@
     </v-content>
     <v-bottom-navigation
       v-if="uid"
-      :height="$vuetify.breakpoint.xsOnly ? 40 : 65"
-      active.sync="activeTab"
+      :height="$vuetify.breakpoint.xsOnly ? 45 : 65"
+      :active.sync="activeTab"
       color="primary"
       grow
       app
