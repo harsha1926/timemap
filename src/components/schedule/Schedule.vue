@@ -20,73 +20,84 @@
     </v-row>
     <v-row v-if="schedule">
       <v-tabs v-model="tab" show-arrows>
-        <v-tab v-for="eachDay in routine" :key="eachDay.day">
+        <v-tab v-for="eachDay in routine" :key="eachDay.index">
           {{ eachDay.day.substring(0, 3) }}
         </v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
-        <v-tab-item v-for="eachDay in routine" :key="eachDay.day">
+        <v-tab-item v-for="eachDay in routine" :key="eachDay.index">
           <v-timeline v-if="eachDay.activities" dense>
-            <v-timeline-item color="grey lighten-2" small>
-              <v-row align="center">
-                <v-btn
-                  @click="openAddActivityDialog"
-                  color="primary"
-                  x-small
-                  fab
-                >
-                  <v-icon>mdi-plus</v-icon>
-                </v-btn>
-              </v-row>
-            </v-timeline-item>
-
-            <v-timeline-item
-              v-for="activity in eachDay.activities"
+            <div
+              v-for="(activity, index) in eachDay.activities"
               :key="activity.id"
             >
-              <template v-slot:icon>
-                <v-avatar>
-                  <v-img :src="activity.gif"></v-img>
-                </v-avatar>
-              </template>
-              <v-row
-                @click="openUpdateActivityDialog(activity, false)"
-                align="center"
-              >
-                <v-col cols="1" class="text-center">
-                  <v-icon small class="customPointer">mdi-pencil</v-icon>
-                </v-col>
-                <v-col cols="4" class="caption text-center">
-                  <v-flex v-if="activity.endTime">
-                    <v-flex>{{ formatTime(activity.startTime) }}</v-flex>
-                    <v-flex>to</v-flex>
-                    <v-flex>{{ formatTime(activity.endTime) }}</v-flex>
-                  </v-flex>
-                  <v-flex v-else>{{ formatTime(activity.startTime) }}</v-flex>
-                </v-col>
-                <v-col cols="7" class="subtitle-2">{{ activity.direct }}</v-col>
-              </v-row>
-            </v-timeline-item>
+              <v-timeline-item>
+                <template v-slot:icon>
+                  <v-avatar>
+                    <v-img :src="activity.gif"></v-img>
+                  </v-avatar>
+                </template>
+                <v-row
+                  @click="openUpdateActivityDialog(activity)"
+                  align="center"
+                >
+                  <v-col cols="1" class="text-center">
+                    <v-icon small class="customPointer">mdi-pencil</v-icon>
+                  </v-col>
+                  <v-col cols="4" class="caption text-center">
+                    <v-flex v-if="activity.endTime">
+                      <v-flex>{{ formatTime(activity.startTime) }}</v-flex>
+                      <v-flex>to</v-flex>
+                      <v-flex>{{ formatTime(activity.endTime) }}</v-flex>
+                    </v-flex>
+                    <v-flex v-else>{{ formatTime(activity.startTime) }}</v-flex>
+                  </v-col>
+                  <v-col cols="7" class="subtitle-2">
+                    {{ activity.direct }}
+                  </v-col>
+                </v-row>
+              </v-timeline-item>
+
+              <v-timeline-item v-if="index < routine.length - 1" small>
+                <template v-slot:icon>
+                  <v-avatar @click="openAddActivityDialog(activity)">
+                    <v-btn fab x-small>
+                      <v-icon color="primary">mdi-plus</v-icon>
+                    </v-btn>
+                  </v-avatar>
+                </template>
+              </v-timeline-item>
+            </div>
           </v-timeline>
         </v-tab-item>
       </v-tabs-items>
     </v-row>
-    <v-dialog v-model="showEditActivityDialog" max-width="600" eager>
-      <update-activity
-        :activity="selectedActivity"
-        :isWeekend="isWeekend"
-        @dialog-closed="closeUpdateActivityDialog"
-        @updated-activity="updatedActivity"
-        @deleted-activity="deletedActivity"
-        :activities="activities"
-      ></update-activity>
-    </v-dialog>
-    <v-bottom-sheet v-model="showAddActivityDialog" eager inset>
+    <v-bottom-sheet
+      v-model="showEditActivityDialog"
+      eager
+      inset
+      max-width="600"
+    >
+      <v-sheet class="text-center">
+        <update-activity
+          ref="updateActivity"
+          :selectedActivity="selectedActivity"
+          :minTime="minTime"
+          :maxTime="maxTime"
+          @activity-updated="updateActivity"
+          @dialog-closed="closeUpdateActivityDialog"
+        ></update-activity>
+      </v-sheet>
+    </v-bottom-sheet>
+    <v-bottom-sheet v-model="showAddActivityDialog" eager inset max-width="600">
       <v-sheet class="text-center">
         <add-activity
           ref="addActivity"
+          :minTime="minTime"
+          :maxTime="maxTime"
+          :activities="remaningActivities"
+          @activity-added="addActivity"
           @dialog-closed="closeAddActivityDialog"
-          :activities="activities"
         ></add-activity>
       </v-sheet>
     </v-bottom-sheet>
@@ -106,9 +117,11 @@ export default {
   },
   data() {
     return {
-      activities: [],
+      minTime: null,
+      maxTime: null,
+      allActivities: [],
       schedule: null,
-      tab: null,
+      tab: 0,
       showEditActivityDialog: false,
       selectedActivity: null,
       isWeekend: false,
@@ -133,27 +146,58 @@ export default {
             })
           }
 
-          activities = activities.sort((a, b) => {
-            const aStartTime = moment(a.startTime, 'HH:mm:ss')
-            const bStartTime = moment(b.startTime, 'HH:mm:ss')
-            if (aStartTime.isAfter(bStartTime)) {
-              return 1
-            } else if (aStartTime.isBefore(bStartTime)) {
-              return -1
-            } else {
-              return 0
-            }
-          })
+          activities = activities
+            .sort((a, b) => {
+              const aStartTime = moment(a.startTime, 'HH:mm:ss')
+              const bStartTime = moment(b.startTime, 'HH:mm:ss')
+              if (aStartTime.isAfter(bStartTime)) {
+                return 1
+              } else if (aStartTime.isBefore(bStartTime)) {
+                return -1
+              } else {
+                return 0
+              }
+            })
+            .map((o, index) => {
+              o.index = index
+              return o
+            })
           routine.push({ day: eachDay, activities })
         }
         return this.sortByDay(routine)
       }
       return []
+    },
+    currentDay() {
+      if (this.routine) {
+        const found = this.routine.find((o) => o.index === this.tab)
+        if (found) return found
+      }
+      return null
+    },
+    alreadyAddedActivities() {
+      if (this.currentDay) {
+        return this.currentDay.activities
+      }
+      return null
+    },
+    remaningActivities() {
+      if (this.alreadyAddedActivities) {
+        return this.allActivities.filter(
+          (eachActivity) =>
+            !(
+              this.alreadyAddedActivities.findIndex(
+                (o) => eachActivity.id === o.id
+              ) > -1
+            )
+        )
+      }
+      return null
     }
   },
   mounted() {
     this.getSchedule()
-    this.getActivities()
+    this.getAllActivities()
   },
   methods: {
     formatTime(time) {
@@ -163,23 +207,134 @@ export default {
         return ''
       }
     },
-    openUpdateActivityDialog(activity, isWeekend) {
-      this.selectedActivity = activity
-      this.isWeekend = isWeekend
-      this.showEditActivityDialog = true
-    },
-    closeUpdateActivityDialog() {
-      this.selectedActivity = null
-      this.showEditActivityDialog = false
-    },
-    updatedActivity() {
-      this.closeUpdateActivityDialog()
-    },
-    deletedActivity() {
-      this.closeUpdateActivityDialog()
+    openAddActivityDialog(startActivity) {
+      this.minTime = null
+      this.maxTime = null
+      if (startActivity) {
+        if (startActivity.endTime) {
+          this.minTime = moment(startActivity.endTime, 'HH:mm:ss')
+            .add(1, 'minutes')
+            .format('HH:mm:ss')
+        } else if (startActivity.startTime)
+          this.minTime = moment(startActivity.startTime, 'HH:mm:ss')
+            .add(1, 'minutes')
+            .format('HH:mm:ss')
+      }
+      const endActivity = this.getNextActivity(startActivity)
+      if (endActivity) {
+        if (endActivity.startTime) {
+          this.maxTime = moment(endActivity.startTime, 'HH:mm:ss')
+            .add(-1, 'minutes')
+            .format('HH:mm:ss')
+        }
+      } else {
+        this.maxTime = '00:00:00'
+      }
+
+      this.showAddActivityDialog = true
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.$refs.addActivity.$refs.activitySelect.focus()
+        }, 10)
+      })
     },
     closeAddActivityDialog() {
       this.showAddActivityDialog = false
+    },
+    addActivity(newActivity) {
+      if (newActivity && this.currentDay) {
+        const payload = newActivity.activity
+        payload.startTime = newActivity.startsAt
+        payload.endTime = newActivity.endsAt
+        const vm = this
+        firebaseDB
+          .ref('schedule/' + this.uid + '/' + this.currentDay.day)
+          .push(payload, (error) => {
+            if (!error) vm.getSchedule()
+            vm.minTime = null
+            vm.maxTime = null
+          })
+      }
+    },
+    openUpdateActivityDialog(selectedActivity) {
+      this.minTime = null
+      this.maxTime = null
+      this.selectedActivity = selectedActivity
+      const startActivity = this.getPreviousActivity(this.selectedActivity)
+      if (startActivity) {
+        if (startActivity.endTime) {
+          this.minTime = moment(startActivity.endTime, 'HH:mm:ss')
+            .add(1, 'minutes')
+            .format('HH:mm:ss')
+        } else if (startActivity.startTime)
+          this.minTime = moment(startActivity.startTime, 'HH:mm:ss')
+            .add(1, 'minutes')
+            .format('HH:mm:ss')
+      }
+      const endActivity = this.getNextActivity(this.selectedActivity)
+      if (endActivity) {
+        if (endActivity.startTime) {
+          this.maxTime = moment(endActivity.startTime, 'HH:mm:ss')
+            .add(-1, 'minutes')
+            .format('HH:mm:ss')
+        }
+      }
+
+      if (this.$refs.updateActivity.$refs.startsAt) {
+        this.$refs.updateActivity.$refs.startsAt.selectingHour = true
+      }
+      this.showEditActivityDialog = true
+    },
+    closeUpdateActivityDialog() {
+      this.showEditActivityDialog = false
+    },
+    updateActivity(updatedActivity) {
+      if (updatedActivity && this.currentDay && this.selectedActivity) {
+        const vm = this
+        const ref = 'schedule/' + this.uid + '/' + this.currentDay.day
+        firebaseDB
+          .ref(ref)
+          .orderByChild('id')
+          .equalTo(vm.selectedActivity.id)
+          .on('value', function(data) {
+            data.forEach((o) => {
+              if (o.key) {
+                firebaseDB
+                  .ref(ref + '/' + o.key)
+                  .update({
+                    startTime: updatedActivity.startsAt,
+                    endTime: updatedActivity.endsAt
+                  })
+                  .then(() => {
+                    vm.selectedActivity = null
+                    vm.minTime = null
+                    vm.maxTime = null
+                    vm.getSchedule()
+                  })
+              }
+            })
+          })
+      }
+    },
+    getPreviousActivity(activity) {
+      if (this.routine) {
+        const index = this.alreadyAddedActivities.findIndex(
+          (o) => o.index === activity.index
+        )
+        if (index > -1) {
+          return this.alreadyAddedActivities.find((o) => o.index === index - 1)
+        }
+      }
+    },
+    getNextActivity(activity) {
+      if (this.routine) {
+        const index = this.alreadyAddedActivities.findIndex(
+          (o) => o.index === activity.index
+        )
+        if (index > -1) {
+          return this.alreadyAddedActivities.find((o) => o.index === index + 1)
+        }
+      }
     },
     sortByDay(arr) {
       const sorter = {
@@ -191,19 +346,16 @@ export default {
         saturday: 6,
         sunday: 7
       }
-      return arr.sort((a, b) => {
-        const day1 = a.day.toLowerCase()
-        const day2 = b.day.toLowerCase()
-        return sorter[day1] - sorter[day2]
-      })
-    },
-    openAddActivityDialog(activity) {
-      this.showAddActivityDialog = true
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.$refs.addActivity.$refs.activitySelect.focus()
-        }, 10)
-      })
+      return arr
+        .sort((a, b) => {
+          const day1 = a.day.toLowerCase()
+          const day2 = b.day.toLowerCase()
+          return sorter[day1] - sorter[day2]
+        })
+        .map((o, index) => {
+          o.index = index
+          return o
+        })
     },
     getSchedule() {
       const vm = this
@@ -218,11 +370,11 @@ export default {
         }
       })
     },
-    getActivities() {
+    getAllActivities() {
       const vm = this
       firebaseDB.ref('activities').once('value', (snapshot) => {
         snapshot.forEach((activity) => {
-          vm.activities.push(activity.val())
+          vm.allActivities.push(activity.val())
         })
       })
     }

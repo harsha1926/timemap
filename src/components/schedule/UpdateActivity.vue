@@ -1,134 +1,124 @@
 <template>
-  <v-container fluid class="ma-0 pa-0">
-    <v-card :disabled="loading">
-      <v-card-text>
-        <v-form ref="form" v-model="valid">
-          <v-autocomplete
-            v-model="activityText"
-            :items="activities"
-            return-object
-            item-text="question"
-            item-value="id"
-            hide-details
-            disabled
-          ></v-autocomplete>
-          <v-row
-            v-if="activity && activity.endTime"
-            align="center"
-            justify="center"
-          >
-            <v-tabs v-model="tab" grow>
-              <v-tab :key="0">Start's at</v-tab>
-              <v-tab :key="1">End's at</v-tab>
-              <v-tab-item :key="0">
-                <v-row align="center" justify="center" class="ma-2">
-                  <v-time-picker
-                    v-model="startTime"
-                    ampm-in-title
-                  ></v-time-picker>
-                </v-row>
-              </v-tab-item>
-              <v-tab-item :key="1">
-                <v-row align="center" justify="center" class="ma-2">
-                  <v-time-picker
-                    v-model="endTime"
-                    ampm-in-title
-                  ></v-time-picker>
-                </v-row>
-              </v-tab-item>
-            </v-tabs>
-          </v-row>
-          <v-row v-else align="center" justify="center" class="ma-2">
+  <v-stepper v-model="e1">
+    <v-stepper-header v-if="selectedActivity && selectedActivity.endTime">
+      <v-stepper-step :complete="e1 > 1" step="1"></v-stepper-step>
+      <v-divider></v-divider>
+      <v-stepper-step step="2"></v-stepper-step>
+    </v-stepper-header>
+
+    <v-stepper-items>
+      <v-stepper-content step="1">
+        <v-row>
+          <v-col cols="12">
             <v-time-picker
-              v-model="startTime"
-              ampm-in-title
-              full-width
+              ref="startsAt"
+              v-model="startsAt"
+              :min="minTime"
+              :max="maxTime"
+              :full-width="$vuetify.breakpoint.xsOnly"
+              format="24hr"
             ></v-time-picker>
-          </v-row>
-        </v-form>
-        <v-row
-          v-if="error"
-          align="center"
-          justify="center"
-          class="overline error--text ma-2 pa-2"
-          >{{ errorMsg }}</v-row
-        >
-      </v-card-text>
-      <v-card-actions>
-        <v-btn @click="deletedActivity" text class="mr-3">Delete</v-btn>
-        <v-btn @click="$emit('dialog-closed')" text class="mr-3">Close</v-btn>
-        <v-btn @click="updatedActivity" text class="mr-3">Save</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-container>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" class="text-right">
+            <v-btn @click="cancel" text>Cancel</v-btn>
+            <v-btn
+              v-if="selectedActivity && selectedActivity.endTime"
+              @click="
+                e1 = 2
+                endsAt = null
+                $refs.endsAt && ($refs.endsAt.selectingHour = true)
+              "
+              :disabled="!startsAt"
+              color="primary"
+              >Continue</v-btn
+            >
+            <v-btn v-else @click="save" :disabled="!startsAt" color="primary"
+              >Save</v-btn
+            >
+          </v-col>
+        </v-row>
+      </v-stepper-content>
+
+      <v-stepper-content step="2">
+        <v-row>
+          <v-col cols="12">
+            <v-time-picker
+              ref="endsAt"
+              v-model="endsAt"
+              :min="startsAt"
+              :max="maxTime"
+              :full-width="$vuetify.breakpoint.xsOnly"
+              format="24hr"
+            ></v-time-picker>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" class="text-right">
+            <v-btn @click="cancel" text>Cancel</v-btn>
+            <v-btn @click="save" :disabled="!endsAt" color="primary"
+              >Save</v-btn
+            >
+          </v-col>
+        </v-row>
+      </v-stepper-content>
+    </v-stepper-items>
+  </v-stepper>
 </template>
 <script>
-import { mapGetters } from 'vuex'
-import moment from 'moment'
 export default {
   props: {
-    activity: {
+    selectedActivity: {
       type: Object,
       default() {
         return null
       }
     },
-    activities: {
-      type: Array,
+    minTime: {
+      type: String,
       default() {
-        return []
+        return null
+      }
+    },
+    maxTime: {
+      type: String,
+      default() {
+        return null
       }
     }
   },
   data() {
     return {
-      tab: null,
-      error: false,
-      errorMsg: null,
-      loading: false,
-      valid: null,
-      rules: {
-        required: (value) => !!value || 'Required.'
-      },
-      activityText: null,
-      startTime: null,
-      endTime: null
-    }
-  },
-  computed: {
-    ...mapGetters('user', ['uid']),
-    width() {
-      if (window.innerWidth < 450) return window.innerWidth
-      else return 450
+      e1: 1,
+      startsAt: null,
+      endsAt: null
     }
   },
   watch: {
-    activity: {
-      handler(newVal) {
-        if (newVal && this.activities) {
-          const selected = this.activities.find((o) => o.id === newVal.id)
-          if (selected) {
-            this.activityText = selected
-          }
-          this.startTime = moment(newVal.startTime, 'HH:mm:ss').format('HH:mm')
-          if (newVal.endTime) {
-            this.endTime = moment(newVal.endTime, 'HH:mm:ss').format('HH:mm')
-          }
-        } else {
-          this.title = null
-          this.startTime = null
-          this.endTime = null
-        }
-      },
-      deep: true
+    selectedActivity(newVal) {
+      if (newVal) {
+        this.startsAt = newVal.startTime
+      } else {
+        this.startsAt = null
+        this.endsAt = null
+      }
     }
   },
   methods: {
-    updatedActivity() {
-      this.$emit('updated-activity')
+    cancel() {
+      this.$emit('dialog-closed')
+      this.e1 = 1
+      this.startsAt = null
     },
-    deletedActivity() {
-      this.$emit('deleted-activity')
+    save() {
+      this.$emit('activity-updated', {
+        startsAt: this.startsAt,
+        endsAt: this.endsAt
+      })
+      this.$emit('dialog-closed')
+      this.e1 = 1
+      this.startsAt = null
     }
   }
 }

@@ -1,5 +1,10 @@
 <template>
-  <v-container :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''">
+  <v-container
+    :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''"
+    fluid
+    fill-height
+    style="height: 85vh; max-height: 85%;"
+  >
     <v-row align="start" justify="center">
       <v-progress-circular
         v-if="loading"
@@ -9,8 +14,8 @@
       <v-col v-else cols="12" sm="8" md="4">
         <v-card class="elevation-12">
           <v-card-subtitle class="mt-5">
-            <v-row justify="center">Hi, there.</v-row>
-            <v-row class="ma-5" justify="center">
+            <v-row justify="center" class="title">Hi, there.</v-row>
+            <v-row class="ma-5 subtitle-1" justify="center">
               Thanks for showing your interest in Timemap. We hope our fun
               filled app can help you know more about your loved ones. Please
               login,

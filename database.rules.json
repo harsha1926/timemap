@@ -5,6 +5,13 @@
     ".write": true,
 	"users": {
       ".indexOn": ["email"]
+    },
+	"schedule": {
+       "$uid": {
+			"$day": {
+				".indexOn": "id"
+			}
+       }
     }
   }
 }
