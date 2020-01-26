@@ -85,6 +85,7 @@
           :minTime="minTime"
           :maxTime="maxTime"
           @activity-updated="updateActivity"
+          @activity-deleted="deleteActivity"
           @dialog-closed="closeUpdateActivityDialog"
         ></update-activity>
       </v-sheet>
@@ -305,6 +306,31 @@ export default {
                     startTime: updatedActivity.startsAt,
                     endTime: updatedActivity.endsAt
                   })
+                  .then(() => {
+                    vm.selectedActivity = null
+                    vm.minTime = null
+                    vm.maxTime = null
+                    vm.getSchedule()
+                  })
+              }
+            })
+          })
+      }
+    },
+    deleteActivity() {
+      if (this.currentDay && this.selectedActivity) {
+        const vm = this
+        const ref = 'schedule/' + this.uid + '/' + this.currentDay.day
+        firebaseDB
+          .ref(ref)
+          .orderByChild('id')
+          .equalTo(vm.selectedActivity.id)
+          .on('value', function(data) {
+            data.forEach((o) => {
+              if (o.key) {
+                firebaseDB
+                  .ref(ref + '/' + o.key)
+                  .set(null)
                   .then(() => {
                     vm.selectedActivity = null
                     vm.minTime = null

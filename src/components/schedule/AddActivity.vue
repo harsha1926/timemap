@@ -49,6 +49,11 @@
         <v-stepper-content step="2">
           <v-row>
             <v-col cols="12">
+              <span class="subtitle-1">Starts at</span>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12">
               <v-time-picker
                 ref="startsAt"
                 v-model="startsAt"
@@ -77,6 +82,11 @@
         </v-stepper-content>
 
         <v-stepper-content step="3">
+          <v-row>
+            <v-col cols="12">
+              <span class="subtitle-1">Ends at</span>
+            </v-col>
+          </v-row>
           <v-row>
             <v-col cols="12">
               <v-time-picker

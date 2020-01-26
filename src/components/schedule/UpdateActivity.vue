@@ -10,6 +10,13 @@
       <v-stepper-content step="1">
         <v-row>
           <v-col cols="12">
+            <span v-if="selectedActivity" class="subtitle-1"
+              >{{ selectedActivity.direct }} at</span
+            >
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12">
             <v-time-picker
               ref="startsAt"
               v-model="startsAt"
@@ -22,6 +29,7 @@
         </v-row>
         <v-row>
           <v-col cols="12" class="text-right">
+            <v-btn @click="deleteActivity" text>Delete</v-btn>
             <v-btn @click="cancel" text>Cancel</v-btn>
             <v-btn
               v-if="selectedActivity && selectedActivity.endTime"
@@ -42,6 +50,11 @@
       </v-stepper-content>
 
       <v-stepper-content step="2">
+        <v-row>
+          <v-col cols="12">
+            <span v-if="selectedActivity" class="subtitle-1">Ends at</span>
+          </v-col>
+        </v-row>
         <v-row>
           <v-col cols="12">
             <v-time-picker
@@ -106,6 +119,12 @@ export default {
     }
   },
   methods: {
+    deleteActivity() {
+      this.$emit('activity-deleted')
+      this.$emit('dialog-closed')
+      this.e1 = 1
+      this.startsAt = null
+    },
     cancel() {
       this.$emit('dialog-closed')
       this.e1 = 1
