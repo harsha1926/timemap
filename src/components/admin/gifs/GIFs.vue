@@ -1,145 +1,145 @@
 <template>
-  <v-container fluid fill-height style="height: 85vh; max-height: 85%;">
+  <v-container :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''" fluid>
     <v-row align="center" justify="center">
-      <v-card>
-        <v-card-title>
-          Manage GIFs
-          <v-spacer></v-spacer>
-          <v-btn @click="showAddGIFDialog = true" color="primary"
-            >Add new GIF</v-btn
-          >
-        </v-card-title>
-        <v-data-table :loading="loading" :headers="headers" :items="gifs">
-          <template v-slot:item.url="{ item }">
-            <v-avatar>
-              <v-img
-                :src="item.url"
-                gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
-              ></v-img>
-            </v-avatar>
-          </template>
-          <template v-slot:item.actions="{ item }">
-            <v-btn
-              @click="
-                showEditGIFDialog = true
-                selectedGIF = item
-              "
-              color="primary"
-              fab
-              icon
-              x-small
-            >
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-            <v-btn @click="deleteGIF(item)" color="primary" fab icon x-small>
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </template>
-        </v-data-table>
-      </v-card>
-      <v-snackbar v-model="showSnackbar" :timeout="1000" :color="snackColor">
-        {{ snackText }}
-        <v-icon>{{ snackIcon }}</v-icon>
+      <v-col cols="12" sm="6" md="4" la="2">
+        <v-autocomplete
+          v-model="activity"
+          :items="activities"
+          autocomplete="off"
+          label="Select activity"
+          return-object
+          item-text="direct"
+          item-value="id"
+          hide-details
+          outlined
+          rounded
+        ></v-autocomplete>
+      </v-col>
+    </v-row>
+    <v-row v-if="loading" align="center" justify="center">
+      <v-col cols="12">Loading...</v-col>
+    </v-row>
+    <v-row v-else wrap>
+      <v-col
+        v-for="gif in gifs"
+        :key="gif.url"
+        :class="$vuetify.breakpoint.xsOnly ? 'mt-0 pt-0' : ''"
+        cols="12"
+        sm="6"
+        md="4"
+        la="2"
+      >
+        <gif :gif="gif" @gif-added="addGIF" />
+      </v-col>
+      <v-snackbar v-model="showGIFAddedSnackbar" :timeout="1000" color="primary">
+        GIF selected successfully
+        <v-icon>far fa-smile</v-icon>
       </v-snackbar>
-      <v-dialog v-model="showEditGIFDialog" max-width="400" eager>
-        <v-card>
-          <add-gif
-            :gif="selectedGIF"
-            @gif-updated="updateGIF"
-            @dialog-closed="showEditGIFDialog = false"
-          ></add-gif>
-        </v-card>
-      </v-dialog>
-      <v-dialog v-model="showAddGIFDialog" max-width="400" eager>
-        <v-card>
-          <add-gif
-            @gif-added="addGIF"
-            @dialog-closed="showAddGIFDialog = false"
-          ></add-gif>
-        </v-card>
-      </v-dialog>
     </v-row>
   </v-container>
 </template>
 <script>
-import AddGif from './AddGIF'
+import Gif from './GIF'
 import { firebaseDB } from '@/services/firebaseInit.js'
+import { fetchRandomGIFs } from '@/api/gifs'
 export default {
   components: {
-    AddGif
+    Gif
   },
   data() {
     return {
-      showAddGIFDialog: false,
-      showEditGIFDialog: false,
-      selectedGIF: null,
-      loading: false,
-      headers: [
-        { text: 'Activity', value: 'activity' },
-        { text: 'Category', value: 'category' },
-        { text: 'Preview', value: 'url' },
-        { text: 'Actions', value: 'actions', sortable: false }
+      activities: [
+        {
+          id: 'sleep',
+          direct: 'I am sleeping',
+          keywords: {
+            sleeping: true,
+            'on bed': true
+          }
+        },
+        {
+          id: 'free',
+          direct: 'I am free',
+          keywords: {
+            'im free': true,
+            offwork: true
+          }
+        }
       ],
+      activity: null,
+      showGIFAddedSnackbar: false,
       gifs: [],
-      showSnackbar: false,
-      snackColor: 'primary',
-      snackText: '',
-      snackIcon: ''
+      loading: false,
+      existingGIFs: []
     }
   },
   mounted() {
-    const vm = this
-    vm.loading = true
-    firebaseDB.ref('gifs').once('value', function(snapshot) {
-      snapshot.forEach((data) => {
-        vm.gifs.push({
-          url: data.val().url,
-          activity: data.val().activity,
-          category: data.val().category,
-          uid: data.key
-        })
+    let vm = this
+    firebaseDB.ref('activities').once('value', (snapshot) => {
+      snapshot.forEach((activity) => {
+        vm.activities.push(activity.val())
       })
-      vm.loading = false
+    })
+    firebaseDB.ref('gifs').once('value', (snapshot) => {
+      snapshot.forEach((gif) => {
+        vm.existingGIFs.push(gif.val())
+      })
     })
   },
   methods: {
-    addGIF(item) {
-      this.gifs.unshift(item)
-      this.showAddGIFDialog = false
-      this.showSnackbar = true
-      this.snackText = 'GIF added successfully'
-      this.snackIcon = 'far fa-smile'
+    isAlreadyAvailable(gif) {
+      return this.existingGIFs.find((o) => o.url === gif.url)
     },
-    updateGIF(item) {
-      const index = this.gifs.findIndex((o) => o.uid === item.uid)
-      if (index > -1) {
-        this.gifs.splice(index, 1, item)
+    getRandomKeyword(obj) {
+      var keys = Object.keys(obj)
+      return keys[(keys.length * Math.random()) << 0]
+    },
+    addGIF(gif) {
+      let vm = this
+      firebaseDB
+        .ref('gifs')
+        .push({
+          activity: gif.activity.id,
+          url: gif.url
+        })
+        .then(() => {
+          let index = vm.gifs.findIndex((o) => o.url === gif.url)
+          if (index > -1) {
+            setTimeout(() => {
+              vm.showGIFAddedSnackbar = true
+              vm.gifs.splice(index, 1)
+            }, 3000)
+          }
+        })
+    },
+    getGifs(activity, limit) {
+      this.loading = true
+      let vm = this
+      let keyword = this.getRandomKeyword(activity.keywords)
+      fetchRandomGIFs(keyword, limit).then((res) => {
+        res.data.results.map((eachGIF) => {
+          let gif = {
+            activity: activity,
+            url: eachGIF.media[0].tinygif.url
+          }
+          if (!this.isAlreadyAvailable(gif)) {
+            this.gifs.push(gif)
+          }
+        })
+        vm.loading = false
+      })
+    }
+  },
+  watch: {
+    activity(newVal) {
+      this.gifs = []
+      if (newVal) {
+        this.getGifs(newVal, 10)
       }
-      this.showEditGIFDialog = false
-      this.selectedGIF = null
-      this.showSnackbar = true
-      this.snackText = 'GIF updated successfully'
-      this.snackIcon = 'far fa-smile'
     },
-    deleteGIF(item) {
-      const vm = this
-      const index = vm.gifs.findIndex((o) => o.uid === item.uid)
-      if (index > -1) {
-        firebaseDB
-          .ref('gifs/' + item.uid)
-          .set(null)
-          .then(() => {
-            vm.gifs.splice(index, 1)
-            vm.showSnackbar = true
-            vm.snackText = 'GIF deleted successfully'
-            vm.snackIcon = 'far fa-smile'
-          })
-          .catch((error) => {
-            console.error(error)
-            vm.showSnackbar = true
-            vm.snackText = 'Failed to delete GIF'
-            vm.snackIcon = 'far fa-frown'
-          })
+    gifs(newVal) {
+      if (this.activity && newVal.length < 5) {
+        this.getGifs(this.activity, 5)
       }
     }
   }

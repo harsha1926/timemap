@@ -27,6 +27,9 @@
         <v-row align="center" class="pa-2">
           <v-btn @click="logout" color="primary">Logout</v-btn>
         </v-row>
+        <v-row align="center" class="pa-2" v-if="admin">
+          <v-btn to="/admin/gifs" color="primary">Manage GIFs</v-btn>
+        </v-row>
         <v-dialog v-model="showEditDisplayNameDialog" max-width="400" eager>
           <v-card>
             <v-card-text>
@@ -50,6 +53,7 @@ import { mapGetters, mapActions } from 'vuex'
 import { auth, firebaseDB } from '@/services/firebaseInit.js'
 export default {
   data: () => ({
+    admin: false,
     showEditDisplayNameDialog: false
   }),
   computed: {

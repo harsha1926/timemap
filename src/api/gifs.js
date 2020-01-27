@@ -7,4 +7,13 @@ const fetchRandomGIF = (search) => {
   )
 }
 
-export { fetchRandomGIF }
+const fetchRandomGIFs = (search, limit) => {
+  return axios.get(
+    `https://api.tenor.com/v1/random?media_filter=minimal&contentfilter=high&ar_range=wide&limit=${limit}&q=${search}&key=${tenorAPIKey}`
+  )
+}
+
+export {
+  fetchRandomGIF,
+  fetchRandomGIFs
+}

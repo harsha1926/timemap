@@ -6,7 +6,7 @@
 	"users": {
       ".indexOn": ["email"]
     },
-	"activites": {
+	"activities": {
       ".indexOn": ["id"]
     },
 	"schedule": {
