@@ -21,9 +21,10 @@
         <v-row align="center">
           <v-flex class="subtitle-1 font-weight-medium">
             {{ displayNameCaptilize }}
-            <span v-if="activity" class="subtitle-2 font-weight-regular"
-              >{{ activity.indirect }}..</span
-            >
+            <span
+              v-if="activityObj"
+              class="subtitle-2 font-weight-regular"
+            >{{ activityObj.indirect }}..</span>
           </v-flex>
         </v-row>
         <v-row>
@@ -41,18 +42,14 @@
         <v-img :src="activityPhoto" :height="height">
           <template v-slot:placeholder>
             <v-row class="fill-height ma-0" align="center" justify="center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
+              <v-progress-circular indeterminate color="primary"></v-progress-circular>
             </v-row>
           </template>
           <v-row
             justify="end"
             align="start"
             class="tenorFont ma-1 pa-1 fill-height white--text"
-            >Powered By Tenor</v-row
-          >
+          >Powered By Tenor</v-row>
         </v-img>
       </v-col>
       <v-col cols="2" class="my-0 py-0">
@@ -63,8 +60,7 @@
               small
               class="customPointer"
               color="tertiary"
-              >fas fa-eye-slash</v-icon
-            >
+            >fas fa-eye-slash</v-icon>
           </div>
 
           <div class="my-3">
@@ -72,8 +68,7 @@
               @click="sendWhatsAppMessage(friend.phoneNumber)"
               class="customPointer"
               color="primary"
-              >mdi-whatsapp</v-icon
-            >
+            >mdi-whatsapp</v-icon>
           </div>
 
           <div class="my-3">
@@ -81,8 +76,7 @@
               @click="callPhone(friend.phoneNumber)"
               class="customPointer"
               color="primary"
-              >mdi-phone</v-icon
-            >
+            >mdi-phone</v-icon>
           </div>
 
           <div class="my-3">
@@ -90,8 +84,7 @@
               @click="sendTextMessage(friend.phoneNumber)"
               class="customPointer"
               color="primary"
-              >mdi-message-outline</v-icon
-            >
+            >mdi-message-outline</v-icon>
           </div>
 
           <div class="my-3">
@@ -99,8 +92,7 @@
               @click="sendEmailMessage(friend.email)"
               class="customPointer"
               color="primary"
-              >mdi-email-outline</v-icon
-            >
+            >mdi-email-outline</v-icon>
           </div>
         </div>
       </v-col>
@@ -113,9 +105,7 @@
         <v-card-title>Are you sure?</v-card-title>
         <v-card-actions>
           <v-btn @click="removeFriend">Yes</v-btn>
-          <v-btn @click="showRemoveFriendWarning = false" color="primary"
-            >No</v-btn
-          >
+          <v-btn @click="showRemoveFriendWarning = false" color="primary">No</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -154,7 +144,8 @@ export default {
       now: new Date(),
       activityPhoto: '',
       lastUpdated: null,
-      showRemoveFriendWarning: false
+      showRemoveFriendWarning: false,
+      activityObj: null
     }
   },
   computed: {
@@ -193,19 +184,17 @@ export default {
       }
     },
     activity() {
-      if (!this.schedule) return { id: '', indirect: '...' }
+      if (!this.schedule) return null
       else {
         let activity = null
         if (this.localTime) {
-          activity = this.getActiveActivity()
-          if (!activity) {
-            activity = this.isAtWork()
-            if (!activity || (activity && activity.id === 'offWork')) {
-              activity = this.isAwake()
-              if (activity && activity.id === 'awake') {
-                activity = { id: 'free', indirect: 'is free' }
-              }
+          if (this.isAwake()) {
+            activity = this.getActiveActivity()
+            if (!activity) {
+              activity = 'free'
             }
+          } else {
+            activity = 'sleep'
           }
         }
         return activity
@@ -217,6 +206,7 @@ export default {
       handler(newVal) {
         if (newVal) {
           this.getRandomGIF()
+          this.getActivityObject()
         }
       }
     }
@@ -260,21 +250,38 @@ export default {
     }
   },
   methods: {
+    getActivityObject() {
+      if (this.activity) {
+        if (this.activity === 'sleep') {
+          this.activityObj = { id: 'sleep', indirect: 'is sleeping' }
+        } else if (this.activity === 'free') {
+          this.activityObj = { id: 'free', indirect: 'is free' }
+        } else {
+          let vm = this
+          firebaseDB
+            .ref('activities')
+            .orderByChild('id')
+            .equalTo(this.activity)
+            .once('value', function(data) {
+              data.forEach((o) => {
+                vm.activityObj = o.val()
+              })
+            })
+        }
+      }
+    },
     getRandomGIF() {
       if (this.activity) {
         let search = 'funny'
-        if (this.activity.id === 'sleep') {
+        if (this.activity === 'sleep') {
           search = 'sleeping'
-        } else if (
-          this.activity.id === 'breakfast' ||
-          this.activity === 'lunch'
-        ) {
+        } else if (this.activity === 'breakfast' || this.activity === 'lunch') {
           search = 'eating'
-        } else if (this.activity.id === 'dinner') {
+        } else if (this.activity === 'dinner') {
           search = 'dinner'
-        } else if (this.activity.id === 'work') {
+        } else if (this.activity === 'work') {
           search = 'working'
-        } else if (this.activity.id === 'free') {
+        } else if (this.activity === 'free') {
           search = 'im free'
         }
         this.fetchGIF(search)
@@ -297,92 +304,46 @@ export default {
       const day = moment()
         .tz(this.timezone)
         .format('dddd')
-      return this.schedule[day.toLowerCase()]
+      return this.schedule.find((o) => o.day === day.toLowerCase())
     },
     getActiveActivity() {
       const routine = this.getSchedule()
-      for (const activity in routine) {
-        if (routine[activity].endTime) {
-          const activityStartTime = this.getMomentDateWithTime(
-            routine[activity].startTime
-          )
-          const currentTime = this.getMomentDateWithTime(
-            moment.tz(this.timezone).format('HH:mm:ss')
-          )
-          const activityEndTime = this.getMomentDateWithTime(
-            routine[activity].endTime
-          )
-          if (
-            currentTime.isAfter(activityStartTime) &&
-            currentTime.isBefore(activityEndTime)
-          ) {
-            return routine[activity]
+      if (routine && routine.activities) {
+        for (let i = 0; i < routine.activities.length; i++) {
+          let activity = routine.activities[i]
+          if (activity.startTime && activity.endTime) {
+            const activityStartTime = this.getMomentDateWithTime(
+              activity.startTime
+            )
+            const currentTime = this.getMomentDateWithTime(
+              moment.tz(this.timezone).format('HH:mm')
+            )
+            const activityEndTime = this.getMomentDateWithTime(activity.endTime)
+            if (
+              currentTime.isAfter(activityStartTime) &&
+              currentTime.isBefore(activityEndTime)
+            ) {
+              return activity.id
+            }
           }
         }
       }
     },
     isAwake() {
       const routine = this.getSchedule()
-      let wakeUpActivity = null
-      let sleepActivity = null
+      const dayStartTime = this.getMomentDateWithTime(routine.dayStartTime)
+      const dayEndTime = this.getMomentDateWithTime(routine.dayEndTime)
+      const currentTime = this.getMomentDateWithTime(
+        moment.tz(this.timezone).format('HH:mm')
+      )
 
-      for (const activity in routine) {
-        if (routine[activity].id === 'awake') {
-          wakeUpActivity = routine[activity]
-        }
-        if (routine[activity].id === 'sleep') {
-          sleepActivity = routine[activity]
-        }
-      }
-
-      if (wakeUpActivity && sleepActivity) {
-        const dayStartTime = this.getMomentDateWithTime(
-          wakeUpActivity.startTime
-        )
-        const dayEndTime = this.getMomentDateWithTime(sleepActivity.startTime)
-        const currentTime = this.getMomentDateWithTime(
-          moment.tz(this.timezone).format('HH:mm:ss')
-        )
-        if (
-          currentTime.isAfter(dayStartTime) &&
-          currentTime.isBefore(dayEndTime)
-        ) {
-          return wakeUpActivity
-        } else {
-          return sleepActivity
-        }
-      }
-    },
-    isAtWork() {
-      const routine = this.getSchedule()
-      let workStartActivity = null
-      let workEndActivity = null
-      for (const activity in routine) {
-        if (routine[activity].id === 'work') {
-          workStartActivity = routine[activity]
-        }
-        if (routine[activity].id === 'offWork') {
-          workEndActivity = routine[activity]
-        }
-      }
-      if (workStartActivity && workEndActivity) {
-        const workStartTime = this.getMomentDateWithTime(
-          workStartActivity.startTime
-        )
-        const workEndTime = this.getMomentDateWithTime(
-          workEndActivity.startTime
-        )
-        const currentTime = this.getMomentDateWithTime(
-          moment.tz(this.timezone).format('HH:mm:ss')
-        )
-        if (
-          currentTime.isAfter(workStartTime) &&
-          currentTime.isBefore(workEndTime)
-        ) {
-          return workStartActivity
-        } else {
-          return workEndActivity
-        }
+      if (
+        currentTime.isAfter(dayStartTime) &&
+        currentTime.isBefore(dayEndTime)
+      ) {
+        return true
+      } else {
+        return false
       }
     },
     getMomentDateWithTime(timeStr) {

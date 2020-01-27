@@ -40,8 +40,7 @@
                 "
                 :disabled="!valid"
                 color="primary"
-                >Continue</v-btn
-              >
+              >Continue</v-btn>
             </v-col>
           </v-row>
         </v-stepper-content>
@@ -75,8 +74,7 @@
                 "
                 :disabled="!startsAt"
                 color="primary"
-                >Continue</v-btn
-              >
+              >Continue</v-btn>
             </v-col>
           </v-row>
         </v-stepper-content>
@@ -99,12 +97,13 @@
               ></v-time-picker>
             </v-col>
           </v-row>
-          <v-row>
-            <v-col cols="12" class="text-right">
+          <v-row align="center">
+            <v-col cols="4">
+              <v-switch v-model="applyToAllDays" label="All days"></v-switch>
+            </v-col>
+            <v-col cols="8" class="text-right">
               <v-btn @click="cancel" text>Cancel</v-btn>
-              <v-btn @click="save" :disabled="!endsAt" color="primary"
-                >Save</v-btn
-              >
+              <v-btn @click="save" :disabled="!endsAt" color="primary">Save</v-btn>
             </v-col>
           </v-row>
         </v-stepper-content>
@@ -143,7 +142,8 @@ export default {
       valid: false,
       rules: {
         required: (v) => !!v || 'Required'
-      }
+      },
+      applyToAllDays: true
     }
   },
   methods: {
@@ -154,9 +154,10 @@ export default {
     },
     save() {
       this.$emit('activity-added', {
-        activity: this.activity,
-        startsAt: this.startsAt,
-        endsAt: this.endsAt
+        id: this.activity.id,
+        startTime: this.startsAt,
+        endTime: this.endsAt,
+        applyToAllDays: this.applyToAllDays
       })
       this.$emit('dialog-closed')
       this.$refs.form.reset()

@@ -1,9 +1,6 @@
 <template>
   <v-container :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''">
-    <v-skeleton-loader
-      v-if="loading"
-      type="list-item-avatar"
-    ></v-skeleton-loader>
+    <v-skeleton-loader v-if="loading" type="list-item-avatar"></v-skeleton-loader>
     <v-row v-else-if="friend">
       <v-col cols="2">
         <v-avatar size="35">
@@ -11,20 +8,12 @@
         </v-avatar>
       </v-col>
       <v-col cols="8">
-        <v-flex class="subtitle-1 font-weight-medium">
-          {{ displayNameCaptilize }}
-        </v-flex>
-        <v-flex v-if="isFriendAlready" class="caption"
-          >You are watching..</v-flex
-        >
+        <v-flex class="subtitle-1 font-weight-medium">{{ displayNameCaptilize }}</v-flex>
+        <v-flex v-if="isFriendAlready" class="caption">You are watching..</v-flex>
       </v-col>
       <v-col cols="2" class="text-center">
-        <v-icon v-if="!isFriendAlready" @click="addFriend" color="primary"
-          >fas fa-eye</v-icon
-        >
-        <v-icon v-else @click="removeFriend" small color="tertiary"
-          >fas fa-eye-slash</v-icon
-        >
+        <v-icon v-if="!isFriendAlready" @click="addFriend" color="primary">fas fa-eye</v-icon>
+        <v-icon v-else @click="showWarning = true" small color="tertiary">fas fa-eye-slash</v-icon>
       </v-col>
       <v-snackbar v-model="friendAdded" :timeout="1000" color="primary">
         You are watching {{ friend.displayName }} now
@@ -35,6 +24,15 @@
         <v-icon>far fa-frown</v-icon>
       </v-snackbar>
     </v-row>
+    <v-dialog v-model="showWarning" max-width="600">
+      <v-card>
+        <v-card-title>Are you sure?</v-card-title>
+        <v-card-actions>
+          <v-btn @click="removeFriend">Yes</v-btn>
+          <v-btn @click="showWarning = false" color="primary">No</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -56,7 +54,8 @@ export default {
       friendAdded: false,
       friendRemoved: false,
       loading: false,
-      friend: null
+      friend: null,
+      showWarning: false
     }
   },
   computed: {
@@ -102,10 +101,10 @@ export default {
       this.friendAdded = true
     },
     removeFriend() {
-      const vm = this
-      firebaseDB.ref('watching/' + vm.uid + '/' + vm.friend.uid).set(null)
+      firebaseDB.ref('watching/' + this.uid + '/' + this.friend.uid).set(null)
       this.isFriendAlready = false
       this.friendRemoved = true
+      this.showWarning = false
     }
   }
 }

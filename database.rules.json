@@ -6,6 +6,9 @@
 	"users": {
       ".indexOn": ["email"]
     },
+	"activites": {
+      ".indexOn": ["id"]
+    },
 	"schedule": {
        "$uid": {
 			"$day": {
