@@ -1,6 +1,9 @@
 <template>
   <v-container :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''">
-    <v-skeleton-loader v-if="loading" type="list-item-avatar"></v-skeleton-loader>
+    <v-skeleton-loader
+      v-if="loading"
+      type="list-item-avatar"
+    ></v-skeleton-loader>
     <v-row v-else-if="friend">
       <v-col cols="2">
         <v-avatar size="35">
@@ -8,12 +11,20 @@
         </v-avatar>
       </v-col>
       <v-col cols="8">
-        <v-flex class="subtitle-1 font-weight-medium">{{ displayNameCaptilize }}</v-flex>
-        <v-flex v-if="isFriendAlready" class="caption">You are watching..</v-flex>
+        <v-flex class="subtitle-1 font-weight-medium">{{
+          displayNameCaptilize
+        }}</v-flex>
+        <v-flex v-if="isFriendAlready" class="caption"
+          >You are watching..</v-flex
+        >
       </v-col>
       <v-col cols="2" class="text-center">
-        <v-icon v-if="!isFriendAlready" @click="addFriend" color="primary">fas fa-eye</v-icon>
-        <v-icon v-else @click="showWarning = true" small color="tertiary">fas fa-eye-slash</v-icon>
+        <v-icon v-if="!isFriendAlready" @click="addFriend" color="primary"
+          >fas fa-eye</v-icon
+        >
+        <v-icon v-else @click="showWarning = true" small color="tertiary"
+          >fas fa-eye-slash</v-icon
+        >
       </v-col>
       <v-snackbar v-model="friendAdded" :timeout="1000" color="primary">
         You are watching {{ friend.displayName }} now

@@ -20,10 +20,9 @@
     </v-row>
     <v-row v-if="reArragedSchedule">
       <v-tabs v-model="tab" show-arrows>
-        <v-tab
-          v-for="eachDay in reArragedSchedule"
-          :key="eachDay.index"
-        >{{ eachDay.day.substring(0, 3) }}</v-tab>
+        <v-tab v-for="eachDay in reArragedSchedule" :key="eachDay.index">{{
+          eachDay.day.substring(0, 3)
+        }}</v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item v-for="eachDay in reArragedSchedule" :key="eachDay.index">
@@ -57,14 +56,17 @@
               </template>
             </v-timeline-item>
 
-            <div v-for="(activity) in eachDay.activities" :key="activity.index">
+            <div v-for="activity in eachDay.activities" :key="activity.index">
               <v-timeline-item>
                 <template v-slot:icon>
                   <v-avatar>
                     <v-img :src="''"></v-img>
                   </v-avatar>
                 </template>
-                <v-row @click="openUpdateActivityDialog(activity)" align="center">
+                <v-row
+                  @click="openUpdateActivityDialog(activity)"
+                  align="center"
+                >
                   <v-col cols="1" class="text-center">
                     <v-icon small class="customPointer">mdi-pencil</v-icon>
                   </v-col>
@@ -76,10 +78,11 @@
                     </v-flex>
                   </v-col>
                   <v-col
-                    cols="7"
                     v-if="activity.activityObj"
+                    cols="7"
                     class="subtitle-2"
-                  >{{ activity.activityObj.direct }}</v-col>
+                    >{{ activity.activityObj.direct }}</v-col
+                  >
                 </v-row>
               </v-timeline-item>
 
@@ -115,7 +118,12 @@
         </v-tab-item>
       </v-tabs-items>
     </v-row>
-    <v-bottom-sheet v-model="showEditActivityDialog" eager inset max-width="600">
+    <v-bottom-sheet
+      v-model="showEditActivityDialog"
+      eager
+      inset
+      max-width="600"
+    >
       <v-sheet class="text-center">
         <update-activity
           ref="updateActivity"
@@ -140,7 +148,12 @@
         ></add-activity>
       </v-sheet>
     </v-bottom-sheet>
-    <v-bottom-sheet v-model="showUpdateDayStartEndDialog" eager inset max-width="600">
+    <v-bottom-sheet
+      v-model="showUpdateDayStartEndDialog"
+      eager
+      inset
+      max-width="600"
+    >
       <v-sheet class="text-center">
         <update-day-start-end
           ref="updateActivity"
@@ -197,9 +210,10 @@ export default {
   computed: {
     ...mapGetters('user', ['uid']),
     activeTab() {
-      for (let key in this.sorter) {
+      for (const key in this.sorter) {
         if (this.sorter[key] === this.tab) return key
       }
+      return null
     },
     currentDay() {
       if (this.schedule) {
@@ -239,7 +253,7 @@ export default {
       this.maxTime = null
       this.isStart = isStart
       if (isStart) {
-        let firstActivity = this.getFirstActivity()
+        const firstActivity = this.getFirstActivity()
         if (firstActivity) {
           this.maxTime = moment(firstActivity.startTime, 'HH:mm')
             .add(-1, 'minutes')
@@ -247,7 +261,7 @@ export default {
         }
         this.selectedTime = this.dayStartTime
       } else {
-        let lastActivity = this.getLastActivity()
+        const lastActivity = this.getLastActivity()
         if (lastActivity) {
           this.minTime = moment(lastActivity.endTime, 'HH:mm')
             .add(+1, 'minutes')
@@ -270,7 +284,7 @@ export default {
             eachday.dayEndTime = payload.time
           }
         })
-        let vm = this
+        const vm = this
         firebaseDB
           .ref('schedule/' + this.uid)
           .set(this.schedule)
@@ -285,7 +299,7 @@ export default {
           } else {
             found.dayEndTime = payload.time
           }
-          let vm = this
+          const vm = this
           firebaseDB
             .ref('schedule/' + this.uid)
             .set(this.schedule)
@@ -392,8 +406,8 @@ export default {
     },
     addActivity(newActivity) {
       if (newActivity && this.schedule) {
-        let vm = this
-        let payload = {
+        const vm = this
+        const payload = {
           id: newActivity.id,
           startTime: newActivity.startTime,
           endTime: newActivity.endTime
@@ -412,7 +426,7 @@ export default {
           const found = this.schedule.find((o) => o.day === this.activeTab)
           if (found) {
             found.activities.push(payload)
-            let vm = this
+            const vm = this
             firebaseDB
               .ref('schedule/' + this.uid)
               .set(this.schedule)
@@ -459,7 +473,7 @@ export default {
       if (updatedActivity && this.selectedActivity) {
         if (updatedActivity.applyToAllDays) {
           this.schedule.map((eachday) => {
-            let activity = eachday.activities.find(
+            const activity = eachday.activities.find(
               (o) => o.id === this.selectedActivity.id
             )
             if (activity) {
@@ -473,7 +487,7 @@ export default {
             }
           })
 
-          let vm = this
+          const vm = this
           firebaseDB
             .ref('schedule/' + this.uid)
             .set(this.schedule)
@@ -483,7 +497,7 @@ export default {
         } else {
           const found = this.schedule.find((o) => o.day === this.activeTab)
           if (found) {
-            let activity = found.activities.find(
+            const activity = found.activities.find(
               (o) => o.id === this.selectedActivity.id
             )
             if (activity) {
@@ -496,7 +510,7 @@ export default {
               }
             }
 
-            let vm = this
+            const vm = this
             firebaseDB
               .ref('schedule/' + this.uid)
               .set(this.schedule)
@@ -511,14 +525,14 @@ export default {
       if (this.currentDay && this.selectedActivity) {
         const found = this.schedule.find((o) => o.day === this.activeTab)
         if (found) {
-          let index = found.activities.findIndex(
+          const index = found.activities.findIndex(
             (o) => o.id === this.selectedActivity.id
           )
           if (index > -1) {
             found.activities.splice(index, 1)
           }
 
-          let vm = this
+          const vm = this
           firebaseDB
             .ref('schedule/' + this.uid)
             .set(this.schedule)
@@ -544,12 +558,12 @@ export default {
       let schedule = []
       data.forEach((eachDay) => {
         if (eachDay.val()) {
-          let eachDaySchedule = { day: eachDay.val().day }
+          const eachDaySchedule = { day: eachDay.val().day }
           eachDaySchedule.dayStartTime = eachDay.val().dayStartTime
           eachDaySchedule.dayEndTime = eachDay.val().dayEndTime
           eachDaySchedule.activities = []
           eachDay.val().activities.map((activity) => {
-            let actObj = this.allActivities.find((o) => o.id === activity.id)
+            const actObj = this.allActivities.find((o) => o.id === activity.id)
             if (actObj) {
               activity.activityObj = actObj
               eachDaySchedule.activities.push(activity)

@@ -63,6 +63,15 @@ export default {
       applyToAllDays: true
     }
   },
+  watch: {
+    selectedTime(newVal) {
+      if (newVal) {
+        this.time = newVal
+      } else {
+        this.time = null
+      }
+    }
+  },
   methods: {
     cancel() {
       this.$emit('dialog-closed')
@@ -75,15 +84,6 @@ export default {
       })
       this.$emit('dialog-closed')
       this.time = null
-    }
-  },
-  watch: {
-    selectedTime(newVal) {
-      if (newVal) {
-        this.time = newVal
-      } else {
-        this.time = null
-      }
     }
   }
 }

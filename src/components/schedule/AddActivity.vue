@@ -40,7 +40,8 @@
                 "
                 :disabled="!valid"
                 color="primary"
-              >Continue</v-btn>
+                >Continue</v-btn
+              >
             </v-col>
           </v-row>
         </v-stepper-content>
@@ -74,7 +75,8 @@
                 "
                 :disabled="!startsAt"
                 color="primary"
-              >Continue</v-btn>
+                >Continue</v-btn
+              >
             </v-col>
           </v-row>
         </v-stepper-content>
@@ -103,7 +105,9 @@
             </v-col>
             <v-col cols="8" class="text-right">
               <v-btn @click="cancel" text>Cancel</v-btn>
-              <v-btn @click="save" :disabled="!endsAt" color="primary">Save</v-btn>
+              <v-btn @click="save" :disabled="!endsAt" color="primary"
+                >Save</v-btn
+              >
             </v-col>
           </v-row>
         </v-stepper-content>
