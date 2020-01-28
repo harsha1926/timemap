@@ -27,7 +27,7 @@
         <v-row align="center" class="pa-2">
           <v-btn @click="logout" color="primary">Logout</v-btn>
         </v-row>
-        <v-row align="center" class="pa-2" v-if="admin">
+        <v-row v-if="admin" align="center" class="pa-2">
           <v-btn to="/admin/gifs" color="primary">Manage GIFs</v-btn>
         </v-row>
         <v-dialog v-model="showEditDisplayNameDialog" max-width="400" eager>

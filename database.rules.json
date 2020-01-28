@@ -15,6 +15,9 @@
 				".indexOn": "id"
 			}
        }
-    }
+    },
+	"gifs": {
+      ".indexOn": ["url", "activity"]
+    },
   }
 }

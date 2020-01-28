@@ -6,7 +6,7 @@
           <v-avatar size="35">
             <v-img :src="iconURL"></v-img>
           </v-avatar>
-          <span class="ml-2 appTitleFont primary--text">Watch</span>
+          <span class="ml-2 pt-2 appTitleFont primary--text">Watch</span>
         </v-flex>
         <v-flex class="text-right">
           <v-row justify="end" align="center">
@@ -36,7 +36,7 @@
     <v-bottom-navigation
       v-if="uid"
       :height="$vuetify.breakpoint.xsOnly ? 45 : 65"
-      :active.sync="activeTab"
+      v-model="activeTab"
       color="primary"
       grow
       app
@@ -60,29 +60,20 @@
 import { mapGetters, mapActions } from 'vuex'
 import Login from '~/components/login/Login'
 import VerifyPhone from '~/components/login/VerifyPhone'
-import { fetchRandomGIF } from '@/api/gifs'
 export default {
   components: {
     Login,
     VerifyPhone
   },
   data: () => ({
-    activeTab: null,
+    activeTab: 0,
     on: false,
     showSearchBar: false,
     iconURL:
-      'https://media.tenor.com/images/7d0204ed76b90079d9bf2402369f8df9/tenor.gif'
+      'https://media1.tenor.com/images/e9aa112a4646871f63345e167557eae1/tenor.gif?itemid=12827256'
   }),
   computed: {
     ...mapGetters('user', ['uid', 'displayName', 'photoURL', 'phoneNumber'])
-  },
-  created() {
-    const vm = this
-    setInterval(function() {
-      fetchRandomGIF('clock').then((res) => {
-        vm.iconURL = res.data.results[0].media[0].tinygif.url
-      })
-    }, 5000)
   },
   methods: {
     ...mapActions('user/currentLocation', ['addCurrentLocation'])

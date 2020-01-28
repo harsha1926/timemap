@@ -13,7 +13,4 @@ const fetchRandomGIFs = (search, limit) => {
   )
 }
 
-export {
-  fetchRandomGIF,
-  fetchRandomGIFs
-}
+export { fetchRandomGIF, fetchRandomGIFs }

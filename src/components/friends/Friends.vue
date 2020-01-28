@@ -10,7 +10,11 @@
         md="4"
         la="2"
       >
-        <friend :friendId="friendId" @friendRemoved="friendRemoved" />
+        <friend
+          :friendId="friendId"
+          @friendRemoved="friendRemoved"
+          :gifs="gifs"
+        />
       </v-col>
       <v-snackbar
         v-model="showFriendRemovedSnackbar"
@@ -35,17 +39,26 @@ export default {
     return {
       showFriendRemovedSnackbar: false,
       removedFriendName: '',
-      friendIds: []
+      friendIds: [],
+      gifs: []
     }
   },
   computed: {
     ...mapGetters('user', ['uid'])
   },
   mounted() {
-    const vm = this
-    vm.fetchFriendsList()
+    this.fetchFriendsList()
+    this.fetchGIFs()
   },
   methods: {
+    fetchGIFs() {
+      const vm = this
+      firebaseDB.ref('gifs').once('value', function(snapshot) {
+        snapshot.forEach((gif) => {
+          vm.gifs.push(gif.val())
+        })
+      })
+    },
     friendRemoved(removedFriend) {
       const index = this.friendIds.findIndex((o) => o === removedFriend.uid)
       if (index > -1) {

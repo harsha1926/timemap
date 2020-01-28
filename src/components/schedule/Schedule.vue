@@ -20,9 +20,9 @@
     </v-row>
     <v-row v-if="reArragedSchedule">
       <v-tabs v-model="tab" show-arrows>
-        <v-tab v-for="eachDay in reArragedSchedule" :key="eachDay.index">{{
-          eachDay.day.substring(0, 3)
-        }}</v-tab>
+        <v-tab v-for="eachDay in reArragedSchedule" :key="eachDay.index">
+          {{ eachDay.day.substring(0, 3) }}
+        </v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item v-for="eachDay in reArragedSchedule" :key="eachDay.index">
@@ -30,7 +30,7 @@
             <v-timeline-item>
               <template v-slot:icon>
                 <v-avatar>
-                  <v-img :src="''"></v-img>
+                  <v-img :src="getRandomGIF('awake')"></v-img>
                 </v-avatar>
               </template>
               <v-row @click="openUpdateDayStartEndDialog(true)" align="center">
@@ -60,7 +60,7 @@
               <v-timeline-item>
                 <template v-slot:icon>
                   <v-avatar>
-                    <v-img :src="''"></v-img>
+                    <v-img :src="getRandomGIF(activity.id)"></v-img>
                   </v-avatar>
                 </template>
                 <v-row
@@ -99,7 +99,7 @@
             <v-timeline-item>
               <template v-slot:icon>
                 <v-avatar>
-                  <v-img :src="''"></v-img>
+                  <v-img :src="getRandomGIF('sleep')"></v-img>
                 </v-avatar>
               </template>
               <v-row @click="openUpdateDayStartEndDialog(false)" align="center">
@@ -204,7 +204,8 @@ export default {
         friday: 4,
         saturday: 5,
         sunday: 6
-      }
+      },
+      gifs: []
     }
   },
   computed: {
@@ -246,8 +247,29 @@ export default {
   },
   mounted() {
     this.getSchedule()
+    this.fetchGIFs()
   },
   methods: {
+    getRndInteger(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min
+    },
+    getRandomGIF(activity) {
+      const activityGIFs = this.gifs.filter(
+        (o) => o.activity === activity && o.forAvatar
+      )
+      if (activityGIFs && activityGIFs.length > 0) {
+        const randomInt = this.getRndInteger(0, activityGIFs.length - 1)
+        return activityGIFs[randomInt].url
+      }
+    },
+    fetchGIFs() {
+      const vm = this
+      firebaseDB.ref('gifs').once('value', function(snapshot) {
+        snapshot.forEach((gif) => {
+          vm.gifs.push(gif.val())
+        })
+      })
+    },
     openUpdateDayStartEndDialog(isStart) {
       this.minTime = null
       this.maxTime = null

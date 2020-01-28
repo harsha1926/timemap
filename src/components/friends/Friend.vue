@@ -133,10 +133,15 @@ import moment from 'moment'
 import momentTimezone from 'moment-timezone'
 import { fetchTimezone } from '@/api/timezone'
 import { firebaseDB } from '@/services/firebaseInit.js'
-import { fetchRandomGIF } from '@/api/gifs'
 
 export default {
   props: {
+    gifs: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
     friendId: {
       type: String,
       default() {
@@ -209,6 +214,9 @@ export default {
         }
         return activity
       }
+    },
+    activityGIFs() {
+      return this.gifs.filter((o) => o.activity === this.activity)
     }
   },
   watch: {
@@ -280,29 +288,14 @@ export default {
         }
       }
     },
-    getRandomGIF() {
-      if (this.activity) {
-        let search = 'funny'
-        if (this.activity === 'sleep') {
-          search = 'sleeping'
-        } else if (this.activity === 'breakfast' || this.activity === 'lunch') {
-          search = 'eating'
-        } else if (this.activity === 'dinner') {
-          search = 'dinner'
-        } else if (this.activity === 'work') {
-          search = 'working'
-        } else if (this.activity === 'free') {
-          search = 'im free'
-        }
-        this.fetchGIF(search)
-      }
+    getRndInteger(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min
     },
-    fetchGIF(search) {
-      fetchRandomGIF(search).then((res) => {
-        if (res.data.results[0].media[0].tinygif.dims[1] < 150)
-          this.activityPhoto = res.data.results[0].media[0].tinygif.url
-        else return this.fetchGIF(search)
-      })
+    getRandomGIF() {
+      if (this.activity && this.activityGIFs && this.activityGIFs.length > 0) {
+        const randomInt = this.getRndInteger(0, this.activityGIFs.length - 1)
+        this.activityPhoto = this.activityGIFs[randomInt].url
+      }
     },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1)
