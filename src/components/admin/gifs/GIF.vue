@@ -106,7 +106,7 @@ export default {
     addGIF() {
       this.loading = true
       this.$emit('gif-added', this.gif)
-      let vm = this
+      const vm = this
       setTimeout(() => {
         vm.loading = false
       }, 1000)
@@ -114,7 +114,7 @@ export default {
     removeGIF() {
       this.loading = true
       this.$emit('gif-removed', this.gif)
-      let vm = this
+      const vm = this
       setTimeout(() => {
         vm.loading = false
       }, 1000)
