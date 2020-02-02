@@ -7,9 +7,17 @@
     <v-row>
       <v-img
         height="200px"
-        src="https://media1.tenor.com/images/b30caa3463074c95d1dd35b06d3e21f5/tenor.gif?itemid=4529604"
+        :src="getRandomGIF('routine')"
         gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
       >
+      <template v-slot:placeholder>
+            <v-row class="fill-height ma-0" align="center" justify="center">
+              <v-progress-circular
+                indeterminate
+                color="primary"
+              ></v-progress-circular>
+            </v-row>
+          </template>
         <v-row align="start" justify="end" class="ma-1 pa-1">
           <div class="tenorFont white--text">Powered By Tenor</div>
         </v-row>
@@ -142,7 +150,7 @@
           ref="addActivity"
           :minTime="minTime"
           :maxTime="maxTime"
-          :activities="allActivities"
+          :activities="addActivites"
           @activity-added="addActivity"
           @dialog-closed="closeAddActivityDialog"
         ></add-activity>
@@ -210,6 +218,9 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['uid']),
+    addActivites() {
+      return this.allActivities.filter(o => o.id !== 'awake' && o.id !== 'sleep' && o.id !== 'free')
+    },
     activeTab() {
       for (const key in this.sorter) {
         if (this.sorter[key] === this.tab) return key
@@ -415,13 +426,7 @@ export default {
           }
         }
       }
-
       this.showAddActivityDialog = true
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.$refs.addActivity.$refs.activitySelect.focus()
-        }, 10)
-      })
     },
     closeAddActivityDialog() {
       this.showAddActivityDialog = false
