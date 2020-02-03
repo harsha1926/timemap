@@ -26,10 +26,7 @@
             </v-row>
             <v-row align="center" justify="space-between">
               <v-col cols="6" class="text-left">
-                <v-switch
-                  v-model="showSelected"
-                  label="Show Selected"
-                ></v-switch>
+                <v-switch v-model="showSelected" label="Show Selected"></v-switch>
               </v-col>
               <v-col cols="6" class="text-right">
                 <v-btn @click="refreshResults" small fab icon>
@@ -56,10 +53,7 @@
             </v-row>
             <v-row align="center" justify="space-between">
               <v-col cols="6" class="text-left">
-                <v-switch
-                  v-model="showSelected"
-                  label="Show Selected"
-                ></v-switch>
+                <v-switch v-model="showSelected" label="Show Selected"></v-switch>
               </v-col>
               <v-col cols="6" class="text-right">
                 <v-btn @click="refreshResults" small fab icon>
@@ -71,10 +65,7 @@
           <v-tab-item :key="2">
             <v-row align="center" justify="space-between">
               <v-col cols="6" class="text-left">
-                <v-switch
-                  v-model="showSelected"
-                  label="Show Selected"
-                ></v-switch>
+                <v-switch v-model="showSelected" label="Show Selected"></v-switch>
               </v-col>
               <v-col cols="6" class="text-right">
                 <v-btn @click="refreshResults" small fab icon>
@@ -99,18 +90,9 @@
         md="4"
         la="2"
       >
-        <gif
-          :gif="gif"
-          @gif-added="addGIF"
-          :selected="false"
-          :forAvatar="forAvatar"
-        />
+        <gif :gif="gif" @gif-added="addGIF" :selected="false" :forAvatar="forAvatar" />
       </v-col>
-      <v-snackbar
-        v-model="showGIFAddedSnackbar"
-        :timeout="1000"
-        color="primary"
-      >
+      <v-snackbar v-model="showGIFAddedSnackbar" :timeout="1000" color="primary">
         GIF selected successfully
         <v-icon>far fa-smile</v-icon>
       </v-snackbar>
@@ -125,26 +107,13 @@
         md="4"
         la="2"
       >
-        <gif
-          :gif="gif"
-          @gif-removed="removeGIF"
-          :selected="true"
-          :forAvatar="forAvatar"
-        />
+        <gif :gif="gif" @gif-removed="removeGIF" :selected="true" :forAvatar="forAvatar" />
       </v-col>
-      <v-snackbar
-        v-model="showGIFAddedSnackbar"
-        :timeout="1000"
-        color="primary"
-      >
+      <v-snackbar v-model="showGIFAddedSnackbar" :timeout="1000" color="primary">
         GIF selected successfully
         <v-icon>far fa-smile</v-icon>
       </v-snackbar>
-      <v-snackbar
-        v-model="showGIFRemovedSnackbar"
-        :timeout="1000"
-        color="primary"
-      >
+      <v-snackbar v-model="showGIFRemovedSnackbar" :timeout="1000" color="primary">
         GIF removed successfully
         <v-icon>far fa-smile</v-icon>
       </v-snackbar>
@@ -202,7 +171,11 @@ export default {
         this.forAvatar = false
         this.activity = {
           id: 'routine',
-          keywords: { routine: true, 'daily routine': true }
+          keywords: {
+            routine: true,
+            'daily-routine': true,
+            'alarm-clock': true
+          }
         }
       }
     },
@@ -229,11 +202,13 @@ export default {
   methods: {
     isAlreadyAvailable(gif) {
       if (this.tab === 0) {
-        return this.existingGIFs.find((o) => o.url === gif.url)
+        return this.existingGIFs.find((o) => o.url === gif.url && !o.forAvatar)
       } else if (this.tab === 1) {
         return this.existingGIFs.find((o) => o.url === gif.url && o.forAvatar)
       } else if (this.tab === 2) {
-        this.existingGIFs.find((o) => o.url === gif.url && o.id === 'routine')
+        return this.existingGIFs.find(
+          (o) => o.url === gif.url && o.id === 'routine'
+        )
       }
     },
     getRandomKeyword(obj) {

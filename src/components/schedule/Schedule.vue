@@ -6,16 +6,12 @@
   >
     <v-row>
       <v-img
-        :src="getRandomGIF('routine')"
+        :src="getRandomGIF('routine', false)"
         height="200px"
-        gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
       >
         <template v-slot:placeholder>
           <v-row class="fill-height ma-0" align="center" justify="center">
-            <v-progress-circular
-              indeterminate
-              color="primary"
-            ></v-progress-circular>
+            <v-progress-circular indeterminate color="primary"></v-progress-circular>
           </v-row>
         </template>
         <v-row align="start" justify="end" class="ma-1 pa-1">
@@ -28,9 +24,10 @@
     </v-row>
     <v-row v-if="reArragedSchedule">
       <v-tabs v-model="tab" show-arrows>
-        <v-tab v-for="eachDay in reArragedSchedule" :key="eachDay.index">
-          {{ eachDay.day.substring(0, 3) }}
-        </v-tab>
+        <v-tab
+          v-for="eachDay in reArragedSchedule"
+          :key="eachDay.index"
+        >{{ eachDay.day.substring(0, 3) }}</v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item v-for="eachDay in reArragedSchedule" :key="eachDay.index">
@@ -38,7 +35,7 @@
             <v-timeline-item>
               <template v-slot:icon>
                 <v-avatar>
-                  <v-img :src="getRandomGIF('awake')"></v-img>
+                  <v-img :src="getRandomGIF('awake', true)"></v-img>
                 </v-avatar>
               </template>
               <v-row @click="openUpdateDayStartEndDialog(true)" align="center">
@@ -68,13 +65,10 @@
               <v-timeline-item>
                 <template v-slot:icon>
                   <v-avatar>
-                    <v-img :src="getRandomGIF(activity.id)"></v-img>
+                    <v-img :src="getRandomGIF(activity.id, true)"></v-img>
                   </v-avatar>
                 </template>
-                <v-row
-                  @click="openUpdateActivityDialog(activity)"
-                  align="center"
-                >
+                <v-row @click="openUpdateActivityDialog(activity)" align="center">
                   <v-col cols="1" class="text-center">
                     <v-icon small class="customPointer">mdi-pencil</v-icon>
                   </v-col>
@@ -89,8 +83,7 @@
                     v-if="activity.activityObj"
                     cols="7"
                     class="subtitle-2"
-                    >{{ activity.activityObj.direct }}</v-col
-                  >
+                  >{{ activity.activityObj.direct }}</v-col>
                 </v-row>
               </v-timeline-item>
 
@@ -107,7 +100,7 @@
             <v-timeline-item>
               <template v-slot:icon>
                 <v-avatar>
-                  <v-img :src="getRandomGIF('sleep')"></v-img>
+                  <v-img :src="getRandomGIF('sleep', true)"></v-img>
                 </v-avatar>
               </template>
               <v-row @click="openUpdateDayStartEndDialog(false)" align="center">
@@ -126,12 +119,7 @@
         </v-tab-item>
       </v-tabs-items>
     </v-row>
-    <v-bottom-sheet
-      v-model="showEditActivityDialog"
-      eager
-      inset
-      max-width="600"
-    >
+    <v-bottom-sheet v-model="showEditActivityDialog" eager inset max-width="600">
       <v-sheet class="text-center">
         <update-activity
           ref="updateActivity"
@@ -156,12 +144,7 @@
         ></add-activity>
       </v-sheet>
     </v-bottom-sheet>
-    <v-bottom-sheet
-      v-model="showUpdateDayStartEndDialog"
-      eager
-      inset
-      max-width="600"
-    >
+    <v-bottom-sheet v-model="showUpdateDayStartEndDialog" eager inset max-width="600">
       <v-sheet class="text-center">
         <update-day-start-end
           ref="updateActivity"
@@ -266,10 +249,16 @@ export default {
     getRndInteger(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min
     },
-    getRandomGIF(activity) {
-      const activityGIFs = this.gifs.filter(
+    getRandomGIF(activity, forAvatar) {
+      let activityGIFs = this.gifs.filter(
         (o) => o.activity === activity && o.forAvatar
       )
+      if (!forAvatar) {
+        activityGIFs = this.gifs.filter(
+          (o) => o.activity === activity && !o.forAvatar
+        )
+      }
+
       if (activityGIFs && activityGIFs.length > 0) {
         const randomInt = this.getRndInteger(0, activityGIFs.length - 1)
         return activityGIFs[randomInt].url

@@ -216,7 +216,7 @@ export default {
       }
     },
     activityGIFs() {
-      return this.gifs.filter((o) => o.activity === this.activity)
+      return this.gifs.filter((o) => o.activity === this.activity && !o.forAvatar)
     }
   },
   watch: {
