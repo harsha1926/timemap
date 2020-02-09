@@ -34,6 +34,7 @@ export default () => {
               })
             },
             (error) => {
+              // eslint-disable-next-line
               console.error(error)
             },
             { timeout: 10000 }

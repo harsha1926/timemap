@@ -18,7 +18,11 @@
           :gifs="gifs"
         />
       </v-col>
-      <v-snackbar v-model="showFriendRemovedSnackbar" :timeout="1000" color="primary">
+      <v-snackbar
+        v-model="showFriendRemovedSnackbar"
+        :timeout="1000"
+        color="primary"
+      >
         You are not watching {{ removedFriendName }} anymore
         <v-icon>far fa-frown</v-icon>
       </v-snackbar>
@@ -44,7 +48,7 @@ export default {
   computed: {
     ...mapGetters('user', ['uid']),
     sortedFriendsList() {
-      return this.friendObjects.sort(function(x, y) {
+      return [...this.friendObjects].sort(function(x, y) {
         return x.isFavourite === y.isFavourite ? 0 : x.isFavourite ? -1 : 1
       })
     }

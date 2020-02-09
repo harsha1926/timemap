@@ -124,9 +124,6 @@ export default {
           vm.confirmationResult = confirmationResult
           vm.loading = false
         })
-        .catch(function(error) {
-          console.error(error)
-        })
     },
     submitVerficationCode() {
       const vm = this
@@ -139,7 +136,6 @@ export default {
           vm.addPhoneNumber(vm.phone)
         })
         .catch(function(error) {
-          console.error(error)
           vm.errorMessage = error.message
         })
     }

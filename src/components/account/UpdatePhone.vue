@@ -114,14 +114,12 @@ export default {
       const vm = this
       vm.loading = true
       const appVerifier = window.recaptchaVerifier
-      PhoneProvider.verifyPhoneNumber(vm.phone, appVerifier)
-        .then(function(verificationId) {
-          vm.verificationId = verificationId
-          vm.loading = false
-        })
-        .catch(function(error) {
-          console.error(error)
-        })
+      PhoneProvider.verifyPhoneNumber(vm.phone, appVerifier).then(function(
+        verificationId
+      ) {
+        vm.verificationId = verificationId
+        vm.loading = false
+      })
     },
     submitVerficationCode() {
       const vm = this
@@ -139,7 +137,6 @@ export default {
           vm.navigateToDashboard()
         })
         .catch(function(error) {
-          console.error(error)
           vm.errorMessage = error.message
         })
     }

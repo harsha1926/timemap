@@ -13,7 +13,9 @@
           </v-flex>
           <v-flex class="text-right">
             <v-row justify="end" align="center">
-              <span v-if="displayName" class="mr-5 d-none d-sm-block">Hello {{ displayName }}</span>
+              <span v-if="displayName" class="mr-5 d-none d-sm-block"
+                >Hello {{ displayName }}</span
+              >
               <v-avatar
                 @click="$router.push('/account')"
                 v-if="photoURL"
@@ -46,47 +48,62 @@
         <v-row row align="center" justify="space-between" class="mt-1">
           <v-flex class="text-center">
             <v-icon
-              v-if="this.currentPage && this.currentPage === '/'"
-              color="primary"
+              v-if="currentPage && currentPage === '/'"
               @click="$router.push('/')"
-            >fas fa-eye</v-icon>
-            <v-icon v-else color="grey" @click="$router.push('/')">far fa-eye</v-icon>
+              color="primary"
+              >fas fa-eye</v-icon
+            >
+            <v-icon v-else @click="$router.push('/')" color="grey"
+              >far fa-eye</v-icon
+            >
           </v-flex>
 
           <v-flex class="text-center">
             <v-icon
-              v-if="this.currentPage && this.currentPage.startsWith('/love')"
-              color="primary"
+              v-if="currentPage && currentPage.startsWith('/love')"
               @click="$router.push('/love')"
-            >fas fa-heart</v-icon>
-            <v-icon v-else color="grey" @click="$router.push('/love')">far fa-heart</v-icon>
+              color="primary"
+              >fas fa-heart</v-icon
+            >
+            <v-icon v-else @click="$router.push('/love')" color="grey"
+              >far fa-heart</v-icon
+            >
           </v-flex>
 
           <v-flex class="text-center">
             <v-icon
-              v-if="this.currentPage && this.currentPage.startsWith('/posts')"
-              color="primary"
+              v-if="currentPage && currentPage.startsWith('/posts')"
               @click="$router.push('/posts')"
-            >fas fa-angle-double-up</v-icon>
-            <v-icon v-else color="grey" @click="$router.push('/posts')">fas fa-angle-double-up</v-icon>
+              color="primary"
+              >fas fa-angle-double-up</v-icon
+            >
+            <v-icon v-else @click="$router.push('/posts')" color="grey"
+              >fas fa-angle-double-up</v-icon
+            >
           </v-flex>
 
           <v-flex class="text-center">
             <v-icon
-              v-if="this.currentPage && this.currentPage.startsWith('/findFriends')"
-              color="primary"
+              v-if="currentPage && currentPage.startsWith('/findFriends')"
               @click="$router.push('/findFriends')"
-            >fas fa-search</v-icon>
-            <v-icon v-else color="grey" @click="$router.push('/findFriends')">fas fa-search</v-icon>
+              color="primary"
+              >fas fa-search</v-icon
+            >
+            <v-icon v-else @click="$router.push('/findFriends')" color="grey"
+              >fas fa-search</v-icon
+            >
           </v-flex>
 
           <v-flex class="text-center">
             <v-icon
-              v-if="this.currentPage && this.currentPage.startsWith('/schedule')"
-              color="primary"
+              v-if="currentPage && currentPage.startsWith('/schedule')"
               @click="$router.push('/schedule')"
-            >fas fa-calendar-check</v-icon>
-            <v-icon v-else color="grey" @click="$router.push('/schedule')">far fa-calendar-check</v-icon>
+              color="primary"
+              >fas fa-calendar-check</v-icon
+            >
+            <v-icon v-else @click="$router.push('/schedule')" color="grey"
+              >far fa-calendar-check</v-icon
+            >
           </v-flex>
         </v-row>
       </v-container>
@@ -113,14 +130,14 @@ export default {
     ...mapGetters('user', ['uid', 'displayName', 'photoURL', 'phoneNumber']),
     ...mapGetters('app', ['currentPage'])
   },
-  methods: {
-    ...mapActions('user/currentLocation', ['addCurrentLocation'])
-  },
   mounted() {
     this.$store.dispatch(
       'app/updateCurrentPage',
       this.$router.currentRoute.path
     )
+  },
+  methods: {
+    ...mapActions('user/currentLocation', ['addCurrentLocation'])
   }
 }
 </script>

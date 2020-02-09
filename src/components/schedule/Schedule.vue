@@ -5,13 +5,13 @@
     style="max-width: 600px;"
   >
     <v-row>
-      <v-img
-        :src="getRandomGIF('routine', false)"
-        height="200px"
-      >
+      <v-img :src="getRandomGIF('routine', false)" height="200px">
         <template v-slot:placeholder>
           <v-row class="fill-height ma-0" align="center" justify="center">
-            <v-progress-circular indeterminate color="primary"></v-progress-circular>
+            <v-progress-circular
+              indeterminate
+              color="primary"
+            ></v-progress-circular>
           </v-row>
         </template>
         <v-row align="start" justify="end" class="ma-1 pa-1">
@@ -24,10 +24,9 @@
     </v-row>
     <v-row v-if="reArragedSchedule">
       <v-tabs v-model="tab" show-arrows>
-        <v-tab
-          v-for="eachDay in reArragedSchedule"
-          :key="eachDay.index"
-        >{{ eachDay.day.substring(0, 3) }}</v-tab>
+        <v-tab v-for="eachDay in reArragedSchedule" :key="eachDay.index">{{
+          eachDay.day.substring(0, 3)
+        }}</v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item v-for="eachDay in reArragedSchedule" :key="eachDay.index">
@@ -68,7 +67,10 @@
                     <v-img :src="getRandomGIF(activity.id, true)"></v-img>
                   </v-avatar>
                 </template>
-                <v-row @click="openUpdateActivityDialog(activity)" align="center">
+                <v-row
+                  @click="openUpdateActivityDialog(activity)"
+                  align="center"
+                >
                   <v-col cols="1" class="text-center">
                     <v-icon small class="customPointer">mdi-pencil</v-icon>
                   </v-col>
@@ -83,7 +85,8 @@
                     v-if="activity.activityObj"
                     cols="7"
                     class="subtitle-2"
-                  >{{ activity.activityObj.direct }}</v-col>
+                    >{{ activity.activityObj.direct }}</v-col
+                  >
                 </v-row>
               </v-timeline-item>
 
@@ -119,7 +122,12 @@
         </v-tab-item>
       </v-tabs-items>
     </v-row>
-    <v-bottom-sheet v-model="showEditActivityDialog" eager inset max-width="600">
+    <v-bottom-sheet
+      v-model="showEditActivityDialog"
+      eager
+      inset
+      max-width="600"
+    >
       <v-sheet class="text-center">
         <update-activity
           ref="updateActivity"
@@ -144,7 +152,12 @@
         ></add-activity>
       </v-sheet>
     </v-bottom-sheet>
-    <v-bottom-sheet v-model="showUpdateDayStartEndDialog" eager inset max-width="600">
+    <v-bottom-sheet
+      v-model="showUpdateDayStartEndDialog"
+      eager
+      inset
+      max-width="600"
+    >
       <v-sheet class="text-center">
         <update-day-start-end
           ref="updateActivity"

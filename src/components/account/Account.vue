@@ -79,15 +79,10 @@ export default {
     },
     logout() {
       const vm = this
-      auth
-        .signOut()
-        .then(function() {
-          vm.removeUser()
-          vm.$router.push('/')
-        })
-        .catch(function(e) {
-          console.error(e)
-        })
+      auth.signOut().then(function() {
+        vm.removeUser()
+        vm.$router.push('/')
+      })
     },
     updateDisplayName(value) {
       firebaseDB
