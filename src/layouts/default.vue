@@ -13,9 +13,7 @@
           </v-flex>
           <v-flex class="text-right">
             <v-row justify="end" align="center">
-              <span v-if="displayName" class="mr-5 d-none d-sm-block"
-                >Hello {{ displayName }}</span
-              >
+              <span v-if="displayName" class="mr-5 d-none d-sm-block">Hello {{ displayName }}</span>
               <v-avatar
                 @click="$router.push('/account')"
                 v-if="photoURL"
@@ -51,11 +49,8 @@
               v-if="currentPage && currentPage === '/'"
               @click="$router.push('/')"
               color="primary"
-              >fas fa-eye</v-icon
-            >
-            <v-icon v-else @click="$router.push('/')" color="grey"
-              >far fa-eye</v-icon
-            >
+            >fas fa-eye</v-icon>
+            <v-icon v-else @click="$router.push('/')" color="grey">far fa-eye</v-icon>
           </v-flex>
 
           <v-flex class="text-center">
@@ -63,11 +58,8 @@
               v-if="currentPage && currentPage.startsWith('/love')"
               @click="$router.push('/love')"
               color="primary"
-              >fas fa-heart</v-icon
-            >
-            <v-icon v-else @click="$router.push('/love')" color="grey"
-              >far fa-heart</v-icon
-            >
+            >fas fa-heart</v-icon>
+            <v-icon v-else @click="$router.push('/love')" color="grey">far fa-heart</v-icon>
           </v-flex>
 
           <v-flex class="text-center">
@@ -75,11 +67,8 @@
               v-if="currentPage && currentPage.startsWith('/posts')"
               @click="$router.push('/posts')"
               color="primary"
-              >fas fa-angle-double-up</v-icon
-            >
-            <v-icon v-else @click="$router.push('/posts')" color="grey"
-              >fas fa-angle-double-up</v-icon
-            >
+            >fas fa-angle-double-up</v-icon>
+            <v-icon v-else @click="$router.push('/posts')" color="grey">fas fa-angle-double-up</v-icon>
           </v-flex>
 
           <v-flex class="text-center">
@@ -87,11 +76,8 @@
               v-if="currentPage && currentPage.startsWith('/findFriends')"
               @click="$router.push('/findFriends')"
               color="primary"
-              >fas fa-search</v-icon
-            >
-            <v-icon v-else @click="$router.push('/findFriends')" color="grey"
-              >fas fa-search</v-icon
-            >
+            >fas fa-search</v-icon>
+            <v-icon v-else @click="$router.push('/findFriends')" color="grey">fas fa-search</v-icon>
           </v-flex>
 
           <v-flex class="text-center">
@@ -99,11 +85,8 @@
               v-if="currentPage && currentPage.startsWith('/schedule')"
               @click="$router.push('/schedule')"
               color="primary"
-              >fas fa-calendar-check</v-icon
-            >
-            <v-icon v-else @click="$router.push('/schedule')" color="grey"
-              >far fa-calendar-check</v-icon
-            >
+            >fas fa-calendar-check</v-icon>
+            <v-icon v-else @click="$router.push('/schedule')" color="grey">far fa-calendar-check</v-icon>
           </v-flex>
         </v-row>
       </v-container>
