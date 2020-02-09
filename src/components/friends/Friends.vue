@@ -2,8 +2,8 @@
   <v-container :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''" fluid>
     <v-row wrap>
       <v-col
-        v-for="friendId in friendIds"
-        :key="friendId"
+        v-for="friend in sortedFriendsList"
+        :key="friend.uid"
         :class="$vuetify.breakpoint.xsOnly ? 'mt-0 pt-0' : ''"
         cols="12"
         sm="6"
@@ -11,16 +11,14 @@
         la="2"
       >
         <friend
-          :friendId="friendId"
+          :friendId="friend.uid"
+          :isFavourite="friend.isFavourite"
           @friendRemoved="friendRemoved"
+          @favourite-updated="favouriteUpdated"
           :gifs="gifs"
         />
       </v-col>
-      <v-snackbar
-        v-model="showFriendRemovedSnackbar"
-        :timeout="1000"
-        color="primary"
-      >
+      <v-snackbar v-model="showFriendRemovedSnackbar" :timeout="1000" color="primary">
         You are not watching {{ removedFriendName }} anymore
         <v-icon>far fa-frown</v-icon>
       </v-snackbar>
@@ -39,18 +37,29 @@ export default {
     return {
       showFriendRemovedSnackbar: false,
       removedFriendName: '',
-      friendIds: [],
+      friendObjects: [],
       gifs: []
     }
   },
   computed: {
-    ...mapGetters('user', ['uid'])
+    ...mapGetters('user', ['uid']),
+    sortedFriendsList() {
+      return this.friendObjects.sort(function(x, y) {
+        return x.isFavourite === y.isFavourite ? 0 : x.isFavourite ? -1 : 1
+      })
+    }
   },
   mounted() {
     this.fetchFriendsList()
     this.fetchGIFs()
   },
   methods: {
+    favouriteUpdated(updatedFriend) {
+      const friend = this.friendObjects.find((o) => o.uid === updatedFriend.uid)
+      if (friend) {
+        friend.isFavourite = updatedFriend.isFavourite
+      }
+    },
     fetchGIFs() {
       const vm = this
       firebaseDB.ref('gifs').once('value', function(snapshot) {
@@ -60,9 +69,11 @@ export default {
       })
     },
     friendRemoved(removedFriend) {
-      const index = this.friendIds.findIndex((o) => o === removedFriend.uid)
+      const index = this.friendObjects.findIndex(
+        (o) => o.uid === removedFriend.uid
+      )
       if (index > -1) {
-        this.friendIds.splice(index, 1)
+        this.friendObjects.splice(index, 1)
         this.removedFriendName = removedFriend.displayName
         this.showFriendRemovedSnackbar = true
       }
@@ -70,9 +81,12 @@ export default {
     fetchFriendsList() {
       const vm = this
       firebaseDB.ref('watching/' + vm.uid).once('value', function(friends) {
-        vm.friendIds = []
+        vm.friendObjects = []
         friends.forEach((friend) => {
-          vm.friendIds.push(friend.val().uid)
+          vm.friendObjects.push({
+            uid: friend.val().uid,
+            isFavourite: friend.val().isFavourite
+          })
         })
       })
     }

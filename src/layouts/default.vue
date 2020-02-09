@@ -38,60 +38,59 @@
       </v-container>
     </v-content>
 
-    <v-footer app>
-      <v-container fluid class="pa-0 ma-0">
+    <v-footer :height="$vuetify.breakpoint.xsOnly ? 45 : 60" color="white" app>
+      <v-container fluid class="fill-height pa-0 ma-0">
         <v-row>
           <div style="background-color:#D8D8D8; height: 1px; width:100%;"></div>
         </v-row>
         <v-row row align="center" justify="space-between" class="mt-1">
           <v-flex class="text-center">
-            <v-btn color="primary" text to="/" value="home">
-              <v-icon>fas fa-eye</v-icon>
-            </v-btn>
+            <v-icon
+              v-if="this.currentPage && this.currentPage === '/'"
+              color="primary"
+              @click="$router.push('/')"
+            >fas fa-eye</v-icon>
+            <v-icon v-else color="grey" @click="$router.push('/')">far fa-eye</v-icon>
           </v-flex>
 
           <v-flex class="text-center">
-            <v-btn color="primary" text to="/findFriends" value="findFriends">
-              <v-icon>fas fa-search</v-icon>
-            </v-btn>
+            <v-icon
+              v-if="this.currentPage && this.currentPage.startsWith('/love')"
+              color="primary"
+              @click="$router.push('/love')"
+            >fas fa-heart</v-icon>
+            <v-icon v-else color="grey" @click="$router.push('/love')">far fa-heart</v-icon>
           </v-flex>
 
           <v-flex class="text-center">
-            <v-btn color="primary" text to="/schedule" value="schedule">
-              <v-icon>far fa-calendar-check</v-icon>
-            </v-btn>
+            <v-icon
+              v-if="this.currentPage && this.currentPage.startsWith('/posts')"
+              color="primary"
+              @click="$router.push('/posts')"
+            >fas fa-angle-double-up</v-icon>
+            <v-icon v-else color="grey" @click="$router.push('/posts')">fas fa-angle-double-up</v-icon>
           </v-flex>
 
           <v-flex class="text-center">
-            <v-btn color="primary" text to="/posts" value="posts">
-              <v-icon>fas fa-angle-double-up</v-icon>
-            </v-btn>
+            <v-icon
+              v-if="this.currentPage && this.currentPage.startsWith('/findFriends')"
+              color="primary"
+              @click="$router.push('/findFriends')"
+            >fas fa-search</v-icon>
+            <v-icon v-else color="grey" @click="$router.push('/findFriends')">fas fa-search</v-icon>
+          </v-flex>
+
+          <v-flex class="text-center">
+            <v-icon
+              v-if="this.currentPage && this.currentPage.startsWith('/schedule')"
+              color="primary"
+              @click="$router.push('/schedule')"
+            >fas fa-calendar-check</v-icon>
+            <v-icon v-else color="grey" @click="$router.push('/schedule')">far fa-calendar-check</v-icon>
           </v-flex>
         </v-row>
       </v-container>
     </v-footer>
-
-    <!-- <v-bottom-navigation
-      v-if="uid"
-      :height="$vuetify.breakpoint.xsOnly ? 45 : 65"
-      v-model="activeTab"
-      color="primary"
-      grow
-      app
-    >
-      <v-btn to="/" value="home">
-        <v-icon>fas fa-eye</v-icon>
-      </v-btn>
-      <v-btn to="/findFriends" value="findFriends">
-        <v-icon>fas fa-search</v-icon>
-      </v-btn>
-      <v-btn to="/schedule" value="schedule">
-        <v-icon>far fa-calendar-check</v-icon>
-      </v-btn>
-      <v-btn to="/posts" value="posts">
-        <v-icon>fas fa-angle-double-up</v-icon>
-      </v-btn>
-    </v-bottom-navigation>-->
   </v-app>
 </template>
 <script>
@@ -104,25 +103,24 @@ export default {
     VerifyPhone
   },
   data: () => ({
-    activeTab: 0,
     on: false,
     showSearchBar: false,
     iconURL:
       'https://media1.tenor.com/images/e9aa112a4646871f63345e167557eae1/tenor.gif?itemid=12827256'
   }),
+  middleware: 'currentPage',
   computed: {
-    ...mapGetters('user', ['uid', 'displayName', 'photoURL', 'phoneNumber'])
+    ...mapGetters('user', ['uid', 'displayName', 'photoURL', 'phoneNumber']),
+    ...mapGetters('app', ['currentPage'])
   },
   methods: {
     ...mapActions('user/currentLocation', ['addCurrentLocation'])
+  },
+  mounted() {
+    this.$store.dispatch(
+      'app/updateCurrentPage',
+      this.$router.currentRoute.path
+    )
   }
 }
 </script>
-<style scoped>
-.v-bottom-navigation {
-  padding: 1px !important;
-}
-.v-bottom-navigation .v-btn {
-  height: inherit !important;
-}
-</style>

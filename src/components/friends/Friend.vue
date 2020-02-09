@@ -21,9 +21,10 @@
         <v-row align="center">
           <v-flex class="subtitle-1 font-weight-medium">
             {{ displayNameCaptilize }}
-            <span v-if="activityObj" class="subtitle-2 font-weight-regular"
-              >{{ activityObj.indirect }}..</span
-            >
+            <span
+              v-if="activityObj"
+              class="subtitle-2 font-weight-regular"
+            >{{ activityObj.indirect }}..</span>
           </v-flex>
         </v-row>
         <v-row>
@@ -31,8 +32,10 @@
         </v-row>
       </v-col>
 
-      <v-col cols="2" class="text-center">
-        <v-icon class="customPointer" color="primary">mdi-heart-outline</v-icon>
+      <v-col @click="addToFavourite" cols="2" class="text-center">
+        <v-progress-circular color="primary" indeterminate v-if="isFavouriteLoading"></v-progress-circular>
+        <v-icon v-else-if="isFavourite" class="customPointer" color="primary">mdi-heart</v-icon>
+        <v-icon v-else class="customPointer" color="primary">mdi-heart-outline</v-icon>
       </v-col>
     </v-row>
 
@@ -41,18 +44,14 @@
         <v-img :src="activityPhoto" :height="height">
           <template v-slot:placeholder>
             <v-row class="fill-height ma-0" align="center" justify="center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
+              <v-progress-circular indeterminate color="primary"></v-progress-circular>
             </v-row>
           </template>
           <v-row
             justify="end"
             align="start"
             class="tenorFont ma-1 pa-1 fill-height white--text"
-            >Powered By Tenor</v-row
-          >
+          >Powered By Tenor</v-row>
         </v-img>
       </v-col>
       <v-col cols="2" class="my-0 py-0">
@@ -63,8 +62,7 @@
               small
               class="customPointer"
               color="tertiary"
-              >fas fa-eye-slash</v-icon
-            >
+            >fas fa-eye-slash</v-icon>
           </div>
 
           <div class="my-3">
@@ -72,8 +70,7 @@
               @click="sendWhatsAppMessage(friend.phoneNumber)"
               class="customPointer"
               color="primary"
-              >mdi-whatsapp</v-icon
-            >
+            >mdi-whatsapp</v-icon>
           </div>
 
           <div class="my-3">
@@ -81,8 +78,7 @@
               @click="callPhone(friend.phoneNumber)"
               class="customPointer"
               color="primary"
-              >mdi-phone</v-icon
-            >
+            >mdi-phone</v-icon>
           </div>
 
           <div class="my-3">
@@ -90,8 +86,7 @@
               @click="sendTextMessage(friend.phoneNumber)"
               class="customPointer"
               color="primary"
-              >mdi-message-outline</v-icon
-            >
+            >mdi-message-outline</v-icon>
           </div>
 
           <div class="my-3">
@@ -99,8 +94,7 @@
               @click="sendEmailMessage(friend.email)"
               class="customPointer"
               color="primary"
-              >mdi-email-outline</v-icon
-            >
+            >mdi-email-outline</v-icon>
           </div>
         </div>
       </v-col>
@@ -113,9 +107,7 @@
         <v-card-title>Are you sure?</v-card-title>
         <v-card-actions>
           <v-btn @click="removeFriend">Yes</v-btn>
-          <v-btn @click="showRemoveFriendWarning = false" color="primary"
-            >No</v-btn
-          >
+          <v-btn @click="showRemoveFriendWarning = false" color="primary">No</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -147,6 +139,12 @@ export default {
       default() {
         return null
       }
+    },
+    isFavourite: {
+      type: Boolean,
+      default() {
+        return false
+      }
     }
   },
   data() {
@@ -160,7 +158,8 @@ export default {
       activityPhoto: '',
       lastUpdated: null,
       showRemoveFriendWarning: false,
-      activityObj: null
+      activityObj: null,
+      isFavouriteLoading: false
     }
   },
   computed: {
@@ -216,7 +215,9 @@ export default {
       }
     },
     activityGIFs() {
-      return this.gifs.filter((o) => o.activity === this.activity && !o.forAvatar)
+      return this.gifs.filter(
+        (o) => o.activity === this.activity && !o.forAvatar
+      )
     }
   },
   watch: {
@@ -268,6 +269,22 @@ export default {
     }
   },
   methods: {
+    addToFavourite() {
+      let vm = this
+      vm.isFavouriteLoading = true
+      firebaseDB
+        .ref('watching/' + vm.uid + '/' + vm.friendId)
+        .update({ isFavourite: !vm.isFavourite })
+        .then(() => {
+          setTimeout(() => {
+            vm.$emit('favourite-updated', {
+              uid: vm.friendId,
+              isFavourite: !vm.isFavourite
+            })
+            vm.isFavouriteLoading = false
+          }, 1000)
+        })
+    },
     getActivityObject() {
       if (this.activity) {
         if (this.activity === 'sleep') {
