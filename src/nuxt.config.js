@@ -89,7 +89,7 @@ export default {
   pwa: {
     manifest: {
       name: 'Just Restart',
-      short_name: 'JR',
+      short_name: 'Restart',
       lang: 'en',
       display: 'standalone',
       theme_color: '#e67e22',

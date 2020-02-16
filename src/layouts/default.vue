@@ -41,49 +41,41 @@
           <div style="background-color:#D8D8D8; height: 1px; width:100%;"></div>
         </v-row>
         <v-row row align="center" justify="space-between" class="mt-1">
-          <v-flex class="text-center">
-            <v-icon
-              v-if="currentPage && currentPage === '/'"
-              @click="$router.push('/')"
-              color="primary"
-            >fas fa-eye</v-icon>
-            <v-icon v-else @click="$router.push('/')" color="grey">far fa-eye</v-icon>
+          <v-flex @click="$router.push('/')" class="text-center">
+            <v-icon v-if="currentPage && currentPage === '/'" color="primary">fas fa-eye</v-icon>
+            <v-icon v-else color="grey">far fa-eye</v-icon>
           </v-flex>
 
-          <v-flex class="text-center">
+          <v-flex @click="$router.push('/love')" class="text-center">
             <v-icon
               v-if="currentPage && currentPage.startsWith('/love')"
-              @click="$router.push('/love')"
               color="primary"
             >fas fa-heart</v-icon>
-            <v-icon v-else @click="$router.push('/love')" color="grey">far fa-heart</v-icon>
+            <v-icon v-else color="grey">far fa-heart</v-icon>
           </v-flex>
 
-          <v-flex class="text-center">
+          <v-flex @click="$router.push('/posts')" class="text-center">
             <v-icon
               v-if="currentPage && currentPage.startsWith('/posts')"
-              @click="$router.push('/posts')"
               color="primary"
             >fas fa-angle-double-up</v-icon>
-            <v-icon v-else @click="$router.push('/posts')" color="grey">fas fa-angle-double-up</v-icon>
+            <v-icon v-else color="grey">fas fa-angle-double-up</v-icon>
           </v-flex>
 
-          <v-flex class="text-center">
+          <v-flex @click="$router.push('/findFriends')" class="text-center">
             <v-icon
               v-if="currentPage && currentPage.startsWith('/findFriends')"
-              @click="$router.push('/findFriends')"
               color="primary"
             >fas fa-search</v-icon>
-            <v-icon v-else @click="$router.push('/findFriends')" color="grey">fas fa-search</v-icon>
+            <v-icon v-else color="grey">fas fa-search</v-icon>
           </v-flex>
 
-          <v-flex class="text-center">
+          <v-flex @click="$router.push('/schedule')" class="text-center">
             <v-icon
               v-if="currentPage && currentPage.startsWith('/schedule')"
-              @click="$router.push('/schedule')"
               color="primary"
             >fas fa-calendar-check</v-icon>
-            <v-icon v-else @click="$router.push('/schedule')" color="grey">far fa-calendar-check</v-icon>
+            <v-icon v-else color="grey">far fa-calendar-check</v-icon>
           </v-flex>
         </v-row>
       </v-container>
