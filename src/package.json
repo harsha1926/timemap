@@ -1,7 +1,7 @@
 {
-  "name": "watch",
+  "name": "just-restart",
   "version": "1.0.0",
-  "description": "Application to show time &amp; activity mapping of people around the world based on their respective time zones.",
+  "description": "Application aims to encourage people to start their day fresh, every day!. Also, to show time &amp; activity mapping of people around the world based on their respective time zones.",
   "author": "Sriharsha Samana",
   "private": true,
   "scripts": {

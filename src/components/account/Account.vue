@@ -24,6 +24,21 @@
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-row>
+        <v-row justify="space-between" align="center" class="pa-2">
+          <v-flex>Linked accounts</v-flex>
+          <v-flex>
+            <v-row justify="end" class="mr-2">
+              <v-col
+                class="mr-2"
+                cols="2"
+                v-for="provider in loginProvidersList"
+                :key="provider.icon"
+              >
+                <v-icon v-if="provider.activated">{{ provider.icon }}</v-icon>
+              </v-col>
+            </v-row>
+          </v-flex>
+        </v-row>
         <v-row align="center" class="pa-2">
           <v-btn @click="logout" color="primary">Logout</v-btn>
         </v-row>
@@ -50,22 +65,24 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { auth, firebaseDB } from '@/services/firebaseInit.js'
+import { auth, firebaseDB, loginProviders } from '@/services/firebaseInit.js'
 export default {
   data: () => ({
     admin: false,
-    showEditDisplayNameDialog: false
+    showEditDisplayNameDialog: false,
+    loginProvidersList: []
   }),
   computed: {
-    ...mapGetters('user', ['uid', 'displayName', 'photoURL', 'phoneNumber'])
+    ...mapGetters('user', ['uid', 'email', 'displayName', 'photoURL', 'phoneNumber'])
   },
   mounted() {
     const vm = this
-    firebaseDB.ref('admins/' + vm.uid).once('value', function(snapshot) {
+    firebaseDB.ref('admins/' + vm.uid).once('value', function (snapshot) {
       if (snapshot.val()) {
         vm.admin = true
       }
     })
+    this.loginProvidersList = loginProviders
   },
   methods: {
     ...mapActions('user', ['removeUser', 'addDisplayName']),
@@ -79,7 +96,7 @@ export default {
     },
     logout() {
       const vm = this
-      auth.signOut().then(function() {
+      auth.signOut().then(function () {
         vm.removeUser()
         vm.$router.push('/')
       })

@@ -5,10 +5,7 @@
         <v-row align="center" class="mb-1">
           <v-flex @click="$router.push('/')" class="customPointer text-left">
             <v-row justify="start" align="center" class="ml-2">
-              <v-avatar size="35">
-                <v-img :src="iconURL"></v-img>
-              </v-avatar>
-              <span class="ml-3 appTitleFont primary--text">Watch</span>
+              <span class="ml-3 appTitleFont primary--text">Just Restart</span>
             </v-row>
           </v-flex>
           <v-flex class="text-right">

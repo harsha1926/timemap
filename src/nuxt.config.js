@@ -8,7 +8,7 @@ export default {
    */
   head: {
     titleTemplate: '%s',
-    title: 'Watch',
+    title: 'Just Restart',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -88,8 +88,8 @@ export default {
   },
   pwa: {
     manifest: {
-      name: 'Watch',
-      short_name: 'Watch',
+      name: 'Just Restart',
+      short_name: 'JR',
       lang: 'en',
       display: 'standalone',
       theme_color: '#e67e22',
