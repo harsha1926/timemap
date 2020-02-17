@@ -10,131 +10,32 @@
       </v-col>
     </v-row>
 
-    <v-row v-else-if="friend">
-      <v-col @click.stop="showFriendPhoto = true" cols="2">
-        <v-avatar size="35">
-          <v-img :src="friend.photoURL"></v-img>
-        </v-avatar>
-      </v-col>
-
-      <v-col cols="8">
-        <v-row align="center">
-          <v-flex class="subtitle-1 font-weight-medium">
+    <v-card v-else-if="friend">
+      <v-row justify="space-between">
+        <v-col cols="8">
+          <v-card-title primary-title class="headline">
             {{ displayNameCaptilize }}
-            <span v-if="activityObj" class="subtitle-2 font-weight-regular"
-              >{{ activityObj.indirect }}..</span
-            >
-          </v-flex>
-        </v-row>
-        <v-row>
-          <v-flex class="caption">{{ localTimeFormattedString }}</v-flex>
-        </v-row>
-      </v-col>
-
-      <v-col @click="addToFavourite" cols="2" class="text-center">
-        <v-progress-circular
-          v-if="isFavouriteLoading"
-          color="primary"
-          indeterminate
-        ></v-progress-circular>
-        <v-icon v-else-if="isFavourite" class="customPointer" color="primary"
-          >mdi-heart</v-icon
-        >
-        <v-icon v-else class="customPointer" color="primary"
-          >mdi-heart-outline</v-icon
-        >
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col class="mt-0 pt-0" cols="10">
-        <v-img :src="activityPhoto" :height="height">
-          <template v-slot:placeholder>
-            <v-row class="fill-height ma-0" align="center" justify="center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
-            </v-row>
-          </template>
-          <v-row
-            justify="end"
-            align="start"
-            class="tenorFont ma-1 pa-1 fill-height white--text"
-            >Powered By Tenor</v-row
-          >
-        </v-img>
-      </v-col>
-      <v-col cols="2" class="my-0 py-0">
-        <div class="text-center">
-          <div>
-            <v-icon
-              @click="removeFriendWarning"
-              small
-              class="customPointer"
-              color="tertiary"
-              >fas fa-eye-slash</v-icon
-            >
-          </div>
-
-          <div class="my-3">
-            <v-icon
-              @click="sendWhatsAppMessage(friend.phoneNumber)"
-              class="customPointer"
+          </v-card-title>
+          <v-card-actions>
+            <v-rating
+              v-model="rating"
+              :length="5"
+              :half-increments="false"
+              :size="30"
+              empty-icon="mdi-heart-outline"
+              full-icon="mdi-heart"
+              half-icon="mdi-heart-half-full"
+              hover="true"
               color="primary"
-              >mdi-whatsapp</v-icon
-            >
-          </div>
-
-          <div class="my-3">
-            <v-icon
-              @click="callPhone(friend.phoneNumber)"
-              class="customPointer"
-              color="primary"
-              >mdi-phone</v-icon
-            >
-          </div>
-
-          <div class="my-3">
-            <v-icon
-              @click="sendTextMessage(friend.phoneNumber)"
-              class="customPointer"
-              color="primary"
-              >mdi-message-outline</v-icon
-            >
-          </div>
-
-          <div class="my-3">
-            <v-icon
-              @click="sendEmailMessage(friend.email)"
-              class="customPointer"
-              color="primary"
-              >mdi-email-outline</v-icon
-            >
-          </div>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <div style="background-color:#D8D8D8; height: 10px; width:100%;"></div>
-    </v-row>
-    <v-dialog v-model="showRemoveFriendWarning" max-width="600">
-      <v-card>
-        <v-card-title>Are you sure?</v-card-title>
-        <v-card-actions>
-          <v-btn @click="removeFriend">Yes</v-btn>
-          <v-btn @click="showRemoveFriendWarning = false" color="primary"
-            >No</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-overlay v-if="friend && friend.photoURL" :value="showFriendPhoto">
-      <v-avatar size="300" tile>
-        <v-img :src="friend.photoURL" content></v-img>
-      </v-avatar>
-    </v-overlay>
+              background-color="grey"
+            ></v-rating>
+          </v-card-actions>
+        </v-col>
+        <v-col cols="4">
+          <v-img :src="friend.photoURL" contain height="125px"></v-img>
+        </v-col>
+      </v-row>
+    </v-card>
   </v-container>
 </template>
 <script>
@@ -177,7 +78,8 @@ export default {
       lastUpdated: null,
       showRemoveFriendWarning: false,
       activityObj: null,
-      isFavouriteLoading: false
+      isFavouriteLoading: false,
+      rating: null
     }
   },
   computed: {

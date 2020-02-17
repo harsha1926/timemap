@@ -11,21 +11,37 @@
           <v-card-subtitle class="mt-5">
             <v-row justify="center" class="title">Hi, there.</v-row>
             <v-row class="ma-5 subtitle-1" justify="center">
-              Thanks for showing your interest. We hope our fun
-              filled app can help you know more about your loved ones. Please
-              login,
+              Thanks for showing your interest. We hope our fun filled app can
+              help you know more about your loved ones. Please login,
             </v-row>
           </v-card-subtitle>
           <v-card-text>
             <v-row justify="center">
-              <v-btn @click="googleSignIn" name="googleLoginBtn" fab icon color="primary">
+              <v-btn
+                @click="googleSignIn"
+                name="googleLoginBtn"
+                fab
+                icon
+                color="primary"
+              >
                 <v-icon>fab fa-google</v-icon>
               </v-btn>
-              <v-btn @click="facebookSignIn" name="facebookLoginBtn" fab icon color="primary">
+              <v-btn
+                @click="facebookSignIn"
+                name="facebookLoginBtn"
+                fab
+                icon
+                color="primary"
+              >
                 <v-icon>fab fa-facebook-f</v-icon>
               </v-btn>
             </v-row>
-            <v-row v-if="loginError" class="overline ma-2 pa-2 error--text" wrap>{{ loginError }}</v-row>
+            <v-row
+              v-if="loginError"
+              class="overline ma-2 pa-2 error--text"
+              wrap
+              >{{ loginError }}</v-row
+            >
           </v-card-text>
         </v-card>
       </v-col>
@@ -34,12 +50,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import {
   auth,
   GoogleProvider,
   FacebookProvider
 } from '@/services/firebaseInit.js'
-import { mapGetters } from 'vuex'
 export default {
   computed: {
     ...mapGetters('app', ['loginError'])

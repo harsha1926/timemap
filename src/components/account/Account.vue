@@ -29,10 +29,10 @@
           <v-flex>
             <v-row justify="end" class="mr-2">
               <v-col
-                class="mr-2"
-                cols="2"
                 v-for="provider in loginProvidersList"
                 :key="provider.icon"
+                class="mr-2"
+                cols="2"
               >
                 <v-icon v-if="provider.activated">{{ provider.icon }}</v-icon>
               </v-col>
@@ -73,11 +73,17 @@ export default {
     loginProvidersList: []
   }),
   computed: {
-    ...mapGetters('user', ['uid', 'email', 'displayName', 'photoURL', 'phoneNumber'])
+    ...mapGetters('user', [
+      'uid',
+      'email',
+      'displayName',
+      'photoURL',
+      'phoneNumber'
+    ])
   },
   mounted() {
     const vm = this
-    firebaseDB.ref('admins/' + vm.uid).once('value', function (snapshot) {
+    firebaseDB.ref('admins/' + vm.uid).once('value', function(snapshot) {
       if (snapshot.val()) {
         vm.admin = true
       }
@@ -96,7 +102,7 @@ export default {
     },
     logout() {
       const vm = this
-      auth.signOut().then(function () {
+      auth.signOut().then(function() {
         vm.removeUser()
         vm.$router.push('/')
       })

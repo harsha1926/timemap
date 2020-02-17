@@ -1,12 +1,12 @@
 <template>
-  <love />
+  <friends />
 </template>
 
 <script>
-import Love from '~/components/love/Love'
+import Friends from '~/components/friends/Friends'
 export default {
   components: {
-    Love
+    Friends
   }
 }
 </script>

@@ -1,13 +1,13 @@
 <template>
-  <friends />
+  <ratings />
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import Friends from '~/components/friends/Friends'
+import Ratings from '~/components/ratings/Ratings'
 export default {
   components: {
-    Friends
+    Ratings
   },
   computed: {
     ...mapGetters('user', ['uid'])
