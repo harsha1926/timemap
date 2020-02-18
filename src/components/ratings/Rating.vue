@@ -13,9 +13,7 @@
     <v-card v-else-if="friend">
       <v-row justify="space-between">
         <v-col cols="8">
-          <v-card-title primary-title class="headline">
-            {{ displayNameCaptilize }}
-          </v-card-title>
+          <v-card-title primary-title class="headline">{{ displayNameCaptilize }}</v-card-title>
           <v-card-actions>
             <v-rating
               v-model="rating"
@@ -25,7 +23,6 @@
               empty-icon="mdi-heart-outline"
               full-icon="mdi-heart"
               half-icon="mdi-heart-half-full"
-              hover="true"
               color="primary"
               background-color="grey"
             ></v-rating>
