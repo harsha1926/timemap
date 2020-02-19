@@ -10,19 +10,9 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="friend" align="center" class="mb-0 pb-0">
-      <v-col @click.stop="showFriendPhoto = true" cols="2" class="mb-0 pb-0">
-        <v-avatar :size="45">
-          <v-img :src="friend.photoURL"></v-img>
-        </v-avatar>
-      </v-col>
-
-      <v-col cols="5" class="mb-0 pb-0">
-        <v-flex class="subtitle-1 font-weight-medium">{{ displayNameCaptilize }}</v-flex>
-      </v-col>
-
-      <v-col @click="addToFavourite" cols="5" class="mb-0 pb-0">
-        <v-skeleton-loader v-if="!feedback" type="chip"></v-skeleton-loader>
+    <v-row v-if="friend" align="center">
+      <v-col @click="addToFavourite" cols="4">
+        <v-skeleton-loader :height="92" v-if="!feedback" type="image"></v-skeleton-loader>
         <v-flex v-else>
           <vue-speedometer
             :minValue="-100"
@@ -33,15 +23,26 @@
             :needleTransitionDuration="4000"
             needleTransition="easeQuadInOut"
             :ringWidth="10"
-            :height="130"
-            :width="130"
+            :height="85"
+            :width="120"
             :value="feedback > 3 ? 80 : -50"
           />
         </v-flex>
       </v-col>
+
+      <v-col cols="5">
+        <v-flex class="subtitle-1 font-weight-medium">{{ displayNameCaptilize }}</v-flex>
+      </v-col>
+
+      <v-col @click.stop="showFriendPhoto = true" cols="3">
+        <v-avatar :size="60">
+          <v-img :src="friend.photoURL"></v-img>
+        </v-avatar>
+      </v-col>
     </v-row>
-    <v-row v-if="friend" class="mt-0 pt-0">
-      <v-col cols="12" class="mt-0 pt-0">
+
+    <v-row justify="center" align="center" v-if="friend" class="mt-0 pt-0">
+      <v-col cols="12" class="text-center mt-0 pt-0">
         <vue-feedback-reaction v-model="feedback" :labels="feedbackLabels" />
       </v-col>
     </v-row>
