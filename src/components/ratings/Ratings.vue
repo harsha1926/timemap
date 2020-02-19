@@ -2,10 +2,29 @@
   <v-container :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''" fluid>
     <v-row wrap justify="center" align="center">
       <v-subheader class="title">How good were you today?</v-subheader>
-      <v-col cols="12" sm="6" md="4" la="2" :class="$vuetify.breakpoint.xsOnly ? 'mt-0 pt-0' : ''">
-        <div ref="ratingChart"></div>
+      <v-col cols="12" sm="6" md="4" la="2" class="text-center">
+        <vue-speedometer
+          :minValue="-100"
+          :maxValue="100"
+          :value="0"
+          needleColor="steelblue"
+          :needleTransitionDuration="4000"
+          :maxSegmentLabels="5"
+          :segments="1000"
+          needleTransition="easeQuadInOut"
+          :height="200"
+        />
       </v-col>
     </v-row>
+
+    <v-row>
+      <div style="background-color:#D8D8D8; height: 1px; width:100%;"></div>
+    </v-row>
+
+    <v-row class="mt-5 mb-5">
+      <v-subheader class="body-1">Let your freinds know if they made you happy today..</v-subheader>
+    </v-row>
+
     <v-row wrap>
       <v-col
         v-for="friend in sortedFriendsList"
@@ -35,11 +54,12 @@
 import { mapGetters } from 'vuex'
 import Rating from './Rating'
 import { firebaseDB } from '@/services/firebaseInit.js'
-import ApexCharts from 'apexcharts'
+import VueSpeedometer from 'vue-speedometer'
 
 export default {
   components: {
-    Rating
+    Rating,
+    VueSpeedometer
   },
   data() {
     return {
@@ -60,47 +80,8 @@ export default {
   mounted() {
     this.fetchFriendsList()
     this.fetchGIFs()
-    this.showRatingMeter()
   },
   methods: {
-    showRatingMeter() {
-      var options = {
-        chart: {
-          height: 280,
-          type: 'radialBar'
-        },
-        series: [67],
-        plotOptions: {
-          radialBar: {
-            hollow: {
-              margin: 15,
-              size: '70%'
-            },
-            dataLabels: {
-              showOn: 'always',
-              name: {
-                offsetY: -10,
-                show: true,
-                color: '#888',
-                fontSize: '13px'
-              },
-              value: {
-                color: '#111',
-                fontSize: '30px',
-                show: true
-              }
-            }
-          }
-        },
-        stroke: {
-          lineCap: 'round'
-        },
-        labels: ['Progress']
-      }
-
-      var chart = new ApexCharts(this.$refs.ratingChart, options)
-      chart.render()
-    },
     favouriteUpdated(updatedFriend) {
       const friend = this.friendObjects.find((o) => o.uid === updatedFriend.uid)
       if (friend) {

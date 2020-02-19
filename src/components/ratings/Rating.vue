@@ -6,33 +6,53 @@
     <v-row v-if="loading">
       <v-col cols="12">
         <v-skeleton-loader type="list-item-avatar-two-line"></v-skeleton-loader>
-        <v-skeleton-loader type="card"></v-skeleton-loader>
+        <v-skeleton-loader type="list-item"></v-skeleton-loader>
       </v-col>
     </v-row>
 
-    <v-card v-else-if="friend">
-      <v-row justify="space-between">
-        <v-col cols="8">
-          <v-card-title primary-title class="headline">{{ displayNameCaptilize }}</v-card-title>
-          <v-card-actions>
-            <v-rating
-              v-model="rating"
-              :length="5"
-              :half-increments="false"
-              :size="30"
-              empty-icon="mdi-heart-outline"
-              full-icon="mdi-heart"
-              half-icon="mdi-heart-half-full"
-              color="primary"
-              background-color="grey"
-            ></v-rating>
-          </v-card-actions>
-        </v-col>
-        <v-col cols="4">
-          <v-img :src="friend.photoURL" contain height="125px"></v-img>
-        </v-col>
-      </v-row>
-    </v-card>
+    <v-row v-if="friend" align="center" class="mb-0 pb-0">
+      <v-col @click.stop="showFriendPhoto = true" cols="2" class="mb-0 pb-0">
+        <v-avatar :size="45">
+          <v-img :src="friend.photoURL"></v-img>
+        </v-avatar>
+      </v-col>
+
+      <v-col cols="5" class="mb-0 pb-0">
+        <v-flex class="subtitle-1 font-weight-medium">{{ displayNameCaptilize }}</v-flex>
+      </v-col>
+
+      <v-col @click="addToFavourite" cols="5" class="mb-0 pb-0">
+        <v-skeleton-loader v-if="!feedback" type="chip"></v-skeleton-loader>
+        <v-flex v-else>
+          <vue-speedometer
+            :minValue="-100"
+            :maxValue="100"
+            :needleHeightRatio="0.5"
+            :maxSegmentLabels="0"
+            needleColor="steelblue"
+            :needleTransitionDuration="4000"
+            needleTransition="easeQuadInOut"
+            :ringWidth="10"
+            :height="130"
+            :width="130"
+            :value="feedback > 3 ? 80 : -50"
+          />
+        </v-flex>
+      </v-col>
+    </v-row>
+    <v-row v-if="friend" class="mt-0 pt-0">
+      <v-col cols="12" class="mt-0 pt-0">
+        <vue-feedback-reaction v-model="feedback" :labels="feedbackLabels" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <div style="background-color:#D8D8D8; height: 10px; width:100%;"></div>
+    </v-row>
+    <v-overlay v-if="friend && friend.photoURL" :value="showFriendPhoto">
+      <v-avatar size="300" tile>
+        <v-img :src="friend.photoURL" content></v-img>
+      </v-avatar>
+    </v-overlay>
   </v-container>
 </template>
 <script>
@@ -41,8 +61,14 @@ import moment from 'moment'
 import momentTimezone from 'moment-timezone'
 import { fetchTimezone } from '@/api/timezone'
 import { firebaseDB } from '@/services/firebaseInit.js'
+import { VueFeedbackReaction } from 'vue-feedback-reaction'
+import VueSpeedometer from 'vue-speedometer'
 
 export default {
+  components: {
+    VueFeedbackReaction,
+    VueSpeedometer
+  },
   props: {
     gifs: {
       type: Array,
@@ -76,7 +102,8 @@ export default {
       showRemoveFriendWarning: false,
       activityObj: null,
       isFavouriteLoading: false,
-      rating: null
+      feedback: '',
+      feedbackLabels: ['', '', '', '', '']
     }
   },
   computed: {

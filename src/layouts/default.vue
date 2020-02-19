@@ -10,9 +10,7 @@
           </v-flex>
           <v-flex class="text-right">
             <v-row justify="end" align="center">
-              <span v-if="displayName" class="mr-5 d-none d-sm-block"
-                >Hello {{ displayName }}</span
-              >
+              <span v-if="displayName" class="mr-5 d-none d-sm-block">Hello {{ displayName }}</span>
               <v-avatar
                 @click="$router.push('/account')"
                 v-if="photoURL"
@@ -44,9 +42,7 @@
         </v-row>
         <v-row row align="center" justify="space-between" class="mt-1">
           <v-flex @click="$router.push('/')" class="text-center">
-            <v-icon v-if="currentPage && currentPage === '/'" color="primary"
-              >fas fa-home</v-icon
-            >
+            <v-icon v-if="currentPage && currentPage === '/'" color="primary">fas fa-home</v-icon>
             <v-icon v-else color="grey">fas fa-home</v-icon>
           </v-flex>
 
@@ -54,8 +50,7 @@
             <v-icon
               v-if="currentPage && currentPage.startsWith('/friends')"
               color="primary"
-              >fas fa-eye</v-icon
-            >
+            >fas fa-eye</v-icon>
             <v-icon v-else color="grey">far fa-eye</v-icon>
           </v-flex>
 
@@ -63,8 +58,7 @@
             <v-icon
               v-if="currentPage && currentPage.startsWith('/posts')"
               color="primary"
-              >fas fa-angle-double-up</v-icon
-            >
+            >fas fa-angle-double-up</v-icon>
             <v-icon v-else color="grey">fas fa-angle-double-up</v-icon>
           </v-flex>
 
@@ -72,8 +66,7 @@
             <v-icon
               v-if="currentPage && currentPage.startsWith('/findFriends')"
               color="primary"
-              >fas fa-user-plus</v-icon
-            >
+            >fas fa-user-plus</v-icon>
             <v-icon v-else color="grey">fas fa-user-plus</v-icon>
           </v-flex>
 
@@ -81,8 +74,7 @@
             <v-icon
               v-if="currentPage && currentPage.startsWith('/schedule')"
               color="primary"
-              >fas fa-calendar-check</v-icon
-            >
+            >fas fa-calendar-check</v-icon>
             <v-icon v-else color="grey">far fa-calendar-check</v-icon>
           </v-flex>
         </v-row>

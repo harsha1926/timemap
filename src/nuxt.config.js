@@ -81,7 +81,8 @@ export default {
       light: true,
       themes: {
         light: {
-          primary: '#e67e22'
+          primary: '#e67e22',
+          background: '#ffffff'
         }
       }
     }
@@ -105,6 +106,8 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {}
+    extend(config, ctx) {
+      config.resolve.alias['vue'] = 'vue/dist/vue.common'
+    }
   }
 }
