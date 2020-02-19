@@ -1,7 +1,7 @@
 <template>
   <v-app id="watch">
     <v-app-bar :dense="$vuetify.breakpoint.xsOnly" app tile flat>
-      <v-container fluid class="pa-0 ma-0">
+      <div style="background-color:#ffffff;">
         <v-row align="center" class="mb-1">
           <v-flex @click="$router.push('/')" class="customPointer text-left">
             <v-row justify="start" align="center" class="ml-2">
@@ -25,7 +25,7 @@
         <v-row>
           <div style="background-color:#D8D8D8; height: 1px; width:100%;"></div>
         </v-row>
-      </v-container>
+      </div>
     </v-app-bar>
     <v-content>
       <v-container fluid class="mt-0 pt-0">

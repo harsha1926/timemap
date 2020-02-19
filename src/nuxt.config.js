@@ -81,8 +81,7 @@ export default {
       light: true,
       themes: {
         light: {
-          primary: '#e67e22',
-          background: '#ffffff'
+          primary: '#e67e22'
         }
       }
     }
