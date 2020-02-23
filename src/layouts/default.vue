@@ -1,34 +1,22 @@
 <template>
   <v-app id="watch">
-    <v-app-bar :dense="$vuetify.breakpoint.xsOnly" app tile flat>
-      <v-container fluid class="ma-0 pa-0" style="background-color:#ffffff;">
-        <v-row align="center" class="mb-1">
-          <v-flex @click="$router.push('/')" class="customPointer text-left">
-            <v-row justify="start" align="center" class="ml-2">
-              <span class="ml-3 appTitleFont primary--text">Just Restart</span>
-            </v-row>
-          </v-flex>
-          <v-flex class="text-right">
-            <v-row justify="end" align="center">
-              <span v-if="displayName" class="mr-5 d-none d-sm-block">Hello {{ displayName }}</span>
-              <v-avatar
-                @click="$router.push('/account')"
-                v-if="photoURL"
-                class="mr-5 customPointer"
-                size="35"
-              >
-                <v-img :src="photoURL"></v-img>
-              </v-avatar>
-            </v-row>
-          </v-flex>
-        </v-row>
+    <v-app-bar color="#ffffff" :dense="$vuetify.breakpoint.xsOnly" app tile flat>
+      <span
+        @click="$router.push('/')"
+        class="customPointer text-left appTitleFont primary--text"
+      >Just Restart</span>
+      <v-spacer />
+      <span v-if="displayName" class="mr-5 d-none d-sm-block">Hello {{ displayName }}</span>
+      <v-avatar @click="$router.push('/account')" v-if="photoURL" class="customPointer" size="35">
+        <v-img :src="photoURL"></v-img>
+      </v-avatar>
+    </v-app-bar>
+
+    <v-content>
+      <v-container fluid class="mt-0 pt-0">
         <v-row>
           <div style="background-color:#D8D8D8; height: 1px; width:100%;"></div>
         </v-row>
-      </v-container>
-    </v-app-bar>
-    <v-content>
-      <v-container fluid class="mt-0 pt-0">
         <login v-if="!uid"></login>
         <verify-phone v-else-if="uid && !phoneNumber"></verify-phone>
         <nuxt v-else-if="uid && phoneNumber"></nuxt>

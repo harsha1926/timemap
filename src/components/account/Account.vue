@@ -65,7 +65,7 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { auth, firebaseDB, loginProviders } from '@/services/firebaseInit.js'
+import { auth, firebaseDB } from '@/services/firebaseInit.js'
 export default {
   data: () => ({
     admin: false,
@@ -83,12 +83,11 @@ export default {
   },
   mounted() {
     const vm = this
-    firebaseDB.ref('admins/' + vm.uid).once('value', function(snapshot) {
+    firebaseDB.ref('admins/' + vm.uid).once('value', function (snapshot) {
       if (snapshot.val()) {
         vm.admin = true
       }
     })
-    this.loginProvidersList = loginProviders
   },
   methods: {
     ...mapActions('user', ['removeUser', 'addDisplayName']),
@@ -102,7 +101,7 @@ export default {
     },
     logout() {
       const vm = this
-      auth.signOut().then(function() {
+      auth.signOut().then(function () {
         vm.removeUser()
         vm.$router.push('/')
       })
