@@ -1,5 +1,5 @@
 <template>
-  <v-container :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''">
+  <v-container fluid fill-height style="height: 85vh; max-height: 85%;">
     <v-row justify="center" align="center">
       <v-col cols="12" sm="8" md="4">
         <v-card v-if="!confirmationResult">
@@ -24,8 +24,7 @@
                 :disabled="!validPhone || !phone"
                 name="submitPhoneBtn"
                 color="primary"
-                >GET VERIFICATION CODE</v-btn
-              >
+              >GET VERIFICATION CODE</v-btn>
             </v-row>
           </v-card-actions>
         </v-card>
@@ -43,24 +42,17 @@
                   errorMessage = null
                 "
                 name="canceBtn"
-                >Cancel</v-btn
-              >
+              >Cancel</v-btn>
               <v-btn
                 @click="submitVerficationCode()"
                 :disabled="!validVerificationCode || !authCode"
                 name="submitCodeBtn"
                 color="primary"
-                >Confirm and Login</v-btn
-              >
+              >Confirm and Login</v-btn>
             </v-row>
           </v-card-actions>
         </v-card>
-        <v-row
-          v-if="errorMessage"
-          class="overline ma-2 pa-2 error--text"
-          wrap
-          >{{ errorMessage }}</v-row
-        >
+        <v-row v-if="errorMessage" class="overline ma-2 pa-2 error--text" wrap>{{ errorMessage }}</v-row>
       </v-col>
     </v-row>
   </v-container>
@@ -120,7 +112,7 @@ export default {
       const appVerifier = window.recaptchaVerifier
       auth.currentUser
         .linkWithPhoneNumber(vm.phone, appVerifier)
-        .then(function(confirmationResult) {
+        .then(function (confirmationResult) {
           vm.confirmationResult = confirmationResult
           vm.loading = false
         })
@@ -129,13 +121,13 @@ export default {
       const vm = this
       vm.confirmationResult
         .confirm(vm.authCode)
-        .then(function(result) {
+        .then(function (result) {
           firebaseDB.ref('users/' + vm.uid).update({
             phoneNumber: vm.phone
           })
           vm.addPhoneNumber(vm.phone)
         })
-        .catch(function(error) {
+        .catch(function (error) {
           vm.errorMessage = error.message
         })
     }
