@@ -1,6 +1,6 @@
 <template>
   <v-app id="watch">
-    <v-app-bar :dense="$vuetify.breakpoint.xsOnly" app tile flat>
+    <v-app-bar color="#ffffff" :dense="$vuetify.breakpoint.xsOnly" app tile flat>
       <v-container fluid class="ma-0 pa-0" style="background-color:#ffffff;">
         <v-row align="center" class="mb-1">
           <v-flex @click="$router.push('/')" class="customPointer text-left">
