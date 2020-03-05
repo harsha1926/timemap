@@ -78,9 +78,17 @@ export default (context) => {
   return new Promise((resolve) => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        addUserToStore(user)
+        firebaseDB.ref('users/' + user.uid).once('value', function (data) {
+          if (data.val() && data.val().uid) {
+            addUserToStore(data.val())
+            resolve()
+          } else {
+            addUserToDatabase(user)
+            addUserToStore(user)
+            resolve()
+          }
+        })
       }
-      resolve()
     })
   })
 }

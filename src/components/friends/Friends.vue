@@ -1,5 +1,21 @@
 <template>
   <v-container :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''" fluid>
+    <v-row wrap justify="center" align="center">
+      <v-subheader class="title">How good were you today?</v-subheader>
+      <v-col cols="12" sm="6" md="4" la="2" class="text-center">
+        <vue-speedometer
+          :minValue="-100"
+          :maxValue="100"
+          :value="rating"
+          :needleTransitionDuration="4000"
+          :maxSegmentLabels="5"
+          :segments="1000"
+          :height="200"
+          needle-color="steelblue"
+          needle-transition="easeQuadInOut"
+        />
+      </v-col>
+    </v-row>
     <v-row wrap>
       <v-col
         v-for="friend in sortedFriendsList"
@@ -18,11 +34,7 @@
           :gifs="gifs"
         />
       </v-col>
-      <v-snackbar
-        v-model="showFriendRemovedSnackbar"
-        :timeout="1000"
-        color="primary"
-      >
+      <v-snackbar v-model="showFriendRemovedSnackbar" :timeout="1000" color="primary">
         You are not watching {{ removedFriendName }} anymore
         <v-icon>far fa-frown</v-icon>
       </v-snackbar>
@@ -33,16 +45,20 @@
 import { mapGetters } from 'vuex'
 import Friend from './Friend'
 import { firebaseDB } from '@/services/firebaseInit.js'
+import VueSpeedometer from 'vue-speedometer'
+
 export default {
   components: {
-    Friend
+    Friend,
+    VueSpeedometer
   },
   data() {
     return {
       showFriendRemovedSnackbar: false,
       removedFriendName: '',
       friendObjects: [],
-      gifs: []
+      gifs: [],
+      ratings: []
     }
   },
   computed: {
@@ -51,13 +67,32 @@ export default {
       return [...this.friendObjects].sort(function(x, y) {
         return x.isFavourite === y.isFavourite ? 0 : x.isFavourite ? -1 : 1
       })
+    },
+    rating() {
+      if (this.ratings.length) {
+        return Math.ceil(
+          this.ratings.reduce((a, b) => a + b, 0) / this.ratings.length
+        )
+      } else {
+        return 0
+      }
     }
   },
   mounted() {
     this.fetchFriendsList()
     this.fetchGIFs()
+    this.fetchRating()
   },
   methods: {
+    fetchRating() {
+      const vm = this
+      firebaseDB.ref('rating/' + vm.uid).once('value', function(ratings) {
+        vm.ratings = []
+        ratings.forEach((rating) => {
+          vm.ratings.push(rating.val())
+        })
+      })
+    },
     favouriteUpdated(updatedFriend) {
       const friend = this.friendObjects.find((o) => o.uid === updatedFriend.uid)
       if (friend) {

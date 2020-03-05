@@ -23,31 +23,15 @@
       </v-container>
     </v-content>
 
-    <v-footer :height="$vuetify.breakpoint.xsOnly ? 45 : 60" color="white" app>
+    <v-footer color="white" app class="ma-0 pa-0">
       <v-container fluid class="fill-height pa-0 ma-0">
-        <v-row>
+        <v-row class="ma-0 pa-0">
           <div style="background-color:#D8D8D8; height: 1px; width:100%;"></div>
         </v-row>
-        <v-row row align="center" justify="space-between" class="mt-1">
+        <v-row row align="center" justify="space-between" class="mt-1 mb-1">
           <v-flex @click="$router.push('/')" class="text-center">
-            <v-icon v-if="currentPage && currentPage === '/'" color="primary">fas fa-home</v-icon>
-            <v-icon v-else color="grey">fas fa-home</v-icon>
-          </v-flex>
-
-          <v-flex @click="$router.push('/friends')" class="text-center">
-            <v-icon
-              v-if="currentPage && currentPage.startsWith('/friends')"
-              color="primary"
-            >fas fa-eye</v-icon>
+            <v-icon v-if="currentPage && currentPage === '/'" color="primary">fas fa-eye</v-icon>
             <v-icon v-else color="grey">far fa-eye</v-icon>
-          </v-flex>
-
-          <v-flex @click="$router.push('/posts')" class="text-center">
-            <v-icon
-              v-if="currentPage && currentPage.startsWith('/posts')"
-              color="primary"
-            >fas fa-angle-double-up</v-icon>
-            <v-icon v-else color="grey">fas fa-angle-double-up</v-icon>
           </v-flex>
 
           <v-flex @click="$router.push('/findFriends')" class="text-center">

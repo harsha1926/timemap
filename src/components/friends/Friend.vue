@@ -21,9 +21,10 @@
         <v-row align="center">
           <v-flex class="subtitle-1 font-weight-medium">
             {{ displayNameCaptilize }}
-            <span v-if="activityObj" class="subtitle-2 font-weight-regular"
-              >{{ activityObj.indirect }}..</span
-            >
+            <span
+              v-if="activityObj"
+              class="subtitle-2 font-weight-regular"
+            >{{ activityObj.indirect }}..</span>
           </v-flex>
         </v-row>
         <v-row>
@@ -31,18 +32,27 @@
         </v-row>
       </v-col>
 
+      <!-- <v-col cols="2">
+        <vue-speedometer
+          :minValue="-100"
+          :maxValue="100"
+          :needleHeightRatio="0.5"
+          :maxSegmentLabels="0"
+          :needleTransitionDuration="3000"
+          :ringWidth="6"
+          :height="60"
+          :width="90"
+          :value="0"
+          :currentValueText="''"
+          needle-color="steelblue"
+          needle-transition="easeQuadInOut"
+        />
+      </v-col>-->
+
       <v-col @click="addToFavourite" cols="2" class="text-center">
-        <v-progress-circular
-          v-if="isFavouriteLoading"
-          color="primary"
-          indeterminate
-        ></v-progress-circular>
-        <v-icon v-else-if="isFavourite" class="customPointer" color="primary"
-          >mdi-heart</v-icon
-        >
-        <v-icon v-else class="customPointer" color="primary"
-          >mdi-heart-outline</v-icon
-        >
+        <v-progress-circular v-if="isFavouriteLoading" color="primary" indeterminate></v-progress-circular>
+        <v-icon v-else-if="isFavourite" class="customPointer" color="primary">mdi-heart</v-icon>
+        <v-icon v-else class="customPointer" color="primary">mdi-heart-outline</v-icon>
       </v-col>
     </v-row>
 
@@ -51,18 +61,14 @@
         <v-img :src="activityPhoto" :height="height">
           <template v-slot:placeholder>
             <v-row class="fill-height ma-0" align="center" justify="center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
+              <v-progress-circular indeterminate color="primary"></v-progress-circular>
             </v-row>
           </template>
           <v-row
             justify="end"
             align="start"
             class="tenorFont ma-1 pa-1 fill-height white--text"
-            >Powered By Tenor</v-row
-          >
+          >Powered By Tenor</v-row>
         </v-img>
       </v-col>
       <v-col cols="2" class="my-0 py-0">
@@ -73,8 +79,7 @@
               small
               class="customPointer"
               color="tertiary"
-              >fas fa-eye-slash</v-icon
-            >
+            >fas fa-eye-slash</v-icon>
           </div>
 
           <div class="my-3">
@@ -82,8 +87,7 @@
               @click="sendWhatsAppMessage(friend.phoneNumber)"
               class="customPointer"
               color="primary"
-              >mdi-whatsapp</v-icon
-            >
+            >mdi-whatsapp</v-icon>
           </div>
 
           <div class="my-3">
@@ -91,8 +95,7 @@
               @click="callPhone(friend.phoneNumber)"
               class="customPointer"
               color="primary"
-              >mdi-phone</v-icon
-            >
+            >mdi-phone</v-icon>
           </div>
 
           <div class="my-3">
@@ -100,8 +103,7 @@
               @click="sendTextMessage(friend.phoneNumber)"
               class="customPointer"
               color="primary"
-              >mdi-message-outline</v-icon
-            >
+            >mdi-message-outline</v-icon>
           </div>
 
           <div class="my-3">
@@ -109,12 +111,14 @@
               @click="sendEmailMessage(friend.email)"
               class="customPointer"
               color="primary"
-              >mdi-email-outline</v-icon
-            >
+            >mdi-email-outline</v-icon>
           </div>
         </div>
       </v-col>
     </v-row>
+
+    <rating v-if="friend" :friend="friend" />
+
     <v-row>
       <div style="background-color:#D8D8D8; height: 10px; width:100%;"></div>
     </v-row>
@@ -123,9 +127,7 @@
         <v-card-title>Are you sure?</v-card-title>
         <v-card-actions>
           <v-btn @click="removeFriend">Yes</v-btn>
-          <v-btn @click="showRemoveFriendWarning = false" color="primary"
-            >No</v-btn
-          >
+          <v-btn @click="showRemoveFriendWarning = false" color="primary">No</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -143,8 +145,14 @@ import moment from 'moment'
 import momentTimezone from 'moment-timezone'
 import { fetchTimezone } from '@/api/timezone'
 import { firebaseDB } from '@/services/firebaseInit.js'
+import Rating from '~/components/ratings/Rating'
+import VueSpeedometer from 'vue-speedometer'
 
 export default {
+  components: {
+    Rating,
+    VueSpeedometer
+  },
   props: {
     gifs: {
       type: Array,
