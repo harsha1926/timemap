@@ -32,23 +32,6 @@
         </v-row>
       </v-col>
 
-      <!-- <v-col cols="2">
-        <vue-speedometer
-          :minValue="-100"
-          :maxValue="100"
-          :needleHeightRatio="0.5"
-          :maxSegmentLabels="0"
-          :needleTransitionDuration="3000"
-          :ringWidth="6"
-          :height="60"
-          :width="90"
-          :value="0"
-          :currentValueText="''"
-          needle-color="steelblue"
-          needle-transition="easeQuadInOut"
-        />
-      </v-col>-->
-
       <v-col @click="addToFavourite" cols="2" class="text-center">
         <v-progress-circular v-if="isFavouriteLoading" color="primary" indeterminate></v-progress-circular>
         <v-icon v-else-if="isFavourite" class="customPointer" color="primary">mdi-heart</v-icon>
@@ -117,7 +100,7 @@
       </v-col>
     </v-row>
 
-    <rating v-if="friend" :friend="friend" />
+    <feedback v-if="friend" :friend="friend" />
 
     <v-row>
       <div style="background-color:#D8D8D8; height: 10px; width:100%;"></div>
@@ -145,13 +128,11 @@ import moment from 'moment'
 import momentTimezone from 'moment-timezone'
 import { fetchTimezone } from '@/api/timezone'
 import { firebaseDB } from '@/services/firebaseInit.js'
-import Rating from '~/components/ratings/Rating'
-import VueSpeedometer from 'vue-speedometer'
+import Feedback from '~/components/ratings/Feedback'
 
 export default {
   components: {
-    Rating,
-    VueSpeedometer
+    Feedback
   },
   props: {
     gifs: {

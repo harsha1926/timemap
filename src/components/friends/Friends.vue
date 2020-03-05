@@ -16,6 +16,11 @@
         />
       </v-col>
     </v-row>
+
+    <v-row>
+      <div style="background-color:#D8D8D8; height: 10px; width:100%;"></div>
+    </v-row>
+    
     <v-row wrap>
       <v-col
         v-for="friend in sortedFriendsList"
