@@ -29,7 +29,7 @@ export default (context) => {
     (result) => {
       const user = result.user
       if (user) {
-        firebaseDB.ref('users/' + user.uid).once('value', function (data) {
+        firebaseDB.ref('users/' + user.uid).once('value', function(data) {
           if (data.val() && data.val().uid) {
             addUserToStore(data.val())
           } else {
@@ -43,9 +43,7 @@ export default (context) => {
       // eslint-disable-next-line
       console.error(error)
       const email = error.email
-      if (
-        error.code === 'auth/account-exists-with-different-credential'
-      ) {
+      if (error.code === 'auth/account-exists-with-different-credential') {
         auth.fetchSignInMethodsForEmail(email).then((providers) => {
           if (providers && providers.length) {
             const linkedProvider = loginProviders.find(
@@ -78,7 +76,7 @@ export default (context) => {
   return new Promise((resolve) => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        firebaseDB.ref('users/' + user.uid).once('value', function (data) {
+        firebaseDB.ref('users/' + user.uid).once('value', function(data) {
           if (data.val() && data.val().uid) {
             addUserToStore(data.val())
             resolve()

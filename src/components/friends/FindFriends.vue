@@ -75,7 +75,9 @@ export default {
       const vm = this
       firebaseDB.ref('users').once('value', function(snapshot) {
         snapshot.forEach((user) => {
-          vm.contacts.push(user.val().uid)
+          if (vm.uid !== user.val().uid) {
+            vm.contacts.push(user.val().uid)
+          }
         })
       })
     }

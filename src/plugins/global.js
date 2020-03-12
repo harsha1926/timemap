@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import { firebaseDB } from '@/services/firebaseInit.js'
+import { fetchTimezone } from '@/api/timezone'
+
 export default () => {
   Vue.directive('uppercase', {
     bind(el, _, vnode) {
@@ -18,16 +20,24 @@ export default () => {
         if (navigator.geolocation && uid) {
           navigator.geolocation.getCurrentPosition(
             (position) => {
-              firebaseDB
-                .ref('users')
-                .child(uid)
-                .update({
-                  currentLocation: {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
-                    lastUpdated: new Date()
-                  }
-                })
+              fetchTimezone(
+                position.coords.latitude,
+                position.coords.longitude,
+                Date.now() / 1000
+              ).then((res) => {
+                firebaseDB
+                  .ref('users')
+                  .child(uid)
+                  .update({
+                    currentLocation: {
+                      latitude: position.coords.latitude,
+                      longitude: position.coords.longitude,
+                      timezone: res.data.timeZoneId,
+                      lastUpdated: new Date()
+                    }
+                  })
+              })
+
               this.$store.dispatch('user/currentLocation/addCurrentLocation', {
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude

@@ -21,10 +21,9 @@
         <v-row align="center">
           <v-flex class="subtitle-1 font-weight-medium">
             {{ displayNameCaptilize }}
-            <span
-              v-if="activityObj"
-              class="subtitle-2 font-weight-regular"
-            >{{ activityObj.indirect }}..</span>
+            <span v-if="activityObj" class="subtitle-2 font-weight-regular"
+              >{{ activityObj.indirect }}..</span
+            >
           </v-flex>
         </v-row>
         <v-row>
@@ -33,25 +32,46 @@
       </v-col>
 
       <v-col @click="addToFavourite" cols="2" class="text-center">
-        <v-progress-circular v-if="isFavouriteLoading" color="primary" indeterminate></v-progress-circular>
-        <v-icon v-else-if="isFavourite" class="customPointer" color="primary">mdi-heart</v-icon>
-        <v-icon v-else class="customPointer" color="primary">mdi-heart-outline</v-icon>
+        <v-progress-circular
+          v-if="isFavouriteLoading"
+          color="primary"
+          indeterminate
+        ></v-progress-circular>
+        <v-icon v-else-if="isFavourite" class="customPointer" color="primary"
+          >mdi-heart</v-icon
+        >
+        <v-icon v-else class="customPointer" color="primary"
+          >mdi-heart-outline</v-icon
+        >
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row v-if="friend">
       <v-col class="mt-0 pt-0" cols="10">
-        <v-img :src="activityPhoto" :height="height">
+        <v-card
+          v-if="locationNotShared"
+          :height="height"
+          color="grey lighten-1"
+        >
+          <v-row class="fill-height" justify="center" align="center">
+            <v-icon class="mr-2">mdi-map-marker-off</v-icon>Location not shared
+          </v-row>
+        </v-card>
+        <v-img v-else :src="activityPhoto" :height="height">
           <template v-slot:placeholder>
             <v-row class="fill-height ma-0" align="center" justify="center">
-              <v-progress-circular indeterminate color="primary"></v-progress-circular>
+              <v-progress-circular
+                indeterminate
+                color="primary"
+              ></v-progress-circular>
             </v-row>
           </template>
           <v-row
             justify="end"
             align="start"
             class="tenorFont ma-1 pa-1 fill-height white--text"
-          >Powered By Tenor</v-row>
+            >Powered By Tenor</v-row
+          >
         </v-img>
       </v-col>
       <v-col cols="2" class="my-0 py-0">
@@ -62,7 +82,8 @@
               small
               class="customPointer"
               color="tertiary"
-            >fas fa-eye-slash</v-icon>
+              >fas fa-eye-slash</v-icon
+            >
           </div>
 
           <div class="my-3">
@@ -70,7 +91,8 @@
               @click="sendWhatsAppMessage(friend.phoneNumber)"
               class="customPointer"
               color="primary"
-            >mdi-whatsapp</v-icon>
+              >mdi-whatsapp</v-icon
+            >
           </div>
 
           <div class="my-3">
@@ -78,7 +100,8 @@
               @click="callPhone(friend.phoneNumber)"
               class="customPointer"
               color="primary"
-            >mdi-phone</v-icon>
+              >mdi-phone</v-icon
+            >
           </div>
 
           <div class="my-3">
@@ -86,7 +109,8 @@
               @click="sendTextMessage(friend.phoneNumber)"
               class="customPointer"
               color="primary"
-            >mdi-message-outline</v-icon>
+              >mdi-message-outline</v-icon
+            >
           </div>
 
           <div class="my-3">
@@ -94,7 +118,8 @@
               @click="sendEmailMessage(friend.email)"
               class="customPointer"
               color="primary"
-            >mdi-email-outline</v-icon>
+              >mdi-email-outline</v-icon
+            >
           </div>
         </div>
       </v-col>
@@ -105,12 +130,15 @@
     <v-row>
       <div style="background-color:#D8D8D8; height: 10px; width:100%;"></div>
     </v-row>
+
     <v-dialog v-model="showRemoveFriendWarning" max-width="600">
       <v-card>
         <v-card-title>Are you sure?</v-card-title>
         <v-card-actions>
           <v-btn @click="removeFriend">Yes</v-btn>
-          <v-btn @click="showRemoveFriendWarning = false" color="primary">No</v-btn>
+          <v-btn @click="showRemoveFriendWarning = false" color="primary"
+            >No</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -126,9 +154,9 @@
 import { mapGetters } from 'vuex'
 import moment from 'moment'
 import momentTimezone from 'moment-timezone'
-import { fetchTimezone } from '@/api/timezone'
 import { firebaseDB } from '@/services/firebaseInit.js'
 import Feedback from '~/components/ratings/Feedback'
+import { fetchTimezone } from '@/api/timezone'
 
 export default {
   components: {
@@ -166,7 +194,8 @@ export default {
       lastUpdated: null,
       showRemoveFriendWarning: false,
       activityObj: null,
-      isFavouriteLoading: false
+      isFavouriteLoading: false,
+      locationNotShared: false
     }
   },
   computed: {
@@ -247,12 +276,14 @@ export default {
     if (this.friendId) {
       const vm = this
       vm.loading = true
-      firebaseDB
-        .ref('users/' + vm.friendId)
-        .once('value', function(data) {
-          vm.friend = data.val()
-          if (vm.friend && vm.friend.currentLocation) {
-            vm.lastUpdated = vm.friend.currentLocation.lastUpdated
+      firebaseDB.ref('users/' + vm.friendId).once('value', function(data) {
+        vm.friend = data.val()
+        vm.loading = false
+        if (vm.friend && vm.friend.currentLocation) {
+          vm.lastUpdated = vm.friend.currentLocation.lastUpdated
+          if (vm.friend.currentLocation.timezone) {
+            vm.timezone = vm.friend.currentLocation.timezone
+          } else {
             fetchTimezone(
               vm.friend.currentLocation.latitude,
               vm.friend.currentLocation.longitude,
@@ -261,10 +292,10 @@ export default {
               vm.timezone = res.data.timeZoneId
             })
           }
-        })
-        .finally(() => {
-          vm.loading = false
-        })
+        } else {
+          vm.locationNotShared = true
+        }
+      })
 
       firebaseDB.ref('schedule/' + vm.friendId).once('value', function(data) {
         if (data.val()) vm.schedule = data.val()

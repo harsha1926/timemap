@@ -305,7 +305,7 @@ export default {
         res.data.results.map((eachGIF) => {
           const gif = {
             activity,
-            url: eachGIF.media[0].gif.url
+            url: eachGIF.media[0].tinygif.url
           }
           if (this.forAvatar) {
             gif.url = eachGIF.media[0].tinygif.url

@@ -1,13 +1,27 @@
 <template>
   <v-app id="watch">
-    <v-app-bar color="#ffffff" :dense="$vuetify.breakpoint.xsOnly" app tile flat>
+    <v-app-bar
+      :dense="$vuetify.breakpoint.xsOnly"
+      color="#ffffff"
+      app
+      tile
+      flat
+    >
       <span
         @click="$router.push('/')"
         class="customPointer text-left appTitleFont primary--text"
-      >Just Restart</span>
+        >Just Restart</span
+      >
       <v-spacer />
-      <span v-if="displayName" class="mr-5 d-none d-sm-block">Hello {{ displayName }}</span>
-      <v-avatar @click="$router.push('/account')" v-if="photoURL" class="customPointer" size="35">
+      <span v-if="displayName" class="mr-5 d-none d-sm-block"
+        >Hello {{ displayName }}</span
+      >
+      <v-avatar
+        @click="$router.push('/account')"
+        v-if="photoURL"
+        class="customPointer"
+        size="35"
+      >
         <v-img :src="photoURL"></v-img>
       </v-avatar>
     </v-app-bar>
@@ -29,24 +43,46 @@
           <div style="background-color:#D8D8D8; height: 1px; width:100%;"></div>
         </v-row>
         <v-row row align="center" justify="space-between" class="mt-1 mb-1">
-          <v-flex @click="$router.push('/')" class="text-center">
-            <v-icon v-if="currentPage && currentPage === '/'" color="primary">fas fa-eye</v-icon>
+          <v-flex @click="$router.push('/')" class="customPointer text-center">
+            <v-icon v-if="currentPage && currentPage === '/'" color="primary"
+              >fas fa-eye</v-icon
+            >
             <v-icon v-else color="grey">far fa-eye</v-icon>
           </v-flex>
 
-          <v-flex @click="$router.push('/findFriends')" class="text-center">
+          <v-flex
+            @click="$router.push('/groups')"
+            class="customPointer text-center"
+          >
+            <v-icon
+              v-if="currentPage && currentPage.startsWith('/groups')"
+              color="primary"
+              >fas fa-users</v-icon
+            >
+            <v-icon v-else color="grey">fas fa-users</v-icon>
+          </v-flex>
+
+          <v-flex
+            @click="$router.push('/findFriends')"
+            class="customPointer text-center"
+          >
             <v-icon
               v-if="currentPage && currentPage.startsWith('/findFriends')"
               color="primary"
-            >fas fa-user-plus</v-icon>
+              >fas fa-user-plus</v-icon
+            >
             <v-icon v-else color="grey">fas fa-user-plus</v-icon>
           </v-flex>
 
-          <v-flex @click="$router.push('/schedule')" class="text-center">
+          <v-flex
+            @click="$router.push('/schedule')"
+            class="customPointer text-center"
+          >
             <v-icon
               v-if="currentPage && currentPage.startsWith('/schedule')"
               color="primary"
-            >fas fa-calendar-check</v-icon>
+              >fas fa-calendar-check</v-icon
+            >
             <v-icon v-else color="grey">far fa-calendar-check</v-icon>
           </v-flex>
         </v-row>

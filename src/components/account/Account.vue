@@ -83,7 +83,7 @@ export default {
   },
   mounted() {
     const vm = this
-    firebaseDB.ref('admins/' + vm.uid).once('value', function (snapshot) {
+    firebaseDB.ref('admins/' + vm.uid).once('value', function(snapshot) {
       if (snapshot.val()) {
         vm.admin = true
       }
@@ -101,7 +101,7 @@ export default {
     },
     logout() {
       const vm = this
-      auth.signOut().then(function () {
+      auth.signOut().then(function() {
         vm.removeUser()
         vm.$router.push('/')
       })

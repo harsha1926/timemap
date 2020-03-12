@@ -20,7 +20,7 @@
     <v-row>
       <div style="background-color:#D8D8D8; height: 10px; width:100%;"></div>
     </v-row>
-    
+
     <v-row wrap>
       <v-col
         v-for="friend in sortedFriendsList"
@@ -39,7 +39,11 @@
           :gifs="gifs"
         />
       </v-col>
-      <v-snackbar v-model="showFriendRemovedSnackbar" :timeout="1000" color="primary">
+      <v-snackbar
+        v-model="showFriendRemovedSnackbar"
+        :timeout="1000"
+        color="primary"
+      >
         You are not watching {{ removedFriendName }} anymore
         <v-icon>far fa-frown</v-icon>
       </v-snackbar>
@@ -48,9 +52,9 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import VueSpeedometer from 'vue-speedometer'
 import Friend from './Friend'
 import { firebaseDB } from '@/services/firebaseInit.js'
-import VueSpeedometer from 'vue-speedometer'
 
 export default {
   components: {
@@ -91,12 +95,21 @@ export default {
   methods: {
     fetchRating() {
       const vm = this
-      firebaseDB.ref('rating/' + vm.uid).once('value', function(ratings) {
-        vm.ratings = []
-        ratings.forEach((rating) => {
-          vm.ratings.push(rating.val())
+      firebaseDB
+        .ref(
+          'rating/' +
+            vm.uid +
+            new Date()
+              .toLocaleDateString('en-US')
+              .split('/')
+              .join('')
+        )
+        .once('value', function(ratings) {
+          vm.ratings = []
+          ratings.forEach((rating) => {
+            vm.ratings.push(rating.val())
+          })
         })
-      })
     },
     favouriteUpdated(updatedFriend) {
       const friend = this.friendObjects.find((o) => o.uid === updatedFriend.uid)

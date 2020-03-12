@@ -5,18 +5,35 @@
         <v-card class="elevation-12">
           <v-card-title class="body-1">
             Hi there,
-            <br />Thanks for showing your interest!
-            <br />We hope our fun filled app can help you know more about your loved ones.
-            <br />Please login,
+            <br />Thanks for showing your interest! <br />We hope our fun filled
+            app can help you know more about your loved ones. <br />Please
+            login,
           </v-card-title>
           <v-card-actions class="col justify-center">
-            <v-btn @click="googleSignIn" name="googleLoginBtn" fab icon color="primary">
+            <v-btn
+              @click="googleSignIn"
+              name="googleLoginBtn"
+              fab
+              icon
+              color="primary"
+            >
               <v-icon>fab fa-google</v-icon>
             </v-btn>
-            <v-btn @click="facebookSignIn" name="facebookLoginBtn" fab icon color="primary">
+            <v-btn
+              @click="facebookSignIn"
+              name="facebookLoginBtn"
+              fab
+              icon
+              color="primary"
+            >
               <v-icon>fab fa-facebook-f</v-icon>
             </v-btn>
-            <v-row v-if="loginError" class="overline ma-2 pa-2 error--text" wrap>{{ loginError }}</v-row>
+            <v-row
+              v-if="loginError"
+              class="overline ma-2 pa-2 error--text"
+              wrap
+              >{{ loginError }}</v-row
+            >
           </v-card-actions>
         </v-card>
       </v-col>
