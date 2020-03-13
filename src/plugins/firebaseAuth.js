@@ -2,6 +2,7 @@ import { auth, firebaseDB, loginProviders } from '@/services/firebaseInit.js'
 
 export default (context) => {
   const { store } = context
+
   const addUserToStore = (user) => {
     store.dispatch('user/addUser', {
       uid: user.uid,

@@ -49,7 +49,7 @@ export default {
   plugins: [
     '~/plugins/i18n.js',
     '~/plugins/global.js',
-    '~/plugins/firebaseAuth.js',
+    // '~/plugins/firebaseAuth.js',
     '~/plugins/vuetify.js',
     '~/plugins/mask.js',
     '~/plugins/telephoneInput.js',

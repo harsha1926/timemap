@@ -42,15 +42,58 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import {
   auth,
   GoogleProvider,
-  FacebookProvider
+  FacebookProvider,
+  loginProviders
 } from '@/services/firebaseInit.js'
 export default {
-  computed: {
-    ...mapGetters('app', ['loginError'])
+  data: () => ({
+    loginError: null
+  }),
+  beforeCreate() {
+    const vm = this
+    auth.getRedirectResult().then(
+      (result) => {
+        const user = result.user
+        if (user) {
+          vm.addUser(user)
+        }
+      },
+      (error) => {
+        // eslint-disable-next-line
+        console.error(error)
+        const email = error.email
+        if (error.code === 'auth/account-exists-with-different-credential') {
+          auth.fetchSignInMethodsForEmail(email).then((providers) => {
+            if (providers && providers.length) {
+              const linkedProvider = loginProviders.find(
+                (o) => o.providerId === providers[0]
+              )
+              auth
+                .signInWithPopup(
+                  linkedProvider.setCustomParameters({ login_hint: email })
+                )
+                .then(
+                  (result) => {
+                    const user = result.user
+                    user.linkWithCredential(error.credential)
+                    vm.addUserToStore(user)
+                  },
+                  (err) => {
+                    vm.loginError = err.message
+                  }
+                )
+            } else {
+              vm.loginError = error.message
+            }
+          })
+        } else {
+          vm.loginError = error.message
+        }
+      }
+    )
   },
   methods: {
     googleSignIn() {

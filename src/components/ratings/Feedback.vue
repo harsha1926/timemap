@@ -1,35 +1,35 @@
 <template>
   <v-row v-if="friend" align="center" justify="space-between" class="mt-0 pt-0">
-    <v-col @click="saveFeedback(-100)" cols="2" class="mt-0 pt-0">
+    <v-col @click="saveFeedback(-100)" cols="2" class="customPointer mt-0 pt-0">
       <v-avatar v-if="feedback == -100" size="60">
-        <v-img src="emojis/1.gif"></v-img>
+        <v-img eager src="emojis/1.gif"></v-img>
       </v-avatar>
       <v-avatar v-else style="opacity: 0.4" size="45">
-        <v-img src="emojis/1.gif"></v-img>
+        <v-img eager src="emojis/1.gif"></v-img>
       </v-avatar>
     </v-col>
-    <v-col @click="saveFeedback(-50)" cols="2" class="mt-0 pt-0">
+    <v-col @click="saveFeedback(-50)" cols="2" class="customPointer mt-0 pt-0">
       <v-avatar v-if="feedback == -50" size="60">
-        <v-img src="emojis/2.gif"></v-img>
+        <v-img eager src="emojis/2.gif"></v-img>
       </v-avatar>
       <v-avatar v-else style="opacity: 0.4" size="45">
-        <v-img src="emojis/2.gif"></v-img>
+        <v-img eager src="emojis/2.gif"></v-img>
       </v-avatar>
     </v-col>
-    <v-col @click="saveFeedback(50)" cols="2" class="mt-0 pt-0">
+    <v-col @click="saveFeedback(50)" cols="2" class="customPointer mt-0 pt-0">
       <v-avatar v-if="feedback == 50" size="60">
-        <v-img src="emojis/3.gif"></v-img>
+        <v-img eager src="emojis/3.gif"></v-img>
       </v-avatar>
       <v-avatar v-else style="opacity: 0.4" size="45">
-        <v-img src="emojis/3.gif"></v-img>
+        <v-img eager src="emojis/3.gif"></v-img>
       </v-avatar>
     </v-col>
-    <v-col @click="saveFeedback(100)" cols="2" class="mt-0 pt-0">
+    <v-col @click="saveFeedback(100)" cols="2" class="customPointer mt-0 pt-0">
       <v-avatar v-if="feedback == 100" size="60">
-        <v-img src="emojis/4.gif"></v-img>
+        <v-img eager src="emojis/4.gif"></v-img>
       </v-avatar>
       <v-avatar v-else style="opacity: 0.4" size="45">
-        <v-img src="emojis/4.gif"></v-img>
+        <v-img eager src="emojis/4.gif"></v-img>
       </v-avatar>
     </v-col>
     <v-col
@@ -55,11 +55,7 @@
       />
     </v-col>
     <v-col v-else cols="4" style="height: 90px" class="text-right">
-      <v-skeleton-loader
-        class="mt-3 ml-2"
-        right
-        type="chip"
-      ></v-skeleton-loader>
+      <v-skeleton-loader class="mt-3 ml-2" type="chip"></v-skeleton-loader>
     </v-col>
   </v-row>
 </template>

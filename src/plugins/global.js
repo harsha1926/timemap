@@ -50,6 +50,38 @@ export default () => {
             { timeout: 10000 }
           )
         }
+      },
+      addUser(user) {
+        const vm = this
+        firebaseDB.ref('users/' + user.uid).once('value', function(data) {
+          if (data.val() && data.val().uid) {
+            vm.addUserToStore(data.val())
+          } else {
+            vm.addUserToDatabase(user)
+            vm.addUserToStore(user)
+          }
+        })
+      },
+      addUserToStore(user) {
+        this.$store.dispatch('user/addUser', {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          phoneNumber: user.phoneNumber
+        })
+      },
+      addUserToDatabase(user) {
+        firebaseDB
+          .ref('users')
+          .child(user.uid)
+          .set({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            phoneNumber: user.phoneNumber
+          })
       }
     }
   })

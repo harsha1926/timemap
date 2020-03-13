@@ -1,9 +1,5 @@
-const previousPage = (state) => state.previousPage
-const currentPage = (state) => state.currentPage
-const loginError = (state) => state.loginError
+const search = (state) => state.search
 
 export default {
-  previousPage,
-  currentPage,
-  loginError
+  search
 }

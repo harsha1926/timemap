@@ -37,6 +37,7 @@
           @friendRemoved="friendRemoved"
           @favourite-updated="favouriteUpdated"
           :gifs="gifs"
+          @friend-data-fetched="addFriendData"
         />
       </v-col>
       <v-snackbar
@@ -72,10 +73,25 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['uid']),
+    ...mapGetters('app', ['search']),
     sortedFriendsList() {
-      return [...this.friendObjects].sort(function(x, y) {
-        return x.isFavourite === y.isFavourite ? 0 : x.isFavourite ? -1 : 1
-      })
+      const list = this.friendObjects.slice()
+      if (!this.search) {
+        return list.sort(function(x, y) {
+          return x.isFavourite === y.isFavourite ? 0 : x.isFavourite ? -1 : 1
+        })
+      } else {
+        return list
+          .filter(
+            (o) =>
+              !o.displayName ||
+              (o.displayName &&
+                o.displayName.toUpperCase().includes(this.search.toUpperCase()))
+          )
+          .sort(function(x, y) {
+            return x.isFavourite === y.isFavourite ? 0 : x.isFavourite ? -1 : 1
+          })
+      }
     },
     rating() {
       if (this.ratings.length) {
@@ -93,6 +109,16 @@ export default {
     this.fetchRating()
   },
   methods: {
+    addFriendData(friendData) {
+      if (friendData) {
+        const index = this.friendObjects.findIndex(
+          (o) => o.uid === friendData.uid
+        )
+        if (index > -1) {
+          this.friendObjects.splice(index, 1, friendData)
+        }
+      }
+    },
     fetchRating() {
       const vm = this
       firebaseDB
@@ -142,7 +168,8 @@ export default {
         friends.forEach((friend) => {
           vm.friendObjects.push({
             uid: friend.val().uid,
-            isFavourite: friend.val().isFavourite
+            isFavourite: friend.val().isFavourite,
+            displayName: friend.val().displayName
           })
         })
       })

@@ -46,7 +46,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', ['uid'])
+    ...mapGetters('user', ['uid']),
+    ...mapGetters('app', ['search'])
   },
   mounted() {
     this.getAllUsers()

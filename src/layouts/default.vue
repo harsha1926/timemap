@@ -8,21 +8,46 @@
       flat
     >
       <span
+        v-if="!showSearchBar"
         @click="$router.push('/')"
         class="customPointer text-left appTitleFont primary--text"
         >Just Restart</span
       >
-      <v-spacer />
-      <span v-if="displayName" class="mr-5 d-none d-sm-block"
+      <v-spacer v-if="!showSearchBar" />
+      <v-avatar
+        v-if="!showSearchBar"
+        @click="showSearchBarFocus()"
+        class="customPointer mr-2"
+        size="35"
+      >
+        <v-icon color="grey">fas fa-search</v-icon>
+      </v-avatar>
+      <span v-if="displayName && !showSearchBar" class="mr-5 d-none d-sm-block"
         >Hello {{ displayName }}</span
       >
       <v-avatar
         @click="$router.push('/account')"
-        v-if="photoURL"
+        v-if="photoURL && !showSearchBar"
         class="customPointer"
         size="35"
       >
         <v-img :src="photoURL"></v-img>
+      </v-avatar>
+
+      <v-text-field
+        ref="searchInput"
+        v-model="searchVal"
+        v-show="showSearchBar"
+        eager
+        hide-details
+      ></v-text-field>
+      <v-avatar
+        v-if="showSearchBar"
+        @click="showSearchBar = false"
+        class="customPointer"
+        size="35"
+      >
+        <v-icon color="grey">fas fa-times</v-icon>
       </v-avatar>
     </v-app-bar>
 
@@ -31,7 +56,12 @@
         <v-row>
           <div style="background-color:#D8D8D8; height: 1px; width:100%;"></div>
         </v-row>
-        <login v-if="!uid"></login>
+
+        <v-row v-if="loading">
+          <v-progress-linear color="primary" indeterminate></v-progress-linear>
+        </v-row>
+
+        <login v-else-if="!uid"></login>
         <verify-phone v-else-if="uid && !phoneNumber"></verify-phone>
         <nuxt v-else-if="uid && phoneNumber"></nuxt>
       </v-container>
@@ -48,18 +78,6 @@
               >fas fa-eye</v-icon
             >
             <v-icon v-else color="grey">far fa-eye</v-icon>
-          </v-flex>
-
-          <v-flex
-            @click="$router.push('/groups')"
-            class="customPointer text-center"
-          >
-            <v-icon
-              v-if="currentPage && currentPage.startsWith('/groups')"
-              color="primary"
-              >fas fa-users</v-icon
-            >
-            <v-icon v-else color="grey">fas fa-users</v-icon>
           </v-flex>
 
           <v-flex
@@ -91,33 +109,56 @@
   </v-app>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import Login from '~/components/login/Login'
 import VerifyPhone from '~/components/login/VerifyPhone'
+import { auth } from '@/services/firebaseInit.js'
+
 export default {
   components: {
     Login,
     VerifyPhone
   },
   data: () => ({
+    loading: true,
     on: false,
-    showSearchBar: false,
-    iconURL:
-      'https://media1.tenor.com/images/e9aa112a4646871f63345e167557eae1/tenor.gif?itemid=12827256'
+    showSearchBar: false
   }),
-  middleware: 'currentPage',
   computed: {
     ...mapGetters('user', ['uid', 'displayName', 'photoURL', 'phoneNumber']),
-    ...mapGetters('app', ['currentPage'])
+    ...mapGetters('app', ['search']),
+    currentPage() {
+      return this.$route.path
+    },
+    searchVal: {
+      get() {
+        return this.search
+      },
+      set(newVal) {
+        this.$store.commit('app/SEARCH_UPDATED', newVal)
+      }
+    }
   },
   mounted() {
-    this.$store.dispatch(
-      'app/updateCurrentPage',
-      this.$router.currentRoute.path
-    )
+    const vm = this
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        vm.addUser(user)
+      }
+
+      setTimeout(() => {
+        vm.loading = false
+      }, 1000)
+    })
   },
   methods: {
-    ...mapActions('user/currentLocation', ['addCurrentLocation'])
+    showSearchBarFocus() {
+      const vm = this
+      vm.showSearchBar = true
+      vm.$nextTick(() => {
+        vm.$refs.searchInput.focus()
+      })
+    }
   }
 }
 </script>
