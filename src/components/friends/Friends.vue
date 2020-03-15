@@ -37,7 +37,6 @@
           @friendRemoved="friendRemoved"
           @favourite-updated="favouriteUpdated"
           :gifs="gifs"
-          @friend-data-fetched="addFriendData"
         />
       </v-col>
       <v-snackbar
@@ -109,16 +108,6 @@ export default {
     this.fetchRating()
   },
   methods: {
-    addFriendData(friendData) {
-      if (friendData) {
-        const index = this.friendObjects.findIndex(
-          (o) => o.uid === friendData.uid
-        )
-        if (index > -1) {
-          this.friendObjects.splice(index, 1, friendData)
-        }
-      }
-    },
     fetchRating() {
       const vm = this
       firebaseDB

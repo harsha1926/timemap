@@ -7,48 +7,26 @@
       tile
       flat
     >
-      <span
-        v-if="!showSearchBar"
-        @click="$router.push('/')"
-        class="customPointer text-left appTitleFont primary--text"
-        >Just Restart</span
-      >
-      <v-spacer v-if="!showSearchBar" />
-      <v-avatar
-        v-if="!showSearchBar"
-        @click="showSearchBarFocus()"
-        class="customPointer mr-2"
-        size="35"
-      >
-        <v-icon color="grey">fas fa-search</v-icon>
-      </v-avatar>
-      <span v-if="displayName && !showSearchBar" class="mr-5 d-none d-sm-block"
-        >Hello {{ displayName }}</span
-      >
       <v-avatar
         @click="$router.push('/account')"
-        v-if="photoURL && !showSearchBar"
+        v-if="photoURL"
         class="customPointer"
         size="35"
       >
         <v-img :src="photoURL"></v-img>
       </v-avatar>
-
-      <v-text-field
-        ref="searchInput"
-        v-model="searchVal"
-        v-show="showSearchBar"
-        eager
-        hide-details
-      ></v-text-field>
-      <v-avatar
-        v-if="showSearchBar"
-        @click="showSearchBar = false"
-        class="customPointer"
-        size="35"
+      <span v-if="displayName" class="ml-5 d-none d-sm-block"
+        >Hello {{ displayName }}</span
       >
-        <v-icon color="grey">fas fa-times</v-icon>
-      </v-avatar>
+      <v-spacer />
+      <span class="mb-3 mr-3 caption font-weight-light align-self-end"
+        >It's okay to</span
+      >
+      <span
+        @click="$router.push('/')"
+        class="customPointer appTitleFont primary--text"
+        >Just Restart</span
+      >
     </v-app-bar>
 
     <v-content>
@@ -121,8 +99,7 @@ export default {
   },
   data: () => ({
     loading: true,
-    on: false,
-    showSearchBar: false
+    on: false
   }),
   computed: {
     ...mapGetters('user', ['uid', 'displayName', 'photoURL', 'phoneNumber']),
@@ -150,15 +127,6 @@ export default {
         vm.loading = false
       }, 1000)
     })
-  },
-  methods: {
-    showSearchBarFocus() {
-      const vm = this
-      vm.showSearchBar = true
-      vm.$nextTick(() => {
-        vm.$refs.searchInput.focus()
-      })
-    }
   }
 }
 </script>

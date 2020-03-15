@@ -278,7 +278,6 @@ export default {
       vm.loading = true
       firebaseDB.ref('users/' + vm.friendId).once('value', function(data) {
         vm.friend = data.val()
-        vm.$emit('friend-data-fetched', vm.friend)
         vm.loading = false
         if (vm.friend && vm.friend.currentLocation) {
           vm.lastUpdated = vm.friend.currentLocation.lastUpdated

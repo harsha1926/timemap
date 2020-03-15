@@ -24,21 +24,6 @@
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-row>
-        <v-row justify="space-between" align="center" class="pa-2">
-          <v-flex>Linked accounts</v-flex>
-          <v-flex>
-            <v-row justify="end" class="mr-2">
-              <v-col
-                v-for="provider in loginProvidersList"
-                :key="provider.icon"
-                class="mr-2"
-                cols="2"
-              >
-                <v-icon v-if="provider.activated">{{ provider.icon }}</v-icon>
-              </v-col>
-            </v-row>
-          </v-flex>
-        </v-row>
         <v-row align="center" class="pa-2">
           <v-btn @click="logout" color="primary">Logout</v-btn>
         </v-row>
@@ -61,6 +46,11 @@
         </v-dialog>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col cols="12">
+        <router-link to="/privacyPolicy">Privacy Policy</router-link>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 <script>
@@ -69,8 +59,7 @@ import { auth, firebaseDB } from '@/services/firebaseInit.js'
 export default {
   data: () => ({
     admin: false,
-    showEditDisplayNameDialog: false,
-    loginProvidersList: []
+    showEditDisplayNameDialog: false
   }),
   computed: {
     ...mapGetters('user', [

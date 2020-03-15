@@ -1,14 +1,28 @@
 <template>
   <v-container fluid fill-height style="height: 85vh; max-height: 85%;">
     <v-row align="start" justify="center">
-      <v-col cols="12" sm="8" md="4" class="text-center">
+      <v-col cols="12" sm="8" md="4">
         <v-card class="elevation-12">
-          <v-card-title class="body-1">
-            Hi there,
-            <br />Thanks for showing your interest! <br />We hope our fun filled
-            app can help you know more about your loved ones. <br />Please
-            login,
-          </v-card-title>
+          <v-card-text>
+            <p>Hi there,</p>
+            <p>Thanks for showing your interest!</p>
+            <p>
+              Philosophy behind our application is to look back how we have been
+              today with our closed ones by getting their ratings anonymously.
+              And then erase them all everyday, to start fresh again.
+            </p>
+            <p class="title">It's okay to, Just Restart!</p>
+            <p>
+              We hope our fun filled app can help you know more about your loved
+              ones.
+            </p>
+            <p>Please login,</p>
+            <p class="overline">
+              By using our app, you are accepting the practices described in
+              this
+              <a @click="showPrivacyPolicy = true">Privacy Policy</a>
+            </p>
+          </v-card-text>
           <v-card-actions class="col justify-center">
             <v-btn
               @click="googleSignIn"
@@ -38,6 +52,12 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-dialog v-model="showPrivacyPolicy">
+      <privacy-policy
+        :isDialog="true"
+        @dialog-closed="showPrivacyPolicy = false"
+      />
+    </v-dialog>
   </v-container>
 </template>
 
@@ -48,9 +68,15 @@ import {
   FacebookProvider,
   loginProviders
 } from '@/services/firebaseInit.js'
+import PrivacyPolicy from '~/components/privacyPolicy/PrivacyPolicy'
 export default {
+  components: {
+    PrivacyPolicy
+  },
   data: () => ({
-    loginError: null
+    loginError: null,
+    showPrivacyPolicy: false,
+    acceptPrivacyPolicy: true
   }),
   beforeCreate() {
     const vm = this

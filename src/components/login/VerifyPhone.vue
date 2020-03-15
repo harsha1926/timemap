@@ -17,6 +17,7 @@
           </v-card-text>
           <v-card-actions>
             <v-row justify="end" class="mr-5 mb-2">
+              <v-btn @click="logout()">Logout</v-btn>
               <v-btn
                 ref="signIn"
                 :loading="loading"
@@ -24,8 +25,7 @@
                 :disabled="!validPhone || !phone"
                 name="submitPhoneBtn"
                 color="primary"
-                >GET VERIFICATION CODE</v-btn
-              >
+              >GET VERIFICATION CODE</v-btn>
             </v-row>
           </v-card-actions>
         </v-card>
@@ -43,24 +43,17 @@
                   errorMessage = null
                 "
                 name="canceBtn"
-                >Cancel</v-btn
-              >
+              >Cancel</v-btn>
               <v-btn
                 @click="submitVerficationCode()"
                 :disabled="!validVerificationCode || !authCode"
                 name="submitCodeBtn"
                 color="primary"
-                >Confirm and Login</v-btn
-              >
+              >Confirm and Login</v-btn>
             </v-row>
           </v-card-actions>
         </v-card>
-        <v-row
-          v-if="errorMessage"
-          class="overline ma-2 pa-2 error--text"
-          wrap
-          >{{ errorMessage }}</v-row
-        >
+        <v-row v-if="errorMessage" class="overline ma-2 pa-2 error--text" wrap>{{ errorMessage }}</v-row>
       </v-col>
     </v-row>
   </v-container>
@@ -101,7 +94,14 @@ export default {
     })
   },
   methods: {
-    ...mapActions('user', ['addPhoneNumber']),
+    ...mapActions('user', ['removeUser', 'addPhoneNumber']),
+    logout() {
+      const vm = this
+      auth.signOut().then(function() {
+        vm.removeUser()
+        vm.$router.push('/')
+      })
+    },
     isValidPhone(isValid) {
       this.validPhone = isValid.valid
       if (isValid.valid) {
