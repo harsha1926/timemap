@@ -11,29 +11,34 @@
         </v-avatar>
       </v-col>
       <v-col cols="8">
-        <v-flex class="subtitle-1 font-weight-medium">{{
-          displayNameCaptilize
-        }}</v-flex>
+        <v-flex class="subtitle-1 font-weight-medium">
+          {{ displayNameCaptilize }}
+        </v-flex>
         <v-flex v-if="isFriendAlready" class="caption"
           >You are watching..</v-flex
         >
       </v-col>
       <v-col cols="2" class="text-center">
-        <v-icon v-if="!isFriendAlready" @click="addFriend" color="primary"
+        <v-icon
+          v-if="!isFriendAlready && !showRemove"
+          @click="addFriend"
+          color="primary"
           >fas fa-eye</v-icon
         >
-        <v-icon v-else @click="showWarning = true" small color="tertiary"
+        <v-icon
+          v-else-if="!showRemove"
+          @click="showWarning = true"
+          small
+          color="tertiary"
           >fas fa-eye-slash</v-icon
         >
+        <v-icon
+          v-if="showRemove"
+          @click="showRemoveWarning = true"
+          color="error"
+          >mdi-close</v-icon
+        >
       </v-col>
-      <v-snackbar v-model="friendAdded" :timeout="1000" color="primary">
-        You are watching {{ friend.displayName }} now
-        <v-icon>far fa-smile</v-icon>
-      </v-snackbar>
-      <v-snackbar v-model="friendRemoved" :timeout="1000" color="primary">
-        You are not watching {{ friend.displayName }} anymore
-        <v-icon>far fa-frown</v-icon>
-      </v-snackbar>
     </v-row>
     <v-dialog v-model="showWarning" max-width="600">
       <v-card>
@@ -44,6 +49,38 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog v-if="friend" v-model="showRemoveWarning" max-width="600">
+      <v-card>
+        <v-card-title class="body-2"
+          >Are you sure? Do you want to stop {{ friend.displayName }} from
+          watching you?</v-card-title
+        >
+        <v-card-actions>
+          <v-btn @click="removeWatcher">Yes</v-btn>
+          <v-btn @click="showRemoveWarning = false" color="primary">No</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-snackbar
+      v-if="friend"
+      v-model="friendAdded"
+      :timeout="1000"
+      color="primary"
+    >
+      You are watching {{ friend.displayName }} now
+      <v-icon>far fa-smile</v-icon>
+    </v-snackbar>
+    <v-snackbar
+      v-if="friend"
+      v-model="friendRemoved"
+      :timeout="1000"
+      color="primary"
+    >
+      You are not watching {{ friend.displayName }} anymore
+      <v-icon>far fa-frown</v-icon>
+    </v-snackbar>
   </v-container>
 </template>
 <script>
@@ -57,6 +94,12 @@ export default {
       default() {
         return null
       }
+    },
+    showRemove: {
+      type: Boolean,
+      default() {
+        return false
+      }
     }
   },
   data() {
@@ -66,7 +109,8 @@ export default {
       friendRemoved: false,
       loading: false,
       friend: null,
-      showWarning: false
+      showWarning: false,
+      showRemoveWarning: false
     }
   },
   computed: {
@@ -116,6 +160,11 @@ export default {
       this.isFriendAlready = false
       this.friendRemoved = true
       this.showWarning = false
+    },
+    removeWatcher() {
+      firebaseDB.ref('watching/' + this.friend.uid + '/' + this.uid).set(null)
+      this.$emit('watcher-removed', this.friend)
+      this.showRemoveWarning = false
     }
   }
 }

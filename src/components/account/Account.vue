@@ -12,24 +12,47 @@
             ></v-img>
           </v-avatar>
         </v-row>
-        <v-row justify="space-between" align="center" class="pa-2">
+
+        <v-row justify="space-between" align="center">
           <span v-if="displayName">{{ displayName }}</span>
           <v-btn @click="openEditDisplayNameDialog" color="primary" fab icon>
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-row>
-        <v-row justify="space-between" align="center" class="pa-2">
+
+        <v-row justify="space-between" align="center">
           <span v-if="phoneNumber">{{ phoneNumber }}</span>
           <v-btn color="primary" fab icon to="/account/updatePhone">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-row>
-        <v-row align="center" class="pa-2">
-          <v-btn @click="logout" color="primary">Logout</v-btn>
+
+        <v-row>
+          <v-col cols="12">
+            <v-btn to="/allowedContacts">Manage privacy settings</v-btn>
+          </v-col>
         </v-row>
-        <v-row v-if="admin" align="center" class="pa-2">
-          <v-btn to="/admin/gifs" color="primary">Manage GIFs</v-btn>
+
+        <v-row>
+          <v-col cols="12">
+            <router-link to="/privacyPolicy"
+              >Check Our Privacy Policy</router-link
+            >
+          </v-col>
         </v-row>
+
+        <v-row align="center">
+          <v-col cols="12">
+            <v-btn @click="logout">Logout</v-btn>
+          </v-col>
+        </v-row>
+
+        <v-row v-if="admin" align="center">
+          <v-col cols="12">
+            <v-btn to="/admin/gifs">Manage GIFs</v-btn>
+          </v-col>
+        </v-row>
+
         <v-dialog v-model="showEditDisplayNameDialog" max-width="400" eager>
           <v-card>
             <v-card-text>
@@ -46,16 +69,12 @@
         </v-dialog>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12">
-        <router-link to="/privacyPolicy">Privacy Policy</router-link>
-      </v-col>
-    </v-row>
   </v-container>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { auth, firebaseDB } from '@/services/firebaseInit.js'
+
 export default {
   data: () => ({
     admin: false,

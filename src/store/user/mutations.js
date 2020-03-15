@@ -38,6 +38,10 @@ const PHONE_NUMBER_REMOVED = (state) => {
   state.phoneNumber = null
 }
 
+const ALLOW_CONTACT_UPDATED = (state, allowContact) => {
+  state.allowContact = allowContact
+}
+
 export default {
   UID_ADDED,
   UID_REMOVED,
@@ -48,5 +52,6 @@ export default {
   PHOTO_URL_ADDED,
   PHOTO_URL_REMOVED,
   PHONE_NUMBER_ADDED,
-  PHONE_NUMBER_REMOVED
+  PHONE_NUMBER_REMOVED,
+  ALLOW_CONTACT_UPDATED
 }

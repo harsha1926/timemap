@@ -21,7 +21,11 @@
           <v-tab-item :key="1">
             <v-row wrap>
               <v-col v-for="friendId in watchers" :key="friendId" cols="12">
-                <add-friend :friendId="friendId" />
+                <add-friend
+                  :friendId="friendId"
+                  :showRemove="true"
+                  @watcher-removed="removeWatcher"
+                />
               </v-col>
             </v-row>
           </v-tab-item>
@@ -54,6 +58,12 @@ export default {
     this.getWatchers()
   },
   methods: {
+    removeWatcher(friend) {
+      const index = this.watchers.findIndex((o) => o === friend.uid)
+      if (index > -1) {
+        this.watchers.splice(index, 1)
+      }
+    },
     getWatchers() {
       const vm = this
       firebaseDB

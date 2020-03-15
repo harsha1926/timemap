@@ -18,6 +18,20 @@
     </v-row>
 
     <v-row>
+      <div style="background-color:#D8D8D8; height: 2px; width:100%;"></div>
+    </v-row>
+
+    <v-row align="center" class="mb-0 pb-0 mt-0 pt-0">
+      <v-col cols="12" class="mb-0 pb-0 mt-0 pt-0">
+        <v-switch
+          v-model="allowContactComputed"
+          @change="updateAllowContactInDB"
+          label="Do you allow your friends to contact you?"
+        ></v-switch>
+      </v-col>
+    </v-row>
+
+    <v-row>
       <div style="background-color:#D8D8D8; height: 10px; width:100%;"></div>
     </v-row>
 
@@ -71,7 +85,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', ['uid']),
+    ...mapGetters('user', ['uid', 'allowContact']),
     ...mapGetters('app', ['search']),
     sortedFriendsList() {
       const list = this.friendObjects.slice()
@@ -100,6 +114,14 @@ export default {
       } else {
         return 0
       }
+    },
+    allowContactComputed: {
+      get() {
+        return this.allowContact
+      },
+      set(newVal) {
+        this.$store.commit('user/ALLOW_CONTACT_UPDATED', newVal)
+      }
     }
   },
   mounted() {
@@ -108,6 +130,15 @@ export default {
     this.fetchRating()
   },
   methods: {
+    updateAllowContactInDB() {
+      const vm = this
+      firebaseDB
+        .ref('users/' + vm.uid)
+        .update({ allowContact: vm.allowContact })
+      if (this.allowContact) {
+        this.$router.push('/allowedContacts')
+      }
+    },
     fetchRating() {
       const vm = this
       firebaseDB
@@ -157,8 +188,7 @@ export default {
         friends.forEach((friend) => {
           vm.friendObjects.push({
             uid: friend.val().uid,
-            isFavourite: friend.val().isFavourite,
-            displayName: friend.val().displayName
+            isFavourite: friend.val().isFavourite
           })
         })
       })

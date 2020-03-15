@@ -88,6 +88,7 @@
 
           <div class="my-3">
             <v-icon
+              :disabled="!allowContactsOverall || !allowContact"
               @click="sendWhatsAppMessage(friend.phoneNumber)"
               class="customPointer"
               color="primary"
@@ -97,6 +98,7 @@
 
           <div class="my-3">
             <v-icon
+              :disabled="!allowContactsOverall || !allowContact"
               @click="callPhone(friend.phoneNumber)"
               class="customPointer"
               color="primary"
@@ -106,6 +108,7 @@
 
           <div class="my-3">
             <v-icon
+              :disabled="!allowContactsOverall || !allowContact"
               @click="sendTextMessage(friend.phoneNumber)"
               class="customPointer"
               color="primary"
@@ -115,6 +118,7 @@
 
           <div class="my-3">
             <v-icon
+              :disabled="!allowContactsOverall || !allowContact"
               @click="sendEmailMessage(friend.email)"
               class="customPointer"
               color="primary"
@@ -195,11 +199,15 @@ export default {
       showRemoveFriendWarning: false,
       activityObj: null,
       isFavouriteLoading: false,
-      locationNotShared: false
+      locationNotShared: false,
+      allowContact: false
     }
   },
   computed: {
     ...mapGetters('user', ['uid']),
+    allowContactsOverall() {
+      return this.friend && this.friend.allowContact
+    },
     height() {
       return this.$vuetify.breakpoint.xsOnly ? '180px' : '250px'
     },
@@ -276,6 +284,13 @@ export default {
     if (this.friendId) {
       const vm = this
       vm.loading = true
+
+      firebaseDB
+        .ref('allowContact/' + vm.friendId + '/' + vm.uid)
+        .once('value', function(data) {
+          vm.allowContact = data.val()
+        })
+
       firebaseDB.ref('users/' + vm.friendId).once('value', function(data) {
         vm.friend = data.val()
         vm.loading = false

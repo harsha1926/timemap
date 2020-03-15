@@ -6,7 +6,8 @@ export const state = () => ({
   email: null,
   displayName: null,
   photoURL: null,
-  phoneNumber: null
+  phoneNumber: null,
+  allowContact: false
 })
 export default {
   state,
