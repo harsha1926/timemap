@@ -1,7 +1,7 @@
 {
   "name": "just-restart",
   "version": "1.0.0",
-  "description": "Philosophy behind our application is to look back how we have been today with our closed ones by getting their ratings anonymously. And then erase them all everyday, to start fresh again. It's okay to, Just Restart! Application aims to encourage people to start their day fresh, every day!",
+  "description": "Philosophy behind our application is to look back how we have been today with our friends by getting their ratings anonymously. And then erase them all everyday, to start fresh again. It's okay to, Just Restart! Application aims to encourage people to start their day fresh, every day!",
   "author": "Sriharsha Samana",
   "private": true,
   "scripts": {

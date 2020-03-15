@@ -8,7 +8,7 @@
             <p>Thanks for showing your interest!</p>
             <p>
               Philosophy behind our application is to look back how we have been
-              today with our closed ones by getting their ratings anonymously.
+              today with our friends by getting their ratings anonymously.
               And then erase them all everyday, to start fresh again.
             </p>
             <p class="title">It's okay to, Just Restart!</p>
@@ -20,43 +20,25 @@
             <p class="overline">
               By using our app, you are accepting the practices described in
               this
-              <a @click="showPrivacyPolicy = true">Privacy Policy</a>
+              <a
+                @click="showPrivacyPolicy = true"
+              >Privacy Policy</a>
             </p>
           </v-card-text>
           <v-card-actions class="col justify-center">
-            <v-btn
-              @click="googleSignIn"
-              name="googleLoginBtn"
-              fab
-              icon
-              color="primary"
-            >
+            <v-btn @click="googleSignIn" name="googleLoginBtn" fab icon color="primary">
               <v-icon>fab fa-google</v-icon>
             </v-btn>
-            <v-btn
-              @click="facebookSignIn"
-              name="facebookLoginBtn"
-              fab
-              icon
-              color="primary"
-            >
+            <v-btn @click="facebookSignIn" name="facebookLoginBtn" fab icon color="primary">
               <v-icon>fab fa-facebook-f</v-icon>
             </v-btn>
-            <v-row
-              v-if="loginError"
-              class="overline ma-2 pa-2 error--text"
-              wrap
-              >{{ loginError }}</v-row
-            >
+            <v-row v-if="loginError" class="overline ma-2 pa-2 error--text" wrap>{{ loginError }}</v-row>
           </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
     <v-dialog v-model="showPrivacyPolicy">
-      <privacy-policy
-        :isDialog="true"
-        @dialog-closed="showPrivacyPolicy = false"
-      />
+      <privacy-policy :isDialog="true" @dialog-closed="showPrivacyPolicy = false" />
     </v-dialog>
   </v-container>
 </template>

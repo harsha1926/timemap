@@ -16,8 +16,8 @@
             ></vue-tel-input>
           </v-card-text>
           <v-card-actions>
-            <v-row justify="end" class="mr-5 mb-2">
-              <v-btn @click="logout()">Logout</v-btn>
+            <v-row justify="end" class="ml-2 mr-2 mb-2">
+              <v-btn text @click="logout()">Logout</v-btn>
               <v-btn
                 ref="signIn"
                 :loading="loading"
