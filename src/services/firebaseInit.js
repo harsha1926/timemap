@@ -5,7 +5,7 @@ import 'firebase/database'
 import { firebaseAPIKey } from '~/plugins/apiKeys'
 const config = {
   apiKey: firebaseAPIKey,
-  authDomain: 'timemap-cf037.firebaseapp.com',
+  authDomain: 'justrestart.in',
   databaseURL: 'https://timemap-cf037.firebaseio.com',
   projectId: 'timemap-cf037',
   storageBucket: 'timemap-cf037.appspot.com',

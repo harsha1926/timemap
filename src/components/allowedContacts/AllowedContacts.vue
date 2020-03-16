@@ -2,23 +2,23 @@
   <v-container :class="$vuetify.breakpoint.xsOnly ? 'ma-0 pa-0' : ''" fluid>
     <v-row wrap>
       <v-col cols="12">
-        <v-text-field
-          v-model="search"
-          hide-details
-          label="Search"
-        ></v-text-field>
-        <v-data-table
-          :search="search"
-          :items="friendObjects"
-          :headers="headers"
-        >
-          <template v-slot:item.allowContact="{ item }">
-            <v-switch
-              v-model="item.allowContact"
-              @change="updateAllowContact(item, $event)"
-            ></v-switch>
-          </template>
-        </v-data-table>
+        <v-list>
+          <v-list-item>
+            <v-list-item-title>Name</v-list-item-title>
+            <v-list-item-action>Allow to contact?</v-list-item-action>
+          </v-list-item>
+
+          <v-row>
+            <div style="background-color:#D8D8D8; height: 2px; width:100%;"></div>
+          </v-row>
+
+          <v-list-item v-for="friend in friendObjects" :key="friend.uid">
+            <v-list-item-title>{{ friend.displayName }}</v-list-item-title>
+            <v-list-item-action>
+              <v-switch v-model="friend.allowContact" @change="updateAllowContact(friend, $event)"></v-switch>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
       </v-col>
     </v-row>
   </v-container>
@@ -31,11 +31,7 @@ export default {
   data() {
     return {
       search: null,
-      friendObjects: [],
-      headers: [
-        { text: 'Name', value: 'displayName' },
-        { text: 'Allow to contact you?', value: 'allowContact' }
-      ]
+      friendObjects: []
     }
   },
   computed: {

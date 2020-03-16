@@ -53,7 +53,7 @@ export default () => {
       },
       addUser(user) {
         const vm = this
-        firebaseDB.ref('users/' + user.uid).once('value', function(data) {
+        firebaseDB.ref('users/' + user.uid).once('value', function (data) {
           if (data.val() && data.val().uid) {
             vm.addUserToStore(data.val())
           } else {
@@ -68,7 +68,8 @@ export default () => {
           email: user.email,
           displayName: user.displayName,
           photoURL: user.photoURL,
-          phoneNumber: user.phoneNumber
+          phoneNumber: user.phoneNumber,
+          allowContact: user.allowContact
         })
       },
       addUserToDatabase(user) {

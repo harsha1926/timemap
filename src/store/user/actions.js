@@ -38,12 +38,21 @@ const removePhoneNumber = (context) => {
   context.commit('PHONE_NUMBER_REMOVED')
 }
 
+const addAllowContact = (context, allowContact) => {
+  context.commit('ALLOW_CONTACT_UPDATED', allowContact)
+}
+
+const removeAllowContact = (context) => {
+  context.commit('ALLOW_CONTACT_UPDATED', false)
+}
+
 const addUser = (context, payload) => {
   addUID(context, payload.uid)
   addEmail(context, payload.email)
   addDisplayName(context, payload.displayName)
   addPhotoURL(context, payload.photoURL)
   addPhoneNumber(context, payload.phoneNumber)
+  addAllowContact(context, payload.allowContact)
 }
 
 const removeUser = (context) => {
@@ -52,6 +61,7 @@ const removeUser = (context) => {
   removeDisplayName(context)
   removePhotoURL(context)
   removePhoneNumber(context)
+  removeAllowContact(context)
 }
 
 export default {
@@ -66,5 +76,7 @@ export default {
   addUser,
   removeUser,
   addPhoneNumber,
-  removePhoneNumber
+  removePhoneNumber,
+  addAllowContact,
+  removeAllowContact
 }

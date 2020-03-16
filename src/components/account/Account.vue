@@ -13,32 +13,25 @@
           </v-avatar>
         </v-row>
 
-        <v-row justify="space-between" align="center">
-          <span v-if="displayName">{{ displayName }}</span>
+        <v-row justify="space-between" align="center" class="mt-5">
+          <v-subheader class="body-1" v-if="displayName">{{ displayName }}</v-subheader>
           <v-btn @click="openEditDisplayNameDialog" color="primary" fab icon>
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-row>
 
         <v-row justify="space-between" align="center">
-          <span v-if="phoneNumber">{{ phoneNumber }}</span>
+          <v-subheader class="body-1" v-if="phoneNumber">{{ phoneNumber }}</v-subheader>
           <v-btn color="primary" fab icon to="/account/updatePhone">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-row>
 
-        <v-row>
-          <v-col cols="12">
-            <v-btn to="/allowedContacts">Manage privacy settings</v-btn>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col cols="12">
-            <router-link to="/privacyPolicy"
-              >Check Our Privacy Policy</router-link
-            >
-          </v-col>
+        <v-row justify="space-between" align="center">
+          <v-subheader class="body-1">Manage privacy settings</v-subheader>
+          <v-btn color="primary" fab icon to="/allowedContacts">
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
         </v-row>
 
         <v-row align="center">
@@ -50,6 +43,12 @@
         <v-row v-if="admin" align="center">
           <v-col cols="12">
             <v-btn to="/admin/gifs">Manage GIFs</v-btn>
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col cols="12">
+            <router-link to="/privacyPolicy">Check Our Privacy Policy</router-link>
           </v-col>
         </v-row>
 
